@@ -185,11 +185,14 @@
   }
 
   .navbar-item {
+    height: auto;
     border-bottom: 1px solid var(--border-secondary);
   }
 
   .navbar-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
     padding: var(--spacing-md) 0;
     font-size: var(--font-size-base);
   }
@@ -212,6 +215,9 @@
   }
 
   .dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
     padding: var(--spacing-sm) var(--spacing-lg);
     font-size: var(--font-size-sm);
   }
