@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Near-Instant Finality - Clock/stopwatch -->
+  <circle cx="32" cy="32" r="20" fill="#EC4899" opacity="0.2"/>
+  <circle cx="32" cy="32" r="20" stroke="#EC4899" stroke-width="2"/>
+  <line x1="32" y1="32" x2="32" y2="18" stroke="#EC4899" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="32" x2="42" y2="32" stroke="#EC4899" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="2" fill="#EC4899"/>
+  <text x="20" y="56" font-family="Arial" font-size="8" font-weight="bold" fill="#EC4899">&lt; 10s</text>
+  <path d="M42 12L48 8L52 14" stroke="#EC4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

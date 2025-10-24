@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AI-Powered Mining - Brain with circuit/mining pick -->
+  <path d="M24 20C24 14 28 10 32 10C36 10 40 14 40 20C40 22 39 24 38 26C42 28 44 32 44 36C44 40 42 44 38 46C38 48 37 50 35 51C33 52 31 52 29 51C27 50 26 48 26 46C22 44 20 40 20 36C20 32 22 28 26 26C25 24 24 22 24 20Z" fill="#F59E0B" opacity="0.2" stroke="#F59E0B" stroke-width="2"/>
+  <circle cx="28" cy="22" r="2" fill="#F59E0B"/>
+  <circle cx="36" cy="22" r="2" fill="#F59E0B"/>
+  <path d="M28 30L32 34L36 30" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48 44L52 48L48 52" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="44" y1="44" x2="48" y2="48" stroke="#F59E0B" stroke-width="2"/>
+  <text x="46" y="60" font-family="Arial" font-size="8" font-weight="bold" fill="#F59E0B">AI</text>
+</svg>

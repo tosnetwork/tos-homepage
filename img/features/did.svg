@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Agent-First Digital Personhood - ID badge with person icon -->
+  <rect x="8" y="12" width="48" height="40" rx="4" fill="#4A9EFF" opacity="0.2"/>
+  <rect x="8" y="12" width="48" height="40" rx="4" stroke="#4A9EFF" stroke-width="2"/>
+  <circle cx="32" cy="26" r="6" fill="#4A9EFF"/>
+  <path d="M22 42C22 36.48 26.48 32 32 32C37.52 32 42 36.48 42 42" stroke="#4A9EFF" stroke-width="2" stroke-linecap="round"/>
+  <rect x="18" y="46" width="28" height="2" rx="1" fill="#4A9EFF"/>
+  <rect x="18" y="50" width="20" height="2" rx="1" fill="#4A9EFF" opacity="0.6"/>
+</svg>

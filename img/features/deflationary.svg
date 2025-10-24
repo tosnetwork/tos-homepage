@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Controlled Supply Economics - Decreasing bar chart -->
+  <rect x="12" y="16" width="8" height="36" rx="1" fill="#84CC16" opacity="0.3" stroke="#84CC16" stroke-width="2"/>
+  <rect x="22" y="22" width="8" height="30" rx="1" fill="#84CC16" opacity="0.3" stroke="#84CC16" stroke-width="2"/>
+  <rect x="32" y="28" width="8" height="24" rx="1" fill="#84CC16" opacity="0.3" stroke="#84CC16" stroke-width="2"/>
+  <rect x="42" y="34" width="8" height="18" rx="1" fill="#84CC16" opacity="0.3" stroke="#84CC16" stroke-width="2"/>
+  <line x1="8" y1="52" x2="56" y2="52" stroke="#84CC16" stroke-width="2"/>
+  <path d="M48 20L54 14L54 20L48 20Z" fill="#84CC16"/>
+  <line x1="15" y1="18" x2="48" y2="18" stroke="#84CC16" stroke-width="1.5" stroke-dasharray="2 2"/>
+</svg>

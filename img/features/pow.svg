@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Proof-of-Work Security - Shield with lock -->
+  <path d="M32 8L48 16V28C48 38 42 46 32 52C22 46 16 38 16 28V16L32 8Z" fill="#14B8A6" opacity="0.2"/>
+  <path d="M32 8L48 16V28C48 38 42 46 32 52C22 46 16 38 16 28V16L32 8Z" stroke="#14B8A6" stroke-width="2"/>
+  <rect x="28" y="26" width="8" height="10" rx="1" fill="#14B8A6"/>
+  <circle cx="32" cy="24" r="4" stroke="#14B8A6" stroke-width="2" fill="none"/>
+  <line x1="26" y1="42" x2="38" y2="42" stroke="#14B8A6" stroke-width="2" stroke-linecap="round"/>
+</svg>

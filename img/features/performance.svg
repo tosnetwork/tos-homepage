@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ultra-Fast Performance - Speedometer/gauge -->
+  <path d="M12 40C12 25.64 23.64 14 38 14C52.36 14 64 25.64 64 40" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+  <path d="M12 40C12 25.64 23.64 14 38 14C52.36 14 64 25.64 64 40" fill="#EF4444" opacity="0.1"/>
+  <circle cx="38" cy="40" r="4" fill="#EF4444"/>
+  <line x1="38" y1="40" x2="50" y2="24" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+  <text x="20" y="52" font-family="Arial" font-size="8" fill="#EF4444">0</text>
+  <text x="52" y="52" font-family="Arial" font-size="8" fill="#EF4444">10K</text>
+  <text x="30" y="58" font-family="Arial" font-size="7" fill="#EF4444">TPS</text>
+</svg>

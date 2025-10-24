@@ -1,0 +1,278 @@
+/* ============================================
+   TOS Network - CSS Variables
+   Bitfinex-inspired dark theme design system
+   ============================================ */
+
+:root {
+  /* ============ Color System ============ */
+
+  /* Bitfinex Color System */
+  --bitfinex-bg: #07020f;          /* Deep purple-black */
+  --bitfinex-surface: #0d1d29;     /* Dark blue-gray */
+  --bitfinex-red: #e44b44;         /* Accent red */
+  --bitfinex-green: #03ca9b;       /* Brand green */
+
+  /* Primary Brand Colors - TOS Blue */
+  --primary-blue: #4A90E2;
+  --primary-blue-light: #60a5fa;
+  --primary-blue-dark: #2563eb;
+  --primary-blue-glow: rgba(74, 144, 226, 0.3);
+
+  /* Accent Colors */
+  --accent-cyan: #00d4ff;
+  --accent-purple: #a855f7;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --gray-950: #030712;
+
+  /* Background Colors */
+  --bg-primary: #07020f;
+  --bg-secondary: #0d1d29;
+  --bg-tertiary: rgba(7, 2, 15, 0.8);
+
+  /* Text Colors */
+  --text-primary: var(--white);
+  --text-secondary: var(--gray-300);
+  --text-tertiary: var(--gray-400);
+  --text-muted: var(--gray-500);
+
+  /* Border Colors */
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-secondary: rgba(255, 255, 255, 0.05);
+  --border-hover: rgba(74, 144, 226, 0.5);
+
+  /* ============ Gradients ============ */
+
+  /* Primary Background Gradient - Exact Bitfinex Style */
+  --bg-gradient-primary:
+    linear-gradient(45deg, #e44b44 -50%, rgba(7, 2, 15, 0) 20%),
+    linear-gradient(135deg, #03ca9b -50%, rgba(7, 2, 15, 0) 20%),
+    linear-gradient(90deg, #07020f 10%, rgba(7, 2, 15, 0) 50%),
+    #0d1d29;
+
+  /* Hero Section Gradient */
+  --bg-gradient-hero:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(228, 75, 68, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 25% at 20% 20%, rgba(3, 202, 155, 0.1) 0%, transparent 70%);
+
+  /* Card Gradient Background */
+  --card-gradient: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+
+  /* Button Gradient */
+  --btn-gradient-primary: linear-gradient(
+    135deg,
+    var(--primary-blue) 0%,
+    var(--primary-blue-dark) 100%
+  );
+
+  /* Text Gradient */
+  --text-gradient: linear-gradient(
+    135deg,
+    var(--primary-blue-light) 0%,
+    var(--accent-cyan) 100%
+  );
+
+  /* ============ Shadow System ============ */
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* Glow Effects */
+  --glow-sm: 0 0 10px var(--primary-blue-glow);
+  --glow-md: 0 0 20px var(--primary-blue-glow);
+  --glow-lg: 0 0 40px var(--primary-blue-glow);
+  --glow-primary: 0 0 20px rgba(74, 144, 226, 0.4);
+  --glow-strong: 0 0 40px rgba(74, 144, 226, 0.6);
+
+  /* ============ Spacing System ============ */
+
+  --spacing-xs: 0.5rem;     /* 8px */
+  --spacing-sm: 0.75rem;    /* 12px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  --spacing-3xl: 4rem;      /* 64px */
+  --spacing-4xl: 6rem;      /* 96px */
+  --spacing-5xl: 8rem;      /* 128px */
+
+  /* ============ Typography ============ */
+
+  /* Font Families */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-heading: 'Montserrat', var(--font-sans);
+  --font-body: 'Inter', var(--font-sans);
+  --font-mono: 'Courier New', Consolas, Monaco, monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.75rem;     /* 60px */
+  --font-size-7xl: 4.5rem;      /* 72px */
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+
+  /* ============ Border Radius ============ */
+
+  --radius-sm: 0.375rem;    /* 6px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+  --radius-xl: 1rem;        /* 16px */
+  --radius-2xl: 1.5rem;     /* 24px */
+  --radius-3xl: 2rem;       /* 32px */
+  --radius-full: 9999px;
+
+  /* ============ Transitions ============ */
+
+  /* Duration */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Combined Transitions */
+  --transition-fast: var(--duration-150) var(--ease-in-out);
+  --transition-base: var(--duration-300) var(--ease-in-out);
+  --transition-slow: var(--duration-500) var(--ease-in-out);
+  --transition-slower: var(--duration-700) var(--ease-in-out);
+
+  /* ============ Layout ============ */
+
+  /* Container */
+  --container-max-width: 1280px;
+  --container-padding: var(--spacing-lg);
+
+  /* Navbar */
+  --navbar-height: 72px;
+  --navbar-height-mobile: 64px;
+
+  /* Section Spacing */
+  --section-spacing-y: var(--spacing-3xl);
+  --section-spacing-y-mobile: var(--spacing-2xl);
+
+  /* ============ Z-Index Scale ============ */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-top: 9999;
+
+  /* ============ Breakpoints ============ */
+  /* Note: These are used in media queries, not as CSS variables */
+  /*
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1536px;
+  */
+
+  /* ============ Animation Timing ============ */
+
+  --animation-spin: 1s linear infinite;
+  --animation-ping: 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animation-pulse: 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animation-bounce: 1s infinite;
+
+  /* ============ Backdrop Blur ============ */
+
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 12px;
+  --blur-xl: 16px;
+  --blur-2xl: 24px;
+  --blur-3xl: 40px;
+}
+
+/* ============ Dark Theme Variables ============ */
+/* (Already set as default, but can be overridden) */
+
+[data-theme="dark"] {
+  /* Keep the same variables for dark theme */
+}
+
+/* ============ Light Theme Override ============ */
+/* (Optional - for future implementation) */
+
+[data-theme="light"] {
+  --gradient-start: #ffffff;
+  --gradient-mid-1: #f8f9fa;
+  --gradient-mid-2: #e9ecef;
+  --gradient-end: #dee2e6;
+
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-700);
+  --text-tertiary: var(--gray-600);
+
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+
+  --border-primary: rgba(0, 0, 0, 0.1);
+  --border-secondary: rgba(0, 0, 0, 0.05);
+}

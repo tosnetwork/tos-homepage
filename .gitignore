@@ -1,0 +1,26 @@
+# Backup files
+*.backup
+*.old
+*.bak
+
+# Development files
+check-links.html
+test-checklist.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if added later)
+node_modules/
+package-lock.json
+
+# Build files (if added later)
+dist/
+build/

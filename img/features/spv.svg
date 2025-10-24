@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Lightweight Client Support - Mobile phone with checkmark -->
+  <rect x="20" y="8" width="24" height="48" rx="3" fill="#3B82F6" opacity="0.2"/>
+  <rect x="20" y="8" width="24" height="48" rx="3" stroke="#3B82F6" stroke-width="2"/>
+  <line x1="28" y1="52" x2="36" y2="52" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <rect x="22" y="12" width="20" height="36" rx="1" fill="white" stroke="#3B82F6" stroke-width="1"/>
+  <path d="M28 26L31 30L38 22" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="34" r="8" stroke="#3B82F6" stroke-width="1.5" fill="none" opacity="0.5"/>
+</svg>

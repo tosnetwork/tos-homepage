@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Storage Optimization - Database with compression arrows -->
+  <rect x="12" y="20" width="40" height="8" rx="2" fill="#7C3AED" opacity="0.3"/>
+  <rect x="12" y="30" width="40" height="8" rx="2" fill="#7C3AED" opacity="0.3"/>
+  <rect x="12" y="40" width="40" height="8" rx="2" fill="#7C3AED" opacity="0.3"/>
+  <rect x="12" y="20" width="40" height="8" rx="2" stroke="#7C3AED" stroke-width="2"/>
+  <rect x="12" y="30" width="40" height="8" rx="2" stroke="#7C3AED" stroke-width="2"/>
+  <rect x="12" y="40" width="40" height="8" rx="2" stroke="#7C3AED" stroke-width="2"/>
+  <path d="M56 24L52 24M56 34L52 34M56 44L52 44" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/>
+  <path d="M56 16L60 20L56 24" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 44L60 48L56 52" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

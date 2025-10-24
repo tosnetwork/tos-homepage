@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fair Launch & Distribution - Scale/balance -->
+  <line x1="12" y1="32" x2="52" y2="32" stroke="#F97316" stroke-width="2"/>
+  <circle cx="32" cy="32" r="4" fill="#F97316"/>
+  <path d="M12 32L16 38L20 32" stroke="#F97316" stroke-width="2" fill="#F97316" opacity="0.3"/>
+  <path d="M44 32L48 38L52 32" stroke="#F97316" stroke-width="2" fill="#F97316" opacity="0.3"/>
+  <line x1="32" y1="32" x2="32" y2="16" stroke="#F97316" stroke-width="2"/>
+  <line x1="26" y1="16" x2="38" y2="16" stroke="#F97316" stroke-width="2" stroke-linecap="round"/>
+  <rect x="14" y="38" width="8" height="12" rx="1" fill="#F97316" opacity="0.3" stroke="#F97316" stroke-width="1.5"/>
+  <rect x="42" y="38" width="8" height="12" rx="1" fill="#F97316" opacity="0.3" stroke="#F97316" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Smart Contract Ready - Code brackets with gears -->
+  <path d="M20 16L12 32L20 48" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 16L52 32L44 48" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="26" r="6" fill="#06B6D4" opacity="0.2" stroke="#06B6D4" stroke-width="2"/>
+  <circle cx="32" cy="38" r="6" fill="#06B6D4" opacity="0.2" stroke="#06B6D4" stroke-width="2"/>
+  <path d="M32 20L34 22L32 24L30 22Z M32 32L34 34L32 36L30 34Z" fill="#06B6D4"/>
+  <line x1="26" y1="32" x2="38" y2="32" stroke="#06B6D4" stroke-width="1.5"/>
+  <text x="18" y="58" font-family="monospace" font-size="7" fill="#06B6D4">sBPF</text>
+</svg>

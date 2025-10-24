@@ -1,0 +1,478 @@
+/* ============================================
+   TOS Network - Responsive Styles
+   Mobile-first responsive design
+   ============================================ */
+
+/* ============ Small Devices (Phones, <576px) ============ */
+
+@media (max-width: 575px) {
+  /* Typography */
+  :root {
+    --font-size-6xl: 2.5rem;    /* 40px */
+    --font-size-5xl: 2rem;      /* 32px */
+    --font-size-4xl: 1.75rem;   /* 28px */
+    --font-size-3xl: 1.5rem;    /* 24px */
+  }
+
+  /* Container */
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  /* Hero Section */
+  .hero {
+    min-height: auto;
+    padding: calc(var(--navbar-height-mobile) + var(--spacing-3xl)) var(--spacing-md) var(--spacing-3xl);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-4xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .hero-title br {
+    display: none;
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .feature-card {
+    padding: var(--spacing-lg);
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .card-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .card-description {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Section Spacing */
+  .features,
+  .docs-section,
+  .whitepaper-section,
+  .faq-section {
+    padding: var(--spacing-3xl) 0;
+  }
+
+  .section-header {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .section-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  /* Docs/Whitepaper Cards */
+  .docs-card,
+  .whitepaper-card {
+    padding: var(--spacing-xl);
+  }
+
+  .docs-title,
+  .whitepaper-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .docs-description,
+  .whitepaper-description {
+    font-size: var(--font-size-base);
+  }
+
+  .docs-links,
+  .whitepaper-links {
+    flex-direction: column;
+  }
+
+  .docs-link,
+  .whitepaper-link {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* FAQ */
+  .faq-question {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-base);
+  }
+
+  .faq-answer-content {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+  }
+
+  /* Footer */
+  .footer {
+    padding: var(--spacing-3xl) 0 var(--spacing-xl);
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+}
+
+/* ============ Navigation Mobile Styles (All Screens) ============ */
+
+@media (max-width: 991px) {
+  /* Navbar */
+  .navbar {
+    height: var(--navbar-height-mobile);
+  }
+
+  .navbar-content {
+    height: var(--navbar-height-mobile);
+  }
+
+  /* Mobile Menu Toggle */
+  .mobile-toggle {
+    display: flex;
+  }
+
+  /* Hide Desktop Menu */
+  .navbar-menu {
+    position: fixed;
+    top: var(--navbar-height-mobile);
+    left: 0;
+    width: 100%;
+    height: calc(100vh - var(--navbar-height-mobile));
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--spacing-lg);
+    background: rgba(15, 20, 25, 0.98);
+    backdrop-filter: blur(var(--blur-2xl));
+    border-top: 1px solid var(--border-primary);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition: all var(--transition-base);
+    overflow-y: auto;
+  }
+
+  .navbar-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .navbar-item {
+    border-bottom: 1px solid var(--border-secondary);
+  }
+
+  .navbar-link {
+    display: block;
+    padding: var(--spacing-md) 0;
+    font-size: var(--font-size-base);
+  }
+
+  /* Mobile Dropdown */
+  .dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    box-shadow: none;
+    margin-top: var(--spacing-sm);
+    display: none;
+  }
+
+  .has-dropdown.active .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-link {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Prevent body scroll when menu is open */
+  body.menu-open {
+    overflow: hidden;
+  }
+}
+
+/* ============ Medium Devices (Tablets, 576px - 767px) ============ */
+
+@media (min-width: 576px) and (max-width: 767px) {
+  /* Hero */
+  .hero-title {
+    font-size: var(--font-size-5xl);
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .hero-actions .btn {
+    width: auto;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+  }
+
+  /* Footer */
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2xl);
+  }
+}
+
+/* ============ Large Devices (Desktops, 768px - 991px) ============ */
+
+@media (min-width: 768px) and (max-width: 991px) {
+  /* Hero */
+  .hero-title {
+    font-size: var(--font-size-5xl);
+  }
+
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+
+  /* Footer */
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============ Extra Large Devices (Large Desktops, 992px - 1199px) ============ */
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Footer */
+  .footer-content {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============ XXL Devices (Larger Desktops, ≥1200px) ============ */
+
+@media (min-width: 1200px) {
+  /* Container */
+  .container {
+    max-width: 1280px;
+  }
+
+  /* Hero */
+  .hero-title {
+    font-size: var(--font-size-6xl);
+  }
+
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Footer */
+  .footer-content {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============ Ultra Wide Screens (≥1536px) ============ */
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1400px;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-7xl);
+  }
+}
+
+/* ============ Landscape Mobile Devices ============ */
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding: calc(var(--navbar-height-mobile) + var(--spacing-2xl)) var(--spacing-md) var(--spacing-2xl);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+  }
+}
+
+/* ============ Touch Device Optimizations ============ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch target sizes */
+  .btn {
+    min-height: 44px;
+    padding: 16px 32px;
+  }
+
+  .navbar-link,
+  .dropdown-link {
+    min-height: 44px;
+    padding: var(--spacing-md);
+  }
+
+  .faq-question {
+    min-height: 60px;
+  }
+
+  .social-link {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .feature-card:hover {
+    transform: none;
+  }
+
+  .feature-card:hover .card-icon {
+    transform: none;
+  }
+
+  .social-link:hover {
+    transform: none;
+  }
+
+  /* Add active states for touch */
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .feature-card:active {
+    transform: translateY(-4px);
+  }
+}
+
+/* ============ High DPI Displays ============ */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Optimize for retina displays */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* ============ Print Styles ============ */
+
+@media print {
+  /* Hide navigation and footer */
+  .navbar,
+  .footer,
+  .hero-actions,
+  .mobile-toggle {
+    display: none !important;
+  }
+
+  /* Reset page backgrounds */
+  body {
+    background: white;
+  }
+
+  /* Optimize spacing */
+  .hero,
+  .features,
+  .docs-section,
+  .whitepaper-section,
+  .faq-section {
+    padding: var(--spacing-lg) 0;
+  }
+
+  /* Expand all FAQ items */
+  .faq-answer {
+    max-height: none !important;
+  }
+
+  /* Prevent page breaks inside cards */
+  .feature-card,
+  .docs-card,
+  .whitepaper-card,
+  .faq-item {
+    page-break-inside: avoid;
+  }
+}
+
+/* ============ Dark Mode Support (Future) ============ */
+
+@media (prefers-color-scheme: dark) {
+  /* Already using dark theme by default */
+}
+
+@media (prefers-color-scheme: light) {
+  /* Can add light theme support here if needed */
+}
+
+/* ============ Reduced Motion ============ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============ High Contrast Mode ============ */
+
+@media (prefers-contrast: high) {
+  /* Increase contrast for accessibility */
+  .navbar,
+  .feature-card,
+  .docs-card,
+  .whitepaper-card,
+  .faq-item {
+    border-width: 2px;
+  }
+
+  .btn {
+    font-weight: var(--font-weight-bold);
+  }
+}
