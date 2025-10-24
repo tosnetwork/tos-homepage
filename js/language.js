@@ -11,6 +11,8 @@
       this.languageBtn = document.getElementById('languageBtn');
       this.languageDropdown = document.getElementById('languageDropdown');
       this.currentLangSpan = document.getElementById('currentLang');
+      this.currentFlagSpan = document.getElementById('currentFlag');
+      this.languageSelector = document.querySelector('.language-selector');
       this.languageOptions = document.querySelectorAll('.language-option');
 
       this.init();
@@ -53,10 +55,12 @@
 
     toggleDropdown() {
       this.languageDropdown.classList.toggle('active');
+      this.languageSelector.classList.toggle('active');
     }
 
     closeDropdown() {
       this.languageDropdown.classList.remove('active');
+      this.languageSelector.classList.remove('active');
     }
 
     switchLanguage(lang) {
@@ -76,13 +80,15 @@
 
       const currentLang = window.i18n.getCurrentLanguage();
       const langMap = {
-        'en': 'EN',
-        'zh': '中文',
-        'ja': '日本',
-        'ko': '한국'
+        'en': { name: 'English', flag: '🇺🇸' },
+        'zh': { name: '中文', flag: '🇨🇳' },
+        'ja': { name: '日本語', flag: '🇯🇵' },
+        'ko': { name: '한국어', flag: '🇰🇷' }
       };
 
-      this.currentLangSpan.textContent = langMap[currentLang] || 'EN';
+      const langData = langMap[currentLang] || langMap['en'];
+      this.currentLangSpan.textContent = langData.name;
+      this.currentFlagSpan.textContent = langData.flag;
       this.updateActiveOption(currentLang);
     }
 

@@ -180,7 +180,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
@@ -189,6 +189,8 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
+  min-width: 120px;
+  justify-content: space-between;
 }
 
 .language-btn:hover {
@@ -196,23 +198,37 @@
   border-color: var(--border-hover);
 }
 
-.language-btn svg {
-  width: 18px;
-  height: 18px;
-  opacity: 0.8;
+.language-btn .flag {
+  font-size: 18px;
+  line-height: 1;
 }
 
 #currentLang {
-  min-width: 24px;
-  text-align: center;
-  font-weight: var(--font-weight-semibold);
+  flex: 1;
+  text-align: left;
+  font-weight: var(--font-weight-medium);
+}
+
+.dropdown-arrow {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.language-btn:hover .dropdown-arrow {
+  opacity: 1;
+}
+
+.language-selector.active .dropdown-arrow {
+  transform: rotate(180deg);
 }
 
 .language-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 140px;
+  min-width: 160px;
   padding: var(--spacing-xs);
   background: rgba(26, 31, 46, 0.98);
   backdrop-filter: blur(var(--blur-xl));
@@ -226,7 +242,6 @@
   z-index: var(--z-dropdown);
 }
 
-.language-selector:hover .language-dropdown,
 .language-dropdown.active {
   opacity: 1;
   visibility: visible;
@@ -236,25 +251,43 @@
 .language-option {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   text-decoration: none;
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
+  cursor: pointer;
 }
 
 .language-option:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+}
+
+.language-option .flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.language-option .lang-name {
+  flex: 1;
+  text-align: left;
 }
 
 .language-option .checkmark {
   opacity: 0;
   color: var(--primary-blue);
   font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   transition: opacity var(--transition-fast);
+  margin-left: auto;
+}
+
+.language-option.active {
+  background: rgba(74, 144, 226, 0.1);
+  color: var(--text-primary);
 }
 
 .language-option.active .checkmark {
