@@ -21,7 +21,7 @@ const translations = {
     'nav.language': 'Language',
 
     // Hero Section
-    'hero.title': 'The First Blockchain Where AGI Earns Money',
+    'hero.title': 'The First Blockchain<br>Where <span class="highlight">AGI Earns Money</span>',
     'hero.getTOS': 'Get TOS',
     'hero.startMining': 'Start AI-Mining',
     'hero.buildOnTOS': 'Build on TOS',
@@ -147,7 +147,7 @@ const translations = {
     'nav.language': '语言',
 
     // Hero Section
-    'hero.title': 'AGI 赚钱的第一条区块链',
+    'hero.title': '<span class="highlight">AGI 赚钱</span>的<br>第一条区块链',
     'hero.getTOS': '获取 TOS',
     'hero.startMining': '开始 AI 挖矿',
     'hero.buildOnTOS': '在 TOS 上构建',
@@ -255,7 +255,7 @@ const translations = {
     'nav.language': '言語',
 
     // Hero Section
-    'hero.title': 'AGIが収益を得る最初のブロックチェーン',
+    'hero.title': '<span class="highlight">AGIが収益を得る</span><br>最初のブロックチェーン',
     'hero.getTOS': 'TOSを入手',
     'hero.startMining': 'AIマイニング開始',
     'hero.buildOnTOS': 'TOSで構築',
@@ -363,7 +363,7 @@ const translations = {
     'nav.language': '언어',
 
     // Hero Section
-    'hero.title': 'AGI가 수익을 창출하는 최초의 블록체인',
+    'hero.title': '<span class="highlight">AGI가 수익을 창출하는</span><br>최초의 블록체인',
     'hero.getTOS': 'TOS 받기',
     'hero.startMining': 'AI 마이닝 시작',
     'hero.buildOnTOS': 'TOS에서 구축',
@@ -1815,21 +1815,9 @@ function updatePageLanguage(lang) {
   elements.forEach(element => {
     const key = element.getAttribute('data-i18n');
     if (translations[lang] && translations[lang][key]) {
-      // Check if element has child elements (like SVG icons)
-      const hasChildElements = element.children.length > 0;
-
-      if (hasChildElements) {
-        // Find and update only text nodes, preserve child elements
-        const childNodes = Array.from(element.childNodes);
-        childNodes.forEach(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            node.textContent = translations[lang][key];
-          }
-        });
-      } else {
-        // No child elements, safe to use textContent
-        element.textContent = translations[lang][key];
-      }
+      // Simply replace the entire content with translation
+      // The translation strings already include HTML when needed
+      element.innerHTML = translations[lang][key];
     }
   });
 
