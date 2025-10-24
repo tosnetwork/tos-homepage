@@ -186,35 +186,32 @@
                 <!-- Right Actions -->
                 <div class="navbar-actions">
                     <!-- Language Selector -->
-                    <div class="language-selector">
-                        <button class="language-btn" id="languageBtn" aria-label="Select language">
+                    <div class="language-selector" id="languageSelector">
+                        <button class="language-btn" id="languageBtn" aria-label="Select language" aria-expanded="false">
                             <span class="flag" id="currentFlag">🇺🇸</span>
                             <span id="currentLang">English</span>
                             <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
+                        <div class="language-backdrop" id="languageBackdrop"></div>
                         <div class="language-dropdown" id="languageDropdown">
-                            <a href="#" class="language-option active" data-lang="en" data-flag="🇺🇸">
+                            <div class="language-option active" data-lang="en" data-flag="🇺🇸">
                                 <span class="flag">🇺🇸</span>
                                 <span class="lang-name">English</span>
-                                <span class="checkmark">✓</span>
-                            </a>
-                            <a href="#" class="language-option" data-lang="zh" data-flag="🇨🇳">
+                            </div>
+                            <div class="language-option" data-lang="zh" data-flag="🇨🇳">
                                 <span class="flag">🇨🇳</span>
                                 <span class="lang-name">中文</span>
-                                <span class="checkmark">✓</span>
-                            </a>
-                            <a href="#" class="language-option" data-lang="ja" data-flag="🇯🇵">
+                            </div>
+                            <div class="language-option" data-lang="ja" data-flag="🇯🇵">
                                 <span class="flag">🇯🇵</span>
                                 <span class="lang-name">日本語</span>
-                                <span class="checkmark">✓</span>
-                            </a>
-                            <a href="#" class="language-option" data-lang="ko" data-flag="🇰🇷">
+                            </div>
+                            <div class="language-option" data-lang="ko" data-flag="🇰🇷">
                                 <span class="flag">🇰🇷</span>
                                 <span class="lang-name">한국어</span>
-                                <span class="checkmark">✓</span>
-                            </a>
+                            </div>
                         </div>
                     </div>
 

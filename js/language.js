@@ -10,10 +10,12 @@
     constructor() {
       this.languageBtn = document.getElementById('languageBtn');
       this.languageDropdown = document.getElementById('languageDropdown');
+      this.languageBackdrop = document.getElementById('languageBackdrop');
       this.currentLangSpan = document.getElementById('currentLang');
       this.currentFlagSpan = document.getElementById('currentFlag');
-      this.languageSelector = document.querySelector('.language-selector');
+      this.languageSelector = document.getElementById('languageSelector');
       this.languageOptions = document.querySelectorAll('.language-option');
+      this.isOpen = false;
 
       this.init();
     }
@@ -30,19 +32,25 @@
         this.toggleDropdown();
       });
 
+      // Backdrop click handler
+      if (this.languageBackdrop) {
+        this.languageBackdrop.addEventListener('click', () => {
+          this.closeDropdown();
+        });
+      }
+
       // Language option click handlers
       this.languageOptions.forEach(option => {
         option.addEventListener('click', (e) => {
-          e.preventDefault();
+          e.stopPropagation();
           const lang = option.getAttribute('data-lang');
           this.switchLanguage(lang);
         });
       });
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!this.languageDropdown.contains(e.target) &&
-            !this.languageBtn.contains(e.target)) {
+      // ESC key to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isOpen) {
           this.closeDropdown();
         }
       });
@@ -54,13 +62,25 @@
     }
 
     toggleDropdown() {
-      this.languageDropdown.classList.toggle('active');
-      this.languageSelector.classList.toggle('active');
+      if (this.isOpen) {
+        this.closeDropdown();
+      } else {
+        this.openDropdown();
+      }
+    }
+
+    openDropdown() {
+      this.isOpen = true;
+      this.languageDropdown.classList.add('active');
+      this.languageBackdrop.classList.add('active');
+      this.languageBtn.setAttribute('aria-expanded', 'true');
     }
 
     closeDropdown() {
+      this.isOpen = false;
       this.languageDropdown.classList.remove('active');
-      this.languageSelector.classList.remove('active');
+      this.languageBackdrop.classList.remove('active');
+      this.languageBtn.setAttribute('aria-expanded', 'false');
     }
 
     switchLanguage(lang) {
