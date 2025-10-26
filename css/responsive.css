@@ -482,3 +482,19 @@
     font-weight: var(--font-weight-bold);
   }
 }
+
+/* ============ Secure Badge Responsive Styles ============ */
+
+/* Tablet and below */
+@media (max-width: 991px) {
+  .secure-badge {
+    height: 60px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 575px) {
+  .secure-badge {
+    height: 50px;
+  }
+}
