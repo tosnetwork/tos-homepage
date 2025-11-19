@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Security Audit - Shield with checkmark and magnifying glass -->
+  <defs>
+    <linearGradient id="auditGradient" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shield -->
+  <path d="M32 10L14 18V30C14 40 20 48 32 54C44 48 50 40 50 30V18L32 10Z"
+        stroke="url(#auditGradient)" stroke-width="2.5" fill="url(#auditGradient)" fill-opacity="0.1"/>
+
+  <!-- Checkmark inside shield -->
+  <path d="M24 32L30 38L42 26"
+        stroke="url(#auditGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Magnifying glass (audit symbol) -->
+  <circle cx="42" cy="42" r="6"
+          stroke="url(#auditGradient)" stroke-width="2" fill="none"/>
+  <line x1="46" y1="46" x2="52" y2="52"
+        stroke="url(#auditGradient)" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Test coverage indicators -->
+  <circle cx="20" cy="22" r="1.5" fill="url(#auditGradient)"/>
+  <circle cx="44" cy="22" r="1.5" fill="url(#auditGradient)"/>
+  <circle cx="32" cy="18" r="1.5" fill="url(#auditGradient)"/>
+</svg>

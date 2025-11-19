@@ -1,0 +1,38 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- TAKO VM - Octopus representing TAKO (Japanese for octopus) + VM chip -->
+  <defs>
+    <linearGradient id="takoGradient" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <!-- VM Chip base -->
+  <rect x="16" y="20" width="32" height="24" rx="3"
+        stroke="url(#takoGradient)" stroke-width="2" fill="url(#takoGradient)" fill-opacity="0.1"/>
+
+  <!-- Chip pins (left) -->
+  <line x1="12" y1="26" x2="16" y2="26" stroke="url(#takoGradient)" stroke-width="2"/>
+  <line x1="12" y1="32" x2="16" y2="32" stroke="url(#takoGradient)" stroke-width="2"/>
+  <line x1="12" y1="38" x2="16" y2="38" stroke="url(#takoGradient)" stroke-width="2"/>
+
+  <!-- Chip pins (right) -->
+  <line x1="48" y1="26" x2="52" y2="26" stroke="url(#takoGradient)" stroke-width="2"/>
+  <line x1="48" y1="32" x2="52" y2="32" stroke="url(#takoGradient)" stroke-width="2"/>
+  <line x1="48" y1="38" x2="52" y2="38" stroke="url(#takoGradient)" stroke-width="2"/>
+
+  <!-- eBPF symbol inside chip -->
+  <text x="32" y="28" font-family="monospace" font-size="8" font-weight="bold"
+        fill="url(#takoGradient)" text-anchor="middle">eBPF</text>
+
+  <!-- JIT indicator -->
+  <rect x="22" y="34" width="20" height="6" rx="1"
+        stroke="url(#takoGradient)" stroke-width="1.5" fill="url(#takoGradient)" fill-opacity="0.3"/>
+  <text x="32" y="38.5" font-family="monospace" font-size="6" font-weight="bold"
+        fill="url(#takoGradient)" text-anchor="middle">JIT</text>
+
+  <!-- Processing indicator -->
+  <circle cx="24" cy="27" r="1.5" fill="url(#takoGradient)"/>
+  <circle cx="32" cy="27" r="1.5" fill="url(#takoGradient)"/>
+  <circle cx="40" cy="27" r="1.5" fill="url(#takoGradient)"/>
+</svg>

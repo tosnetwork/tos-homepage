@@ -1,0 +1,35 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Energy System - Lightning bolt with staking/freezing symbol -->
+  <defs>
+    <linearGradient id="energyGradient" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="energyGlow" x1="32" y1="12" x2="32" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer energy circle (staking pool) -->
+  <circle cx="32" cy="32" r="22"
+          stroke="url(#energyGradient)" stroke-width="2.5" fill="url(#energyGlow)"/>
+
+  <!-- Lightning bolt (energy) -->
+  <path d="M32 14L26 30H32L30 50L38 34H32L32 14Z"
+        fill="url(#energyGradient)" stroke="url(#energyGradient)" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Freeze/lock particles (3 small circles around) -->
+  <circle cx="48" cy="24" r="2.5" fill="#10b981" opacity="0.8"/>
+  <circle cx="50" cy="40" r="2" fill="#059669" opacity="0.6"/>
+  <circle cx="14" cy="28" r="2" fill="#10b981" opacity="0.7"/>
+
+  <!-- Energy meter bars (bottom indicator) -->
+  <rect x="22" y="52" width="4" height="6" rx="1" fill="url(#energyGradient)" opacity="0.8"/>
+  <rect x="28" y="50" width="4" height="8" rx="1" fill="url(#energyGradient)" opacity="0.9"/>
+  <rect x="34" y="48" width="4" height="10" rx="1" fill="url(#energyGradient)"/>
+  <rect x="40" y="50" width="4" height="8" rx="1" fill="url(#energyGradient)" opacity="0.9"/>
+
+  <!-- Inner glow effect -->
+  <circle cx="32" cy="32" r="16" fill="url(#energyGradient)" opacity="0.05"/>
+</svg>

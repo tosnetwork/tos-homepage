@@ -1,0 +1,30 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Parallel Execution - Multiple lanes with arrows -->
+  <defs>
+    <linearGradient id="parallelGradient" x1="8" y1="16" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Three parallel execution lanes -->
+  <!-- Lane 1 -->
+  <rect x="10" y="16" width="44" height="8" rx="2"
+        stroke="url(#parallelGradient)" stroke-width="2" fill="url(#parallelGradient)" fill-opacity="0.2"/>
+  <path d="M48 20L52 20L49 17M49 23L52 20" stroke="url(#parallelGradient)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Lane 2 -->
+  <rect x="10" y="28" width="44" height="8" rx="2"
+        stroke="url(#parallelGradient)" stroke-width="2" fill="url(#parallelGradient)" fill-opacity="0.2"/>
+  <path d="M48 32L52 32L49 29M49 35L52 32" stroke="url(#parallelGradient)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Lane 3 -->
+  <rect x="10" y="40" width="44" height="8" rx="2"
+        stroke="url(#parallelGradient)" stroke-width="2" fill="url(#parallelGradient)" fill-opacity="0.2"/>
+  <path d="M48 44L52 44L49 41M49 47L52 44" stroke="url(#parallelGradient)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- CPU core indicator -->
+  <circle cx="14" cy="20" r="2" fill="url(#parallelGradient)"/>
+  <circle cx="14" cy="32" r="2" fill="url(#parallelGradient)"/>
+  <circle cx="14" cy="44" r="2" fill="url(#parallelGradient)"/>
+</svg>
