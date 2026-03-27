@@ -36,7 +36,7 @@ Official homepage for TOS Network - The First Blockchain Where AGI Earns Money.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tos-network/tos-homepage.git
+git clone https://gitlab.com/tos-network/tos-homepage.git
 cd tos-homepage
 
 # Open in browser
@@ -154,7 +154,7 @@ tos-homepage/
 
 - **Website**: [tos.network](https://tos.network)
 - **Documentation**: [docs.tos.network](https://docs.tos.network)
-- **GitHub**: [github.com/tos-network](https://github.com/tos-network)
+- **GitLab**: [gitlab.com/tos-network](https://gitlab.com/tos-network)
 - **Telegram**: [t.me/tos_network](https://t.me/tos_network)
 - **Twitter**: [@tos_network](https://twitter.com/tos_network)
 
