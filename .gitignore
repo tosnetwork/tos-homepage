@@ -24,3 +24,4 @@ package-lock.json
 # Build files (if added later)
 dist/
 build/
+.wrangler/

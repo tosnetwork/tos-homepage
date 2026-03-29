@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="css/dag-animation.css">
     <link rel="stylesheet" href="css/premium-enhancements.css">
     <link rel="stylesheet" href="css/elite-enhancements.css">
+    <link rel="stylesheet" href="css/docs-code-rain.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -378,13 +379,6 @@
                     <a href="https://docs.tos.network" class="btn btn-outline" data-i18n="nav.documentation">Documentation</a>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Wave Animation Section -->
-    <section class="wave-section" id="wave-visual">
-        <div class="wave-canvas-container">
-            <canvas id="wave-canvas"></canvas>
         </div>
     </section>
 
@@ -1168,6 +1162,9 @@
     <section class="docs-section" id="docs">
         <div class="container">
             <div class="docs-card">
+                <div class="docs-card__matrix" aria-hidden="true">
+                    <canvas class="docs-card__matrix-canvas" data-code-rain-word="TOS"></canvas>
+                </div>
                 <div class="docs-icon">
                     <img src="img/features/documentation.svg" alt="TOS Documentation Icon">
                 </div>
@@ -1352,13 +1349,14 @@
 
             <div class="faq-footer">
                 <p data-i18n="faq.bottomText">Have a question or would like to submit an update?</p>
-                <a href="https://github.com/tosnetwork" class="btn btn-outline" target="_blank" rel="noopener">Contact Us on GitLab</a>
+                <a href="https://github.com/tosnetwork" class="btn btn-outline" target="_blank" rel="noopener">Contact Us on GitHub</a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer" id="footer">
+        <canvas id="wave-canvas" class="footer-wave-bg"></canvas>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
@@ -1367,6 +1365,7 @@
                         <li><a href="https://docs.tos.network/resources/tokenomics" target="_blank" rel="noopener" data-i18n="footer.getTOS">Get TOS</a></li>
                         <li><a href="https://docs.tos.network/features/mining/ai-mining" target="_blank" rel="noopener" data-i18n="footer.startMining">Start AI-Mining</a></li>
                         <li><a href="https://docs.tos.network/tutorials/smart-contract-tutorial" target="_blank" rel="noopener" data-i18n="footer.buildOnTOS">Build on TOS</a></li>
+                        <li><a href="song/" data-i18n="footer.themeSong">Listen to "Digital Dawn"</a></li>
                     </ul>
                 </div>
 
@@ -1391,7 +1390,7 @@
                 <div class="footer-column">
                     <h3 class="footer-heading" data-i18n="footer.community">Community</h3>
                     <div class="footer-social">
-                        <a href="https://github.com/tosnetwork" class="social-link" target="_blank" rel="noopener" aria-label="GitLab">
+                        <a href="https://github.com/tosnetwork" class="social-link" target="_blank" rel="noopener" aria-label="GitHub">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
                             </svg>
@@ -1439,5 +1438,7 @@
     <script src="js/faq.js"></script>
     <script src="js/scroll-animations.js"></script>
     <script src="js/wave-animation.js"></script>
+    <script src="js/docs-code-rain.js"></script>
+    <script src="js/tos-music.js"></script>
 </body>
 </html>

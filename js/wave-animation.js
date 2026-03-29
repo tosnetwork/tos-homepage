@@ -1,7 +1,7 @@
 /* ============================================
    TOS Network - Wave Point Cloud Animation
    Adapted from creative coding by @yuruyurau
-   Red & Green color scheme
+   Blue & Cyan color scheme matching AGI Earns Money highlight
    ============================================ */
 
 class WaveAnimation {
@@ -17,21 +17,19 @@ class WaveAnimation {
     }
 
     resize() {
-        const container = this.canvas.parentElement;
-        const rect = container.getBoundingClientRect();
+        const rect = this.canvas.parentElement.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         this.w = rect.width;
         this.h = rect.height;
         this.canvas.width = this.w * dpr;
         this.canvas.height = this.h * dpr;
-        this.canvas.style.width = this.w + 'px';
-        this.canvas.style.height = this.h + 'px';
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // Scale factor relative to original 400x400
+        // Scale factor — use width on mobile (narrow screens) for better fit
         this.scale = Math.min(this.w, this.h) / 400;
         this.cx = this.w / 2;
-        this.cy = this.h / 2;
+        this.cy = this.h * 0.35; // shift up on tall containers
+        this.isMobile = this.w < 768;
     }
 
     bindEvents() {
@@ -86,28 +84,31 @@ class WaveAnimation {
 
         this.t += Math.PI / 240;
 
-        const totalPoints = 20000;
+        // Fewer particles on mobile for performance and cleaner look
+        const totalPoints = this.isMobile ? 10000 : 20000;
+        const gridW = this.isMobile ? 200 : 200;
 
         for (let i = 0; i < totalPoints; i++) {
             const k = (i / 8) % 25 - 12.5;
-            const e = i / 800 - 12.5;
+            const e = (this.isMobile ? i / 400 : i / 800) - 12.5;
             const dist = this.mag(k, e);
             const d = 7 * Math.cos(dist / 3 - this.t / 2);
 
             const px = (k * 4 + d * k / 2 * Math.sin(d + e / 19 + this.t)) * scale + cx;
             const py = (e * 2 - d * 9 - d * 9 * Math.cos(d + this.t)) * scale + cy;
 
-            // Color: blend between red and green based on wave value
+            // Color: blend between blue and cyan based on wave value
             const blend = (Math.sin(d * 0.5 + this.t * 0.7 + dist * 0.15) + 1) / 2;
 
-            // TOS red: #e44b44, TOS green: #03ca9b
-            const r = Math.round(228 * (1 - blend) + 3 * blend);
-            const g = Math.round(75 * (1 - blend) + 202 * blend);
-            const b = Math.round(68 * (1 - blend) + 155 * blend);
-            const alpha = 0.38 + 0.25 * Math.abs(Math.cos(d));
+            // Highlight blue: #60a5fa, Accent cyan: #00d4ff
+            const r = Math.round(96 * (1 - blend) + 0 * blend);
+            const g = Math.round(165 * (1 - blend) + 212 * blend);
+            const b = Math.round(250 * (1 - blend) + 255 * blend);
+            const alpha = 0.25 + 0.18 * Math.abs(Math.cos(d));
 
             ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-            ctx.fillRect(px, py, 1.5 * scale, 1.5 * scale);
+            const sz = (this.isMobile ? 1.8 : 1.5) * scale;
+            ctx.fillRect(px, py, sz, sz);
         }
 
         this.animId = requestAnimationFrame(() => this.animate());
