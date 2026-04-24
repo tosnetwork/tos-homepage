@@ -2250,6 +2250,7 @@ const homepageOverrides = {
     'footer.connect': 'Source',
     'footer.team': 'Source Repository',
     'footer.connectWithUs': 'Open an Issue',
+    'footer.themeSong': 'Listen to "Digital Dawn"',
     'footer.tagline': 'Three execution domains, one root of truth.'
   },
   zh: {
@@ -2372,6 +2373,7 @@ const homepageOverrides = {
     'footer.connect': '源码入口',
     'footer.team': '源代码仓库',
     'footer.connectWithUs': '提交 Issue',
+    'footer.themeSong': '收听《Digital Dawn》',
     'footer.tagline': '三种执行域，一个真相根。'
   },
   ja: {
@@ -2494,6 +2496,7 @@ const homepageOverrides = {
     'footer.connect': 'ソース',
     'footer.team': 'ソースリポジトリ',
     'footer.connectWithUs': 'Issueを作成',
+    'footer.themeSong': '「Digital Dawn」を聴く',
     'footer.tagline': '3つの実行ドメイン、1つの真実の根。'
   },
   ko: {
@@ -2616,6 +2619,7 @@ const homepageOverrides = {
     'footer.connect': '소스',
     'footer.team': '소스 리포지토리',
     'footer.connectWithUs': '이슈 열기',
+    'footer.themeSong': '"Digital Dawn" 듣기',
     'footer.tagline': '세 가지 실행 도메인, 하나의 진실 루트.'
   }
 };

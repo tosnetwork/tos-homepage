@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="css/dag-animation.css">
     <link rel="stylesheet" href="css/premium-enhancements.css">
     <link rel="stylesheet" href="css/elite-enhancements.css">
+    <link rel="stylesheet" href="css/docs-code-rain.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -378,13 +379,6 @@
                     <a href="https://github.com/tosnetwork/tos/tree/main/doc" class="btn btn-outline" target="_blank" rel="noopener" data-i18n="nav.documentation">Doc Index</a>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Wave Animation Section -->
-    <section class="wave-section" id="wave-visual">
-        <div class="wave-canvas-container">
-            <canvas id="wave-canvas"></canvas>
         </div>
     </section>
 
@@ -838,6 +832,9 @@
     <section class="docs-section" id="docs">
         <div class="container">
             <div class="docs-card">
+                <div class="docs-card__matrix" aria-hidden="true">
+                    <canvas class="docs-card__matrix-canvas" data-code-rain-word="TOS"></canvas>
+                </div>
                 <div class="docs-icon">
                     <img src="img/features/documentation.svg" alt="TOS Documentation Icon">
                 </div>
@@ -1047,6 +1044,7 @@
 
     <!-- Footer -->
     <footer class="footer" id="footer">
+        <canvas id="wave-canvas" class="footer-wave-bg"></canvas>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
@@ -1055,6 +1053,7 @@
                         <li><a href="https://github.com/tosnetwork/tos/blob/main/README.md" target="_blank" rel="noopener" data-i18n="footer.getTOS">Read Overview</a></li>
                         <li><a href="https://github.com/tosnetwork/tos/blob/main/BUILD.md" target="_blank" rel="noopener" data-i18n="footer.startMining">Build from Source</a></li>
                         <li><a href="https://github.com/tosnetwork/tos/blob/main/doc/uno-workchain.md" target="_blank" rel="noopener" data-i18n="footer.buildOnTOS">Uno Workchain</a></li>
+                        <li><a href="song/" data-i18n="footer.themeSong">Listen to "Digital Dawn"</a></li>
                     </ul>
                 </div>
 
@@ -1127,5 +1126,7 @@
     <script src="js/faq.js"></script>
     <script src="js/scroll-animations.js"></script>
     <script src="js/wave-animation.js"></script>
+    <script src="js/docs-code-rain.js"></script>
+    <script src="js/tos-music.js"></script>
 </body>
 </html>
