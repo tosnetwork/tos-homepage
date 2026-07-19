@@ -1,18 +1,18 @@
 # TOS Network Homepage
 
-Official homepage for TOS Network, now positioned around wallet infrastructure for AI robot economies.
+Official homepage for TOS Network, now positioned around native actor-model coordination infrastructure for AI agent economies.
 
 ## Product Direction
 
 The homepage follows the main repository roadmap:
 
-- AI robot wallets and agent-first accounts
-- Actor-model messaging between wallets, services, verifiers, and owner controls
-- AGIW work receipts for verifiable task settlement
-- Policy-bound authority with spend limits, delegated permissions, controller rotation, and owner approvals
-- Auditable service-to-service payments for machine-run workflows
+- Native TVM actor execution for accounts, contracts, agents, tasks, and services
+- Agent-first accounts with persistent identity, state, policy, delegation, and task history
+- Asynchronous agent messaging with callbacks, retries, timeouts, settlement, and verification
+- Native task contracts with escrow, result submission, dispute windows, payout, and slashing hooks
+- Capability registries and service actors for discoverable AI services, tools, data, and compute
 
-The site is not centered on ordinary consumer phone wallets. Its first audience is builders, operators, and researchers working on autonomous agents, automation systems, service actors, and AI wallet infrastructure.
+The site is not centered on ordinary consumer phone wallets. Its first audience is builders, operators, and researchers working on autonomous agents, automation systems, service actors, and verifiable agent coordination infrastructure.
 
 ## Site Structure
 
@@ -34,8 +34,8 @@ tos-homepage/
 
 The primary homepage sections are:
 
-- Hero: TOS as the wallet layer for AI robot economies
-- Features: AI robot wallets, Actor Model, AGIW settlement, policy authority, agent operations, service payments, audit trails, lightweight agent clients, autonomous identity, task markets, owner approvals, private agent messaging
+- Hero: TOS as the fast actor-model blockchain for AI agents
+- Features: native TVM actor execution, agent accounts, async agent messaging, native task contracts, capability registry, service actors, audit trails, lightweight agent clients, autonomous identity, task markets, owner approvals, private agent messaging
 - Metrics: actor types, core stack, operator path, callbacks, policy APIs, receipts, account state, agent network
 - Docs: links to `ROADMAP.md`, `doc/ai-actors.md`, and `doc/tos-account-permission-model.md`
 - FAQ: answers focused on why TOS is built for AI agents instead of ordinary wallet apps

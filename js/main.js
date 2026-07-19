@@ -215,7 +215,7 @@
 
     // Log initialization
     console.log('%c🚀 TOS Network Website Initialized', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
-    console.log('%cAgent-first wallet infrastructure for AI robot economies', 'color: #60a5fa; font-size: 12px;');
+    console.log('%cActor-model coordination infrastructure for AI agent economies', 'color: #60a5fa; font-size: 12px;');
   }
 
   // Initialize when DOM is ready

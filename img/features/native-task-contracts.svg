@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="taskContractsGradient" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#EF4444"/>
+    </linearGradient>
+  </defs>
+  <path d="M21 10H40L49 19V52C49 53.7 47.7 55 46 55H18C16.3 55 15 53.7 15 52V13C15 11.3 16.3 10 18 10H21Z" fill="url(#taskContractsGradient)" fill-opacity="0.12"/>
+  <path d="M21 10H40L49 19V52C49 53.7 47.7 55 46 55H18C16.3 55 15 53.7 15 52V13C15 11.3 16.3 10 18 10H21Z" stroke="url(#taskContractsGradient)" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M40 10V19H49" stroke="url(#taskContractsGradient)" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M24 30H40M24 38H35" stroke="url(#taskContractsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M23 45L27 49L35 41" stroke="url(#taskContractsGradient)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="22" cy="22" r="3" fill="url(#taskContractsGradient)" fill-opacity="0.22" stroke="url(#taskContractsGradient)" stroke-width="2"/>
+</svg>

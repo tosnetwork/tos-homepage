@@ -1,0 +1,17 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="asyncMessagingGradient" x1="9" y1="12" x2="55" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <circle cx="16" cy="20" r="6" fill="url(#asyncMessagingGradient)" fill-opacity="0.16" stroke="url(#asyncMessagingGradient)" stroke-width="2"/>
+  <circle cx="48" cy="20" r="6" fill="url(#asyncMessagingGradient)" fill-opacity="0.16" stroke="url(#asyncMessagingGradient)" stroke-width="2"/>
+  <circle cx="32" cy="46" r="6" fill="url(#asyncMessagingGradient)" fill-opacity="0.16" stroke="url(#asyncMessagingGradient)" stroke-width="2"/>
+  <path d="M22 20H40" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 16L42 20L38 24" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M45 26C42 34 38 39 34 43" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M39 42L33.8 43.2L34.8 38" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M19 26C22 34 26 39 30 43" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4"/>
+  <path d="M25 42L30.2 43.2L29.2 38" stroke="url(#asyncMessagingGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

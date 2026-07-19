@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="agentAccountsGradient" x1="12" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#03CA9B"/>
+    </linearGradient>
+  </defs>
+  <rect x="14" y="16" width="36" height="34" rx="6" fill="url(#agentAccountsGradient)" fill-opacity="0.12" stroke="url(#agentAccountsGradient)" stroke-width="2.2"/>
+  <circle cx="32" cy="28" r="6" fill="url(#agentAccountsGradient)" fill-opacity="0.18" stroke="url(#agentAccountsGradient)" stroke-width="2"/>
+  <path d="M22 44C23.8 38.8 27.5 36 32 36C36.5 36 40.2 38.8 42 44" stroke="url(#agentAccountsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M46 23H52V35H46" stroke="url(#agentAccountsGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 14V10M28 14V10M36 14V10M44 14V10" stroke="url(#agentAccountsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M22 23H24M40 23H42" stroke="url(#agentAccountsGradient)" stroke-width="2" stroke-linecap="round"/>
+</svg>

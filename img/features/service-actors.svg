@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="serviceActorsGradient" x1="9" y1="10" x2="55" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#00D4FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="23" y="19" width="18" height="18" rx="4" fill="url(#serviceActorsGradient)" fill-opacity="0.14" stroke="url(#serviceActorsGradient)" stroke-width="2.2"/>
+  <circle cx="16" cy="48" r="6" fill="url(#serviceActorsGradient)" fill-opacity="0.14" stroke="url(#serviceActorsGradient)" stroke-width="2"/>
+  <circle cx="48" cy="48" r="6" fill="url(#serviceActorsGradient)" fill-opacity="0.14" stroke="url(#serviceActorsGradient)" stroke-width="2"/>
+  <path d="M32 37V44M25 31L20 44M39 31L44 44" stroke="url(#serviceActorsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M27 28H37M32 23V33" stroke="url(#serviceActorsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M15 12H49C51.2 12 53 13.8 53 16V22M11 22V16C11 13.8 12.8 12 15 12" stroke="url(#serviceActorsGradient)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M11 22L15 18M11 22L7 18M53 22L49 18M53 22L57 18" stroke="url(#serviceActorsGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
