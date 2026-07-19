@@ -10,7 +10,7 @@ const translations = {
     "nav.devTools": "ROADMAP",
     "nav.documentation": "Doc Index",
     "nav.whitepaper": "Whitepaper",
-    "hero.title": "The Wallet Layer for<br><span class=\"highlight\">AI Robot Economies.</span>",
+    "hero.title": "The Fast Blockchain for<br><span class=\"highlight\">AI Agents.</span>",
     "hero.getTOS": "Read Overview",
     "hero.startMining": "AI Actor Model",
     "features.subtitle": "TOS is being built for AI robots, agent runners, automation systems, and service actors that need persistent wallets, programmable authority, verifiable work receipts, and auditable settlement. The first product direction is not a consumer phone wallet; it is an agent-first wallet/account layer for machine economies.",
