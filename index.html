@@ -3,1130 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOS Network | The Fast Blockchain for AI Agents</title>
+    <meta name="description" content="TOS Network is building the open coordination and settlement network for AI services, autonomous agents, and physical edge intelligence.">
+    <meta name="keywords" content="TOS Network, AI services, physical AI, edge intelligence, autonomous agents, settlement network, blockchain">
+    <meta name="author" content="TOS Network">
+    <meta name="theme-color" content="#07111f">
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="TOS Network builds agent-first wallet and settlement infrastructure for AI agents, autonomous services, service actors, and machine-run economies.">
-    <meta name="keywords" content="TOS Network, AI agent wallet, AI actor model, autonomous agents, AGIW, policy wallet, agent settlement, machine economy">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TOS Network — The Transaction Layer for the Machine Economy">
+    <meta property="og:description" content="Open coordination and settlement for AI services and physical edge intelligence.">
+    <meta property="og:image" content="img/tos-network-vision.webp">
+    <meta property="og:url" content="https://tos.network">
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@tos_network">
-    <meta name="twitter:title" content="TOS Network | The Fast Blockchain for AI Agents">
-    <meta name="twitter:description" content="Agent-first wallets, programmable authority, verifiable work receipts, and auditable settlement for autonomous AI actors.">
-    <meta name="twitter:image" content="https://tos.network/img/logo.png">
+    <meta name="twitter:title" content="TOS Network — The Transaction Layer for the Machine Economy">
+    <meta name="twitter:description" content="Open coordination and settlement for AI services and physical edge intelligence.">
+    <meta name="twitter:image" content="img/tos-network-vision.webp">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="TOS Network | The Fast Blockchain for AI Agents">
-    <meta property="og:url" content="https://tos.network/">
-    <meta property="og:image" content="https://tos.network/img/logo.png">
-    <meta property="og:description" content="Agent-first wallets, programmable authority, verifiable work receipts, and auditable settlement for autonomous AI actors.">
-    <meta property="og:site_name" content="tos.network">
+    <title>TOS Network — Open Coordination and Settlement for AI</title>
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="16x16" href="img/16x16.png">
-    <link rel="apple-touch-icon" sizes="64x64" href="img/64x64.png">
-    <link rel="apple-touch-icon" sizes="150x150" href="img/150x150.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="img/32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/16x16.png">
-    <meta name="theme-color" content="#0a0e27">
-
-    <!-- Preconnect -->
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="icon" href="favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/dag-animation.css">
-    <link rel="stylesheet" href="css/premium-enhancements.css">
-    <link rel="stylesheet" href="css/elite-enhancements.css">
-    <link rel="stylesheet" href="css/docs-code-rain.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/investor-home.css">
 </head>
 <body>
-    <!-- Page Loader -->
-    <div class="page-loader" id="pageLoader">
-        <div class="loader-spinner"></div>
-    </div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <!-- Logo -->
-                <a href="/" class="navbar-logo">
-                    <div class="logo-wrapper">
-                        <img src="img/logo-navbar.svg" alt="TOS Network Logo" class="logo-img">
+    <header class="site-header" id="siteHeader">
+        <div class="shell nav-shell">
+            <a class="brand" href="#top" aria-label="TOS Network home">
+                <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                <span>TOS Network</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="siteNav">
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
+                <a href="#thesis">Thesis</a>
+                <a href="#platform">Platform</a>
+                <a href="#edge">Physical AI</a>
+                <a href="#foundation">Foundation</a>
+                <a href="#roadmap">Roadmap</a>
+                <a class="nav-cta" href="pdf/tos.pdf" target="_blank" rel="noopener">Read whitepaper</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="hero" id="top">
+            <div class="hero-grid" aria-hidden="true"></div>
+            <div class="hero-orbit hero-orbit-one" aria-hidden="true"></div>
+            <div class="hero-orbit hero-orbit-two" aria-hidden="true"></div>
+
+            <div class="shell hero-layout">
+                <div class="hero-copy reveal">
+                    <div class="eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        The transaction layer for the machine economy
                     </div>
-                    <span class="logo-text">TOS Network</span>
-                </a>
+                    <h1>Intelligence is becoming infrastructure. <span>TOS makes it transactable.</span></h1>
+                    <p class="hero-lede">
+                        TOS Network is building the open coordination and settlement network for
+                        autonomous agents, owner-operated AI services, and site-bound physical
+                        intelligence.
+                    </p>
+                    <p class="hero-detail">
+                        Providers keep their hardware, models, data, and operating control.
+                        TOS standardizes how services are discovered, authorized, evidenced,
+                        composed, and paid across organizational boundaries.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="pdf/tos.pdf" target="_blank" rel="noopener">
+                            Read the whitepaper
+                            <span aria-hidden="true">↗</span>
+                        </a>
+                        <a class="button button-secondary" href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                            Inspect the code
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                    <div class="maturity-line" aria-label="Product maturity">
+                        <span><strong>Implemented</strong> TOS Core</span>
+                        <span><strong>Designed</strong> Service architecture</span>
+                        <span><strong>Planned</strong> Edge terminal products</span>
+                    </div>
+                </div>
 
-                <!-- Desktop Menu -->
-                <ul class="navbar-menu" id="navbarMenu">
-                    <li class="navbar-item has-dropdown">
-                        <a href="#" class="navbar-link">
-                            <svg class="nav-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="rocketGradient" x1="8" y1="1" x2="8" y2="15" gradientUnits="userSpaceOnUse">
-                                        <stop offset="0%" stop-color="#f59e0b"/>
-                                        <stop offset="100%" stop-color="#ef4444"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Rocket body -->
-                                <path d="M8 2L5 8V12C5 12 6 13 8 13C10 13 11 12 11 12V8L8 2Z" stroke="url(#rocketGradient)" stroke-width="1.5" stroke-linejoin="round"/>
-                                <!-- Rocket window -->
-                                <circle cx="8" cy="6" r="1.2" fill="url(#rocketGradient)" fill-opacity="0.6"/>
-                                <!-- Left fin -->
-                                <path d="M5 9L3 11V12L5 11V9Z" stroke="url(#rocketGradient)" stroke-width="1.2" stroke-linejoin="round"/>
-                                <!-- Right fin -->
-                                <path d="M11 9L13 11V12L11 11V9Z" stroke="url(#rocketGradient)" stroke-width="1.2" stroke-linejoin="round"/>
-                                <!-- Flame -->
-                                <path d="M6.5 13C6.5 13 7 14.5 8 14.5C9 14.5 9.5 13 9.5 13" stroke="url(#rocketGradient)" stroke-width="1.2" stroke-linecap="round"/>
-                            </svg>
-                            <span data-i18n="nav.getStarted">Get Started</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="https://github.com/tosnetwork/tos/blob/main/README.md" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="getTOSGradient" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#fbbf24"/>
-                                                <stop offset="100%" stop-color="#f59e0b"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <!-- Wallet body -->
-                                        <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="url(#getTOSGradient)" stroke-width="1.5"/>
-                                        <!-- Wallet flap -->
-                                        <path d="M2 6.5C2 5.67157 2.67157 5 3.5 5H12.5C13.3284 5 14 5.67157 14 6.5V7H2V6.5Z" fill="url(#getTOSGradient)" fill-opacity="0.2"/>
-                                        <!-- Card slot -->
-                                        <rect x="4" y="8" width="8" height="3" rx="0.5" stroke="url(#getTOSGradient)" stroke-width="1.2"/>
-                                        <!-- Coin symbol -->
-                                        <circle cx="8" cy="9.5" r="1" fill="url(#getTOSGradient)"/>
-                                    </svg>
-                                    <span data-i18n="nav.getTOS">Read Overview</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/tosnetwork/tos/blob/main/BUILD.md" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="miningGradient" x1="3" y1="2" x2="13" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#22c55e"/>
-                                                <stop offset="100%" stop-color="#16a34a"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <!-- Robot head -->
-                                        <rect x="4" y="5" width="8" height="7" rx="1.5" stroke="url(#miningGradient)" stroke-width="1.5"/>
-                                        <!-- Antenna -->
-                                        <line x1="8" y1="3" x2="8" y2="5" stroke="url(#miningGradient)" stroke-width="1.5" stroke-linecap="round"/>
-                                        <circle cx="8" cy="2.5" r="0.8" fill="url(#miningGradient)"/>
-                                        <!-- Eyes -->
-                                        <circle cx="6" cy="8" r="0.8" fill="url(#miningGradient)"/>
-                                        <circle cx="10" cy="8" r="0.8" fill="url(#miningGradient)"/>
-                                        <!-- Mouth/panel -->
-                                        <rect x="6" y="10" width="4" height="1" rx="0.5" fill="url(#miningGradient)" fill-opacity="0.6"/>
-                                        <!-- Body connector -->
-                                        <line x1="8" y1="12" x2="8" y2="13.5" stroke="url(#miningGradient)" stroke-width="1.2" stroke-linecap="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.startMining">Build from Source</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/tosnetwork/tos/blob/main/doc/ai-actors.md" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="buildGradient" x1="2" y1="1" x2="14" y2="15" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#ef4444"/>
-                                                <stop offset="100%" stop-color="#dc2626"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <!-- Spartan helmet top -->
-                                        <path d="M8 2C6 2 4 3 3 5V8C3 8 3 10 4 11L8 14L12 11C13 10 13 8 13 8V5C12 3 10 2 8 2Z" stroke="url(#buildGradient)" stroke-width="1.5" stroke-linejoin="round"/>
-                                        <!-- Helmet crest -->
-                                        <path d="M8 2V4.5" stroke="url(#buildGradient)" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M7 3L8 2L9 3" stroke="url(#buildGradient)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <!-- Face opening -->
-                                        <ellipse cx="8" cy="7.5" rx="2.5" ry="3" stroke="url(#buildGradient)" stroke-width="1.2"/>
-                                        <!-- Cheek guards -->
-                                        <path d="M3 8C3 8 3.5 9 4 9.5" stroke="url(#buildGradient)" stroke-width="1.2" stroke-linecap="round"/>
-                                        <path d="M13 8C13 8 12.5 9 12 9.5" stroke="url(#buildGradient)" stroke-width="1.2" stroke-linecap="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.buildOnTOS">AI Actor Model</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="navbar-item has-dropdown">
-                        <a href="#" class="navbar-link">
-                            <svg class="nav-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="learnGradient" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-                                        <stop offset="0%" stop-color="#06b6d4"/>
-                                        <stop offset="100%" stop-color="#0891b2"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Book cover -->
-                                <path d="M3 2H11C11.5523 2 12 2.44772 12 3V13C12 13.5523 11.5523 14 11 14H3V2Z" stroke="url(#learnGradient)" stroke-width="1.5" stroke-linejoin="round"/>
-                                <!-- Book spine -->
-                                <path d="M3 2V14" stroke="url(#learnGradient)" stroke-width="1.5"/>
-                                <!-- Pages -->
-                                <path d="M12 3H13C13.5523 3 14 3.44772 14 4V12C14 12.5523 13.5523 13 13 13H12" stroke="url(#learnGradient)" stroke-width="1.5" stroke-linejoin="round"/>
-                                <!-- Bookmark -->
-                                <path d="M9 2V7L7.5 6L6 7V2" stroke="url(#learnGradient)" stroke-width="1.2" stroke-linejoin="round"/>
-                            </svg>
-                            <span data-i18n="nav.learnMore">Learn More</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="https://github.com/tosnetwork/tos/blob/main/ROADMAP.md" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="resourcesGradient" x1="3" y1="2" x2="13" y2="13" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#10b981"/>
-                                                <stop offset="100%" stop-color="#059669"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M3 6L8 2L13 6V12C13 12.5523 12.5523 13 12 13H4C3.44772 13 3 12.5523 3 12V6Z" stroke="url(#resourcesGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M6 13V9H10V13" stroke="url(#resourcesGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.resources">Repository</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/tosnetwork" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="devtoolsGradient" x1="2" y1="2" x2="14" y2="13" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#f59e0b"/>
-                                                <stop offset="100%" stop-color="#d97706"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <rect x="2" y="4" width="12" height="9" rx="1" stroke="url(#devtoolsGradient)" stroke-width="1.5"/>
-                                        <path d="M5 7H11M5 10H9" stroke="url(#devtoolsGradient)" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M6 4V3C6 2.44772 6.44772 2 7 2H9C9.55228 2 10 2.44772 10 3V4" stroke="url(#devtoolsGradient)" stroke-width="1.5"/>
-                                    </svg>
-                                    <span data-i18n="nav.devTools">ROADMAP</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/tosnetwork/tos/tree/main/doc" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="docsGradient" x1="3" y1="2" x2="13" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#3b82f6"/>
-                                                <stop offset="100%" stop-color="#2563eb"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M4 2H12C12.5523 2 13 2.44772 13 3V13C13 13.5523 12.5523 14 12 14H4C3.44772 14 3 13.5523 3 13V3C3 2.44772 3.44772 2 4 2Z" stroke="url(#docsGradient)" stroke-width="1.5"/>
-                                        <path d="M6 6H10M6 9H10" stroke="url(#docsGradient)" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.documentation">Doc Index</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="pdf/tos.pdf" id="whitepaper-link-nav" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="whitepaperGradient" x1="3" y1="2" x2="13" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#8b5cf6"/>
-                                                <stop offset="100%" stop-color="#7c3aed"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M9 2H4C3.44772 2 3 2.44772 3 3V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V6L9 2Z" stroke="url(#whitepaperGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M9 2V6H13" stroke="url(#whitepaperGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.whitepaper">Whitepaper</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="navbar-item has-dropdown">
-                        <a href="#" class="navbar-link">
-                            <svg class="nav-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="connectGradient" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-                                        <stop offset="0%" stop-color="#8b5cf6"/>
-                                        <stop offset="100%" stop-color="#6366f1"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Network nodes -->
-                                <circle cx="8" cy="3" r="1.8" stroke="url(#connectGradient)" stroke-width="1.5" fill="url(#connectGradient)" fill-opacity="0.2"/>
-                                <circle cx="3" cy="8" r="1.8" stroke="url(#connectGradient)" stroke-width="1.5" fill="url(#connectGradient)" fill-opacity="0.2"/>
-                                <circle cx="13" cy="8" r="1.8" stroke="url(#connectGradient)" stroke-width="1.5" fill="url(#connectGradient)" fill-opacity="0.2"/>
-                                <circle cx="8" cy="13" r="1.8" stroke="url(#connectGradient)" stroke-width="1.5" fill="url(#connectGradient)" fill-opacity="0.2"/>
-                                <!-- Connection lines -->
-                                <line x1="8" y1="4.8" x2="8" y2="11.2" stroke="url(#connectGradient)" stroke-width="1.5"/>
-                                <line x1="4.8" y1="8" x2="11.2" y2="8" stroke="url(#connectGradient)" stroke-width="1.5"/>
-                                <line x1="6.5" y1="4.5" x2="4.5" y2="6.5" stroke="url(#connectGradient)" stroke-width="1.5"/>
-                                <line x1="9.5" y1="4.5" x2="11.5" y2="6.5" stroke="url(#connectGradient)" stroke-width="1.5"/>
-                            </svg>
-                            <span data-i18n="nav.connect">Connect</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="https://t.me/tos_network" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="telegramGradient" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#2aabee"/>
-                                                <stop offset="100%" stop-color="#229ed9"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M14 2L7 9M14 2L10 14L7 9M14 2L2 6L7 9" stroke="url(#telegramGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.telegram">Telegram</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com/tos_network" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="twitterGradient" x1="0.5" y1="3" x2="13" y2="13.8" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#1d9bf0"/>
-                                                <stop offset="100%" stop-color="#0c7abf"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M13 3C12.5 3.5 11.9 3.9 11.2 4.1C10.8 3.6 10.1 3.2 9.3 3.2C7.8 3.2 6.6 4.5 6.6 6C6.6 6.2 6.6 6.4 6.7 6.6C4.5 6.5 2.6 5.4 1.4 3.7C1.2 4.1 1 4.5 1 5C1 5.8 1.4 6.5 2 7C1.6 7 1.3 6.9 1 6.7C1 8 2 9.1 3.2 9.4C3 9.5 2.7 9.5 2.4 9.5C2.2 9.5 2.1 9.5 1.9 9.4C2.2 10.5 3.3 11.3 4.6 11.3C3.6 12 2.3 12.5 1 12.5H0.5C1.8 13.3 3.3 13.8 5 13.8C9.3 13.8 11.6 9.5 11.6 6.3V5.9C12.1 5.5 12.6 5.1 13 4.6V3Z" stroke="url(#twitterGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span data-i18n="nav.twitter">Twitter</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://discord.tos.network" class="dropdown-link" target="_blank" rel="noopener">
-                                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="discordGradient" x1="1" y1="2" x2="15" y2="14" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#5865F2"/>
-                                                <stop offset="100%" stop-color="#7289DA"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M13.545 3.195A13.255 13.255 0 0010.272 2a.05.05 0 00-.053.024c-.14.248-.297.57-.406.823a12.25 12.25 0 00-3.626 0 8.35 8.35 0 00-.412-.823.05.05 0 00-.052-.024c-1.147.193-2.24.535-3.274 1.195a.045.045 0 00-.021.018C.356 6.062-.213 8.856.066 11.607a.052.052 0 00.02.037 13.32 13.32 0 003.996 1.987.05.05 0 00.056-.017c.308-.414.583-.852.818-1.31a.05.05 0 00-.027-.07 8.8 8.8 0 01-1.248-.586.05.05 0 01-.005-.083c.084-.062.168-.127.248-.192a.05.05 0 01.052-.007c2.618 1.178 5.453 1.178 8.04 0a.05.05 0 01.053.006c.08.065.164.13.248.193a.05.05 0 01-.004.083 8.25 8.25 0 01-1.249.585.05.05 0 00-.027.07c.24.458.515.896.817 1.31a.05.05 0 00.056.018 13.286 13.286 0 004.001-1.987.05.05 0 00.02-.036c.334-3.395-.56-6.346-2.369-8.96a.04.04 0 00-.02-.02zM5.347 10.019c-.788 0-1.437-.713-1.437-1.587 0-.875.636-1.588 1.437-1.588.807 0 1.45.72 1.437 1.588 0 .874-.636 1.587-1.437 1.587zm5.313 0c-.788 0-1.437-.713-1.437-1.587 0-.875.636-1.588 1.437-1.588.807 0 1.45.72 1.437 1.588 0 .874-.63 1.587-1.437 1.587z" fill="url(#discordGradient)"/>
-                                    </svg>
-                                    <span data-i18n="nav.discord">Discord</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                <aside class="hero-thesis reveal" aria-label="Investment thesis">
+                    <p class="panel-label">The thesis in one minute</p>
+                    <div class="thesis-item">
+                        <span>01</span>
+                        <div>
+                            <strong>Demand is becoming autonomous</strong>
+                            <p>Software agents need identity, authority, budgets, receipts, and settlement—not another human checkout screen.</p>
+                        </div>
+                    </div>
+                    <div class="thesis-item">
+                        <span>02</span>
+                        <div>
+                            <strong>Supply is moving to the edge</strong>
+                            <p>Models and physical AI increasingly run where data, latency, privacy, and real-world context live.</p>
+                        </div>
+                    </div>
+                    <div class="thesis-item">
+                        <span>03</span>
+                        <div>
+                            <strong>The missing layer is coordination</strong>
+                            <p>Independent intelligence needs neutral discovery, policy, evidence, and economic rails to become one market.</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
 
-                <!-- Right Actions -->
-                <div class="navbar-actions">
-                    <!-- Language Selector -->
-                    <div class="language-selector" id="languageSelector">
-                        <button class="language-btn" id="languageBtn" aria-label="Select language" aria-expanded="false">
-                            <span class="language-label" data-i18n="nav.language">Language</span>
-                            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+        <section class="proof-strip" aria-label="TOS design principles">
+            <div class="shell proof-grid">
+                <div><span>Open</span><strong>Standards, not a walled cloud</strong></div>
+                <div><span>Owner-operated</span><strong>Supply without platform custody</strong></div>
+                <div><span>Policy-bound</span><strong>Authority before execution</strong></div>
+                <div><span>Verifiable</span><strong>Receipts, evidence, settlement</strong></div>
+            </div>
+        </section>
+
+        <section class="section opportunity" id="thesis">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker">A structural market transition</p>
+                    <h2>AI has compute. It has models. It still lacks a neutral economic operating system.</h2>
+                    <p>
+                        The next AI market is not one application or one cloud. It is a fragmented
+                        universe of agents, models, sensors, machines, data, and human expertise.
+                        TOS is designed to turn that fragmentation into an open service economy.
+                    </p>
+                </div>
+
+                <div class="shift-grid">
+                    <article class="shift-card reveal">
+                        <span class="shift-number">01</span>
+                        <p class="shift-tag">Demand shift</p>
+                        <h3>From users clicking to agents transacting</h3>
+                        <p>Autonomous software needs persistent identity, delegated authority, explicit budgets, task state, and machine-verifiable receipts.</p>
+                    </article>
+                    <article class="shift-card reveal">
+                        <span class="shift-number">02</span>
+                        <p class="shift-tag">Supply shift</p>
+                        <h3>From centralized clouds to owner-operated intelligence</h3>
+                        <p>AI services are spreading across workstations, edge servers, factories, vehicles, robots, cameras, stores, and homes.</p>
+                    </article>
+                    <article class="shift-card reveal">
+                        <span class="shift-number">03</span>
+                        <p class="shift-tag">Value shift</p>
+                        <h3>From renting hardware to buying outcomes</h3>
+                        <p>The durable market unit is a completed, policy-compliant service action—not an hour of unidentified GPU capacity.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section platform" id="platform">
+            <div class="shell">
+                <div class="section-intro narrow reveal">
+                    <p class="kicker">What TOS coordinates</p>
+                    <h2>A common transaction grammar for independently owned intelligence.</h2>
+                    <p>
+                        A client asks for a capability under explicit price, latency, privacy,
+                        region, and evidence constraints. A provider decides whether to admit it.
+                        TOS binds the request to authority, proof, and settlement.
+                    </p>
+                </div>
+
+                <div class="transaction-flow reveal" aria-label="TOS service transaction flow">
+                    <div class="flow-step">
+                        <span>01</span>
+                        <strong>Discover</strong>
+                        <p>Resolve identity, capability, policy, and endpoint.</p>
+                    </div>
+                    <div class="flow-connector" aria-hidden="true"></div>
+                    <div class="flow-step">
+                        <span>02</span>
+                        <strong>Authorize</strong>
+                        <p>Bind a quote to permissions, budget, and limits.</p>
+                    </div>
+                    <div class="flow-connector" aria-hidden="true"></div>
+                    <div class="flow-step">
+                        <span>03</span>
+                        <strong>Execute</strong>
+                        <p>Run an approved service under local admission policy.</p>
+                    </div>
+                    <div class="flow-connector" aria-hidden="true"></div>
+                    <div class="flow-step">
+                        <span>04</span>
+                        <strong>Evidence</strong>
+                        <p>Return signed results, metering, and evidence references.</p>
+                    </div>
+                    <div class="flow-connector" aria-hidden="true"></div>
+                    <div class="flow-step">
+                        <span>05</span>
+                        <strong>Settle</strong>
+                        <p>Release, refund, or dispute according to agreed policy.</p>
+                    </div>
+                </div>
+
+                <div class="principles-grid">
+                    <article class="principle reveal">
+                        <div class="principle-icon">SO</div>
+                        <h3>Service outcomes</h3>
+                        <p>Consumers buy a defined capability and result. TOS does not expose raw accelerators, public shells, or arbitrary execution.</p>
+                    </article>
+                    <article class="principle reveal">
+                        <div class="principle-icon">OC</div>
+                        <h3>Owner control</h3>
+                        <p>Providers retain custody of hardware, data, models, availability, pricing, and operational policy.</p>
+                    </article>
+                    <article class="principle reveal">
+                        <div class="principle-icon">BA</div>
+                        <h3>Bounded authority</h3>
+                        <p>Controller keys, spending limits, quotes, deadlines, and revocation constrain what autonomous software may do.</p>
+                    </article>
+                    <article class="principle reveal">
+                        <div class="principle-icon">ER</div>
+                        <h3>Evidence and receipts</h3>
+                        <p>Signed records connect service actions to accounting and settlement without putting private payloads on-chain.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section vision-section">
+            <div class="shell">
+                <div class="vision-frame reveal">
+                    <div class="vision-heading">
+                        <div>
+                            <p class="kicker">One network, two frontiers</p>
+                            <h2>Digital AI services and physical edge intelligence.</h2>
+                        </div>
+                        <p>Coordination, settlement, and trust sit between independently owned supply and global demand.</p>
+                    </div>
+                    <span class="vision-mobile-hint">Swipe to explore the full network map →</span>
+                    <a href="img/tos-network-vision.webp" target="_blank" rel="noopener" aria-label="Open the TOS Network vision diagram">
+                        <img src="img/tos-network-vision.webp" alt="TOS Network connecting AI services and physical edge intelligence through identity, authorization, execution, receipts, and settlement" width="1536" height="1024" loading="lazy">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section edge" id="edge">
+            <div class="shell edge-layout">
+                <div class="edge-copy reveal">
+                    <p class="kicker">The Physical AI wedge</p>
+                    <h2>The most valuable edge node is not the biggest. It is the one in the right place.</h2>
+                    <p class="edge-lede">
+                        A terminal beside a camera, robot, vehicle, or production line can execute
+                        where remote clouds face latency, bandwidth, privacy, connectivity, or
+                        safety constraints.
+                    </p>
+                    <p>
+                        TOS treats these devices as site-bound service terminals—not miniature
+                        GPU clouds. Local real-time work and independent safety controls always
+                        outrank external network tasks.
+                    </p>
+                    <a class="text-link" href="https://github.com/tosnetwork/tos/blob/main/doc/physical-ai-edge-terminal-use-case.md" target="_blank" rel="noopener">
+                        Read the Physical AI architecture <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+
+                <div class="edge-stack">
+                    <article class="edge-card reveal">
+                        <span class="edge-index">01</span>
+                        <div>
+                            <h3>Disconnected by design</h3>
+                            <p>Approved local workloads continue offline with bounded authority and idempotent reconciliation after reconnect.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <span class="edge-index">02</span>
+                        <div>
+                            <h3>Real-time work comes first</h3>
+                            <p>Safety interlocks, control deadlines, and local perception pre-empt external services and background jobs.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <span class="edge-index">03</span>
+                        <div>
+                            <h3>Updates fail safely</h3>
+                            <p>Signed artifacts, compatibility gates, staged rollout rings, health checks, and known-good rollback protect fleets.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <span class="edge-index">04</span>
+                        <div>
+                            <h3>Execution stays isolated</h3>
+                            <p>No public shell, raw actuator, Docker socket, or unrestricted host access. Every queue and resource has a bound.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section flywheel">
+            <div class="shell">
+                <div class="flywheel-layout">
+                    <div class="flywheel-copy reveal">
+                        <p class="kicker">Why the network can compound</p>
+                        <h2>Each completed service makes the next transaction easier to route and trust.</h2>
+                        <p>
+                            TOS is designed around cumulative interoperability rather than
+                            rewards for idle hardware. More compatible services improve choice.
+                            More demand improves provider utilization. More signed receipts create
+                            better operational evidence. Shared conformance lowers integration cost
+                            across devices, models, sites, and industries.
+                        </p>
+                    </div>
+
+                    <div class="flywheel-ring reveal" aria-label="TOS Network flywheel">
+                        <div class="flywheel-center">
+                            <span>TOS</span>
+                            <small>Open service economy</small>
+                        </div>
+                        <div class="flywheel-node node-one"><strong>Supply</strong><span>Owner-operated services</span></div>
+                        <div class="flywheel-node node-two"><strong>Demand</strong><span>Agents and applications</span></div>
+                        <div class="flywheel-node node-three"><strong>Evidence</strong><span>Receipts and outcomes</span></div>
+                        <div class="flywheel-node node-four"><strong>Standards</strong><span>Lower integration cost</span></div>
+                    </div>
+                </div>
+
+                <div class="leverage-grid">
+                    <article class="leverage-card reveal">
+                        <p>Capital structure</p>
+                        <h3>Asset-light at the application layer</h3>
+                        <span>Providers fund and operate the hardware. TOS coordinates market access, commitments, and settlement.</span>
+                    </article>
+                    <article class="leverage-card reveal">
+                        <p>Expansion logic</p>
+                        <h3>One base protocol, many verticals</h3>
+                        <span>AI opens the network; storage, commerce, tools, and human services can reuse the same trust rails.</span>
+                    </article>
+                    <article class="leverage-card reveal">
+                        <p>Defensibility</p>
+                        <h3>Integration depth compounds</h3>
+                        <span>Identity, policy, evidence, conformance, and operational history travel across endpoints and hardware generations.</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section foundation" id="foundation">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker">Execution credibility</p>
+                    <h2>Built from working infrastructure—not a token wrapped around a slide deck.</h2>
+                    <p>
+                        The blockchain and networking foundation exists in open source today.
+                        The service protocol and terminal product layers are intentionally
+                        separated and explicitly identified as the next delivery surface.
+                    </p>
+                </div>
+
+                <div class="status-columns">
+                    <article class="status-panel implemented reveal">
+                        <div class="status-heading">
+                            <span>Implemented foundation</span>
+                            <strong>TOS Core</strong>
+                        </div>
+                        <ul>
+                            <li>Native TVM actor execution and asynchronous value-bearing messages</li>
+                            <li>Masterchain, shardchains, validator engine, and full-node stack</li>
+                            <li>ADNL, DHT, RLDP, QUIC, TOS Sites, and DNS resolution</li>
+                            <li>Wallet, cryptography, JSON-RPC, indexing, and operator tooling</li>
+                            <li>Agent Account, Service Actor, Task Escrow, and Dispute foundations</li>
+                            <li>Capability Registry and Proof Attestation foundations</li>
+                        </ul>
+                        <a class="text-link" href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                            Verify in the repository <span aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+
+                    <article class="status-panel planned reveal">
+                        <div class="status-heading">
+                            <span>Planned product layer</span>
+                            <strong>TOS Network</strong>
+                        </div>
+                        <ul>
+                            <li>Canonical service descriptors, sessions, quotes, and receipts</li>
+                            <li>Public <code>.tos</code> registration and plural service discovery</li>
+                            <li>Edge Core, terminal installers, and runtime adapters</li>
+                            <li>Managed AI terminal and Physical AI terminal distributions</li>
+                            <li>Home and site relays, low-latency settlement, and stronger evidence</li>
+                            <li>Cross-implementation conformance and extended resource-soak testing</li>
+                        </ul>
+                        <a class="text-link" href="https://github.com/tosnetwork/tos/blob/main/doc/the-tos-protocol-implementation-plan.md" target="_blank" rel="noopener">
+                            Review the implementation plan <span aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+                </div>
+
+                <div class="architecture reveal">
+                    <div class="architecture-row architecture-demand">
+                        <span>Demand</span>
+                        <div>People</div>
+                        <div>Applications</div>
+                        <div>Autonomous agents</div>
+                    </div>
+                    <div class="architecture-row architecture-service">
+                        <span>Service plane</span>
+                        <div>Discovery</div>
+                        <div>Authentication + quotes</div>
+                        <div>Receipts + evidence</div>
+                    </div>
+                    <div class="architecture-row architecture-terminal">
+                        <span>Owner-operated supply</span>
+                        <div>Managed AI terminals</div>
+                        <div>Physical AI terminals</div>
+                        <div>Other service profiles</div>
+                    </div>
+                    <div class="architecture-row architecture-core">
+                        <span>TOS Core</span>
+                        <div>Identity + authority</div>
+                        <div>Escrow + settlement</div>
+                        <div>Network + transport</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section roadmap" id="roadmap">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker">Focused delivery</p>
+                    <h2>A sequence designed to prove the transaction loop before scaling the market.</h2>
+                    <p>No phase introduces bare GPU rental, arbitrary consumer execution, or blockchain control of physical safety systems.</p>
+                </div>
+
+                <ol class="roadmap-list">
+                    <li class="reveal">
+                        <span class="roadmap-phase">Phase 0</span>
+                        <div>
+                            <h3>Base protocol and Edge Core</h3>
+                            <p>Identity, manifests, authentication, quotes, payment, receipts, evidence, discovery schema, SDKs, and conformance.</p>
+                        </div>
+                        <span class="roadmap-state">Next foundation</span>
+                    </li>
+                    <li class="reveal">
+                        <span class="roadmap-phase">Phase 1</span>
+                        <div>
+                            <h3>Managed inference terminal</h3>
+                            <p>Tier 1 Linux/NVIDIA reference, approved models, bounded scheduling, streaming, metering, receipts, and restart recovery.</p>
+                        </div>
+                        <span class="roadmap-state">First vertical</span>
+                    </li>
+                    <li class="reveal">
+                        <span class="roadmap-phase">Phase 2</span>
+                        <div>
+                            <h3>Site-bound Physical AI terminal</h3>
+                            <p>Jetson/ARM reference, offline operation, safe updates, real-time priority, actuator isolation, and fleet management.</p>
+                        </div>
+                        <span class="roadmap-state">Edge expansion</span>
+                    </li>
+                    <li class="reveal">
+                        <span class="roadmap-phase">Phase 3+</span>
+                        <div>
+                            <h3>Additional profiles and network services</h3>
+                            <p>Storage, commerce, tools, human services, relays, channels, multi-region routing, replication, and stronger attestation.</p>
+                        </div>
+                        <span class="roadmap-state">Protocol leverage</span>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="section diligence">
+            <div class="shell diligence-layout">
+                <div class="diligence-copy reveal">
+                    <p class="kicker">Underwrite the work, not the adjectives</p>
+                    <h2>Every material claim should lead to code, architecture, or a clearly marked plan.</h2>
+                    <p>
+                        TOS does not ask serious investors to confuse vision with deployment.
+                        Start with the source, inspect the current foundation, then evaluate
+                        whether the service and terminal roadmap can turn it into a category-defining network.
+                    </p>
+                </div>
+                <div class="diligence-links reveal">
+                    <a href="pdf/tos.pdf" target="_blank" rel="noopener">
+                        <span>01</span>
+                        <div><strong>Whitepaper</strong><small>Positioning, architecture, status, and roadmap</small></div>
+                        <b>↗</b>
+                    </a>
+                    <a href="https://github.com/tosnetwork/tos/blob/main/doc/the-tos-protocol-implementation-plan.md" target="_blank" rel="noopener">
+                        <span>02</span>
+                        <div><strong>Implementation plan</strong><small>Repository boundaries, missing work, and release gates</small></div>
+                        <b>↗</b>
+                    </a>
+                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                        <span>03</span>
+                        <div><strong>Source repository</strong><small>Consensus, networking, contracts, tests, and history</small></div>
+                        <b>↗</b>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section faq" id="faq">
+            <div class="shell faq-layout">
+                <div class="faq-heading reveal">
+                    <p class="kicker">Investment questions</p>
+                    <h2>What matters before the narrative becomes consensus.</h2>
+                </div>
+                <div class="faq-list">
+                    <article class="faq-item reveal">
+                        <button type="button" aria-expanded="false">
+                            <span>Is TOS another decentralized GPU marketplace?</span>
+                            <i aria-hidden="true">+</i>
                         </button>
-                        <div class="language-backdrop" id="languageBackdrop"></div>
-                        <div class="language-dropdown" id="languageDropdown">
-                            <div class="language-option active" data-lang="en" data-flag="🇺🇸" data-name="English">
-                                <span class="flag">🇺🇸</span>
-                                <span class="lang-name">English</span>
-                            </div>
-                            <div class="language-option" data-lang="zh" data-flag="🇨🇳" data-name="中文">
-                                <span class="flag">🇨🇳</span>
-                                <span class="lang-name">中文</span>
-                            </div>
-                            <div class="language-option" data-lang="ja" data-flag="🇯🇵" data-name="日本語">
-                                <span class="flag">🇯🇵</span>
-                                <span class="lang-name">日本語</span>
-                            </div>
-                            <div class="language-option" data-lang="ko" data-flag="🇰🇷" data-name="한국어">
-                                <span class="flag">🇰🇷</span>
-                                <span class="lang-name">한국어</span>
-                            </div>
+                        <div class="faq-answer">
+                            <p>No. TOS is designed around policy-bound service outcomes. The provider exposes an approved capability, not a raw accelerator, public shell, or arbitrary execution environment.</p>
                         </div>
-                    </div>
-
-                    <!-- Mobile Menu Toggle -->
-                    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu" aria-expanded="false">
-                        <span class="hamburger"></span>
-                    </button>
+                    </article>
+                    <article class="faq-item reveal">
+                        <button type="button" aria-expanded="false">
+                            <span>Why does Physical AI strengthen the thesis?</span>
+                            <i aria-hidden="true">+</i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Physical AI creates services whose value comes from location, local data, privacy, and real-time execution. Those advantages cannot always be replicated by moving the workload to a remote centralized cloud.</p>
+                        </div>
+                    </article>
+                    <article class="faq-item reveal">
+                        <button type="button" aria-expanded="false">
+                            <span>What exists today?</span>
+                            <i aria-hidden="true">+</i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>TOS Core exists in open source: actor execution, consensus, sharding, networking, wallets, query foundations, and service-oriented contracts. The interoperable service protocol, discovery product, and edge terminals remain planned product work.</p>
+                        </div>
+                    </article>
+                    <article class="faq-item reveal">
+                        <button type="button" aria-expanded="false">
+                            <span>Where can network effects emerge?</span>
+                            <i aria-hidden="true">+</i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Compatible supply improves discovery and composition; demand improves utilization; signed receipts improve operational evidence; shared standards reduce the cost of adding the next model, device, site, or service profile.</p>
+                        </div>
+                    </article>
+                    <article class="faq-item reveal">
+                        <button type="button" aria-expanded="false">
+                            <span>Does the website project token value or protocol revenue?</span>
+                            <i aria-hidden="true">+</i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>No. Service transaction volume, validator fees, protocol revenue, and token value accrual are distinct. The project publishes architecture and delivery objectives, not investment-return promises.</p>
+                        </div>
+                    </article>
                 </div>
             </div>
-        </div>
-    </nav>
+        </section>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-background">
-            <div class="hero-gradient"></div>
-            <div class="hero-glow"></div>
-        </div>
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title" data-i18n="hero.title">
-                    The Fast Actor-Model<br>
-                    <span class="highlight">Blockchain for AI Agents.</span>
-                </h1>
-                <p class="hero-subtitle" data-i18n="features.subtitle">
-                    TOS runs native TVM actor execution for autonomous agents, wallets, tasks, tools, and services. Each actor owns state, receives asynchronous messages, emits follow-up work, and settles payments or verification on-chain.
-                </p>
+        <section class="closing">
+            <div class="shell closing-inner reveal">
+                <p class="kicker">The opportunity</p>
+                <h2>The cloud organized computing.<br>TOS is built to organize independent intelligence.</h2>
+                <p>Open identity. Bounded authority. Verifiable service actions. Native settlement.</p>
                 <div class="hero-actions">
-                    <a href="https://github.com/tosnetwork/tos/blob/main/README.md" class="btn btn-primary" target="_blank" rel="noopener" data-i18n="hero.getTOS">Read Overview</a>
-                    <a href="https://github.com/tosnetwork/tos/blob/main/doc/ai-actors.md" class="btn btn-secondary" target="_blank" rel="noopener" data-i18n="hero.startMining">AI Actor Model</a>
-                    <a href="https://github.com/tosnetwork/tos/tree/main/doc" class="btn btn-outline" target="_blank" rel="noopener" data-i18n="nav.documentation">Doc Index</a>
+                    <a class="button button-primary" href="pdf/tos.pdf" target="_blank" rel="noopener">Read the whitepaper <span aria-hidden="true">↗</span></a>
+                    <a class="button button-secondary" href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">Explore TOS Core <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="#top">
+                    <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                    <span>TOS Network</span>
+                </a>
+                <p>The open coordination and settlement network for AI services and physical edge intelligence.</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <strong>Explore</strong>
+                    <a href="#thesis">Investment thesis</a>
+                    <a href="#platform">Platform</a>
+                    <a href="#roadmap">Roadmap</a>
+                </div>
+                <div>
+                    <strong>Verify</strong>
+                    <a href="pdf/tos.pdf" target="_blank" rel="noopener">Whitepaper</a>
+                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">Source</a>
+                    <a href="https://github.com/tosnetwork/tos/tree/main/doc" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <div>
+                    <strong>Connect</strong>
+                    <a href="https://x.com/tos_network" target="_blank" rel="noopener">X / Twitter</a>
+                    <a href="https://t.me/tos_network" target="_blank" rel="noopener">Telegram</a>
+                    <a href="https://discord.tos.network" target="_blank" rel="noopener">Discord</a>
+                    <a href="https://github.com/tosnetwork/tos/issues" target="_blank" rel="noopener">Open an issue</a>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="features.coreTitle">Built Around Native Agent Actors</h2>
-                <p class="section-subtitle" data-i18n="features.coreSubtitle">
-                    The roadmap centers on agent accounts, asynchronous workflow messages, native task contracts, capability registries, service actors, and verifiable coordination.
-                </p>
-            </div>
-
-            <div class="features-grid">
-                <div class="feature-card" data-category="agi">
-                    <div class="card-icon">
-                        <img src="img/features/native-tvm-actor.svg" alt="Native TVM Actor Execution Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.did.title">Native TVM Actor Execution</h3>
-                    <p class="card-description" data-i18n="features.did.desc">
-                        Accounts, contracts, agents, tasks, and services run as independent native actors with deterministic cell state and message-driven execution.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="agi">
-                    <div class="card-icon">
-                        <img src="img/features/agent-accounts.svg" alt="Agent Accounts Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.agiw.title">Agent Accounts</h3>
-                    <p class="card-description" data-i18n="features.agiw.desc">
-                        Agent wallets encode owner keys, controller keys, spending limits, execution policy, service endpoints, task history, and delegation rules.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="agi">
-                    <div class="card-icon">
-                        <img src="img/features/async-agent-messaging.svg" alt="Async Agent Messaging Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.credits.title">Async Agent Messaging</h3>
-                    <p class="card-description" data-i18n="features.credits.desc">
-                        Workflows use task requests, acceptance, progress updates, callbacks, retries, timeouts, result submission, and settlement messages.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/native-task-contracts.svg" alt="Native Task Contracts Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.performance.title">Native Task Contracts</h3>
-                    <p class="card-description" data-i18n="features.performance.desc">
-                        Task contracts carry budgets, deadlines, assignment or open bidding, escrowed payment, result submission, dispute windows, payout, and slashing hooks.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/capability-registry.svg" alt="Capability Registry Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.trilemma.title">Capability Registry</h3>
-                    <p class="card-description" data-i18n="features.trilemma.desc">
-                        Agents and services publish identity, task categories, pricing, service metadata, staking or bond requirements, reputation, and verification methods.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/service-actors.svg" alt="Service Actors Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.instant.title">Service Actors</h3>
-                    <p class="card-description" data-i18n="features.instant.desc">
-                        Model providers, data providers, tools, and compute services become payable actors with rate limits, access policy, signed responses, and proof references.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/pruning.svg" alt="Cell State Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.pruning.title">Auditable Task History</h3>
-                    <p class="card-description" data-i18n="features.pruning.desc">
-                        Wallet state exposes decisions, receipts, approvals, and settlement traces so owners can inspect what happened.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/spv.svg" alt="Determinism Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.spv.title">Lightweight Agent Clients</h3>
-                    <p class="card-description" data-i18n="features.spv.desc">
-                        Agent runners and automation clients verify the network with minimal state and predictable trust assumptions.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="ecosystem">
-                    <div class="card-icon">
-                        <img src="img/features/fairlaunch.svg" alt="Consensus Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.fairlaunch.title">Autonomous Identity</h3>
-                    <p class="card-description" data-i18n="features.fairlaunch.desc">
-                        AI actors need durable identity, controller rotation, attestations, and reputation before work begins.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="ecosystem">
-                    <div class="card-icon">
-                        <img src="img/features/deflationary.svg" alt="Task Market Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.deflationary.title">Task Markets</h3>
-                    <p class="card-description" data-i18n="features.deflationary.desc">
-                        Tasks, receipts, disputes, sponsor routing, reputation, and payout flows let AI agents exchange work for value.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="ecosystem">
-                    <div class="card-icon">
-                        <img src="img/features/tako-vm.svg" alt="Catchain Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.takovm.title">Consensus for Agent Timing</h3>
-                    <p class="card-description" data-i18n="features.takovm.desc">
-                        Fast, predictable chain progress matters for service calls, callbacks, escrow releases, and recurring payments.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="ecosystem">
-                    <div class="card-icon">
-                        <img src="img/features/wallet.svg" alt="Owner Approval Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.community.title">Owner Approval Rails</h3>
-                    <p class="card-description" data-i18n="features.community.desc">
-                        Humans remain owners and governors through approvals, policy updates, daily reports, and emergency controls.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/zk-privacy.svg" alt="ZK Privacy Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.zkprivacy.title">Proof-Aware Verification</h3>
-                    <p class="card-description" data-i18n="features.zkprivacy.desc">
-                        Verifiable evidence, attestations, and proof references support agent work, audits, and dispute handling.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/cryptography.svg" alt="Cryptography Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.cryptography.title">Cryptographic Accounts</h3>
-                    <p class="card-description" data-i18n="features.cryptography.desc">
-                        Agent wallets rely on signing, address serialization, controller keys, and account proofs for automated use.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/parallel-execution.svg" alt="Parallel Execution Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.parallel.title">Fleet-Ready Infrastructure</h3>
-                    <p class="card-description" data-i18n="features.parallel.desc">
-                        Operators can manage many agents, queues, service endpoints, and wallets from one control plane.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/security-audit.svg" alt="Security Audit Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.security.title">Safety at Validation Time</h3>
-                    <p class="card-description" data-i18n="features.security.desc">
-                        Quotas, spend limits, region tags, provider permissions, and delegated scopes should be enforced during validation.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/encrypted-network.svg" alt="Encrypted Network Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.encrypted.title">Private Agent Messaging</h3>
-                    <p class="card-description" data-i18n="features.encrypted.desc">
-                        Agent communication needs encrypted delivery, relay-friendly routing, replay protection, and receipts.
-                    </p>
-                </div>
-
-                <div class="feature-card" data-category="tech">
-                    <div class="card-icon">
-                        <img src="img/features/communication-fabric.svg" alt="Communication Fabric Icon">
-                    </div>
-                    <h3 class="card-title" data-i18n="features.communication.title">AI Service Economy</h3>
-                    <p class="card-description" data-i18n="features.communication.desc">
-                        AI actors discover services, negotiate tasks, pay providers, prove completion, and build reputation over time.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Performance Stats Section -->
-    <section class="performance-stats-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="performance.title">Signals That Matter for Agents</h2>
-                <p class="section-subtitle" data-i18n="performance.subtitle">
-                    These are product signals for an AI wallet network: actors, policy, receipts, service settlement, lightweight verification, and operator control.
-                </p>
-            </div>
-
-            <div class="stats-scroll-container">
-                <div class="stats-scroll-track">
-                    <!-- Stat Card 1: Actor types -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <circle cx="24" cy="24" r="20" stroke="url(#tpsGradient)" stroke-width="2" opacity="0.2"/>
-                                <path d="M24 14V24L32 28" stroke="url(#tpsGradient)" stroke-width="3" stroke-linecap="round"/>
-                                <defs>
-                                    <linearGradient id="tpsGradient" x1="4" y1="4" x2="44" y2="44">
-                                        <stop offset="0%" stop-color="#667eea"/>
-                                        <stop offset="100%" stop-color="#764ba2"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">3</div>
-                        <div class="stat-card-label" data-i18n="stats.actorTypes.label">Actor Types</div>
-                        <div class="stat-card-desc" data-i18n="stats.actorTypes.desc">Wallets, services, verifiers</div>
-                    </div>
-
-                    <!-- Stat Card 2: Node Binary -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <rect x="10" y="10" width="28" height="28" rx="4" stroke="url(#blockGradient)" stroke-width="2" opacity="0.2"/>
-                                <rect x="14" y="14" width="20" height="20" rx="2" stroke="url(#blockGradient)" stroke-width="2"/>
-                                <path d="M20 20L28 28M28 20L20 28" stroke="url(#blockGradient)" stroke-width="2" stroke-linecap="round"/>
-                                <defs>
-                                    <linearGradient id="blockGradient" x1="10" y1="10" x2="38" y2="38">
-                                        <stop offset="0%" stop-color="#10b981"/>
-                                        <stop offset="100%" stop-color="#059669"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">1</div>
-                        <div class="stat-card-label" data-i18n="stats.node.label">Core Stack</div>
-                        <div class="stat-card-desc" data-i18n="stats.node.desc">One network for agent accounts</div>
-                    </div>
-
-                    <!-- Stat Card 3: Canonical CLI -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <path d="M24 8L40 16V24C40 32 34 38 24 42C14 38 8 32 8 24V16L24 8Z" stroke="url(#uptimeGradient)" stroke-width="2"/>
-                                <path d="M18 24L22 28L30 20" stroke="url(#uptimeGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="uptimeGradient" x1="8" y1="8" x2="40" y2="42">
-                                        <stop offset="0%" stop-color="#3b82f6"/>
-                                        <stop offset="100%" stop-color="#2563eb"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">1</div>
-                        <div class="stat-card-label" data-i18n="stats.cli.label">Operator Path</div>
-                        <div class="stat-card-desc" data-i18n="stats.cli.desc">From nodes to agent fleets</div>
-                    </div>
-
-                    <!-- Stat Card 4: Global Cadence -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <rect x="8" y="18" width="12" height="12" rx="2" stroke="url(#blocksGradient)" stroke-width="2"/>
-                                <rect x="18" y="8" width="12" height="12" rx="2" stroke="url(#blocksGradient)" stroke-width="2"/>
-                                <rect x="28" y="18" width="12" height="12" rx="2" stroke="url(#blocksGradient)" stroke-width="2"/>
-                                <rect x="18" y="28" width="12" height="12" rx="2" stroke="url(#blocksGradient)" stroke-width="2"/>
-                                <defs>
-                                    <linearGradient id="blocksGradient" x1="8" y1="8" x2="40" y2="40">
-                                        <stop offset="0%" stop-color="#f59e0b"/>
-                                        <stop offset="100%" stop-color="#d97706"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">~1s</div>
-                        <div class="stat-card-label" data-i18n="stats.cadence.label">Fast Cadence</div>
-                        <div class="stat-card-desc" data-i18n="stats.cadence.desc">For callbacks and settlement</div>
-                    </div>
-
-                    <!-- Stat Card 5: JSON-RPC -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <circle cx="24" cy="24" r="16" stroke="url(#feeGradient)" stroke-width="2"/>
-                                <path d="M24 14V24M24 24V34M24 24H30M24 24H18" stroke="url(#feeGradient)" stroke-width="2.5" stroke-linecap="round"/>
-                                <defs>
-                                    <linearGradient id="feeGradient" x1="8" y1="8" x2="40" y2="40">
-                                        <stop offset="0%" stop-color="#ec4899"/>
-                                        <stop offset="100%" stop-color="#be185d"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">API</div>
-                        <div class="stat-card-label" data-i18n="stats.rpc.label">Policy APIs</div>
-                        <div class="stat-card-desc" data-i18n="stats.rpc.desc">Machine-readable wallet control</div>
-                    </div>
-
-                    <!-- Stat Card 6: Receipts -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <path d="M8 24H18L22 14L26 34L30 24H40" stroke="url(#txGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <circle cx="22" cy="14" r="2" fill="url(#txGradient)"/>
-                                <circle cx="26" cy="34" r="2" fill="url(#txGradient)"/>
-                                <defs>
-                                    <linearGradient id="txGradient" x1="8" y1="14" x2="40" y2="34">
-                                        <stop offset="0%" stop-color="#8b5cf6"/>
-                                        <stop offset="100%" stop-color="#6d28d9"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">AGIW</div>
-                        <div class="stat-card-label" data-i18n="stats.receipts.label">Receipts</div>
-                        <div class="stat-card-desc" data-i18n="stats.receipts.desc">Work, approval, settlement</div>
-                    </div>
-
-                    <!-- Stat Card 7: State Model -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <circle cx="24" cy="12" r="4" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <circle cx="12" cy="36" r="4" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <circle cx="36" cy="36" r="4" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <line x1="24" y1="16" x2="24" y2="28" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <line x1="24" y1="28" x2="14" y2="34" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <line x1="24" y1="28" x2="34" y2="34" stroke="url(#nodesGradient)" stroke-width="2"/>
-                                <defs>
-                                    <linearGradient id="nodesGradient" x1="12" y1="12" x2="36" y2="36">
-                                        <stop offset="0%" stop-color="#14b8a6"/>
-                                        <stop offset="100%" stop-color="#0d9488"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">State</div>
-                        <div class="stat-card-label" data-i18n="stats.state.label">Account State</div>
-                        <div class="stat-card-desc" data-i18n="stats.state.desc">Identity, policy, balances</div>
-                    </div>
-
-                    <!-- Stat Card 8: Network Stack -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <path d="M24 8L34 18L24 38L14 18L24 8Z" stroke="url(#finalityGradient)" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M14 18H34" stroke="url(#finalityGradient)" stroke-width="2"/>
-                                <defs>
-                                    <linearGradient id="finalityGradient" x1="14" y1="8" x2="34" y2="38">
-                                        <stop offset="0%" stop-color="#f97316"/>
-                                        <stop offset="100%" stop-color="#ea580c"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">ADNL+</div>
-                        <div class="stat-card-label" data-i18n="stats.network.label">Agent Network</div>
-                        <div class="stat-card-desc" data-i18n="stats.network.desc">Messaging and service routing</div>
-                    </div>
-
-                    <!-- Duplicate cards for seamless loop -->
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <circle cx="24" cy="24" r="20" stroke="url(#tpsGradient2)" stroke-width="2" opacity="0.2"/>
-                                <path d="M24 14V24L32 28" stroke="url(#tpsGradient2)" stroke-width="3" stroke-linecap="round"/>
-                                <defs>
-                                    <linearGradient id="tpsGradient2" x1="4" y1="4" x2="44" y2="44">
-                                        <stop offset="0%" stop-color="#667eea"/>
-                                        <stop offset="100%" stop-color="#764ba2"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">3</div>
-                        <div class="stat-card-label" data-i18n="stats.actorTypes.label">Actor Types</div>
-                        <div class="stat-card-desc" data-i18n="stats.actorTypes.desc">Wallets, services, verifiers</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <rect x="10" y="10" width="28" height="28" rx="4" stroke="url(#blockGradient2)" stroke-width="2" opacity="0.2"/>
-                                <rect x="14" y="14" width="20" height="20" rx="2" stroke="url(#blockGradient2)" stroke-width="2"/>
-                                <path d="M20 20L28 28M28 20L20 28" stroke="url(#blockGradient2)" stroke-width="2" stroke-linecap="round"/>
-                                <defs>
-                                    <linearGradient id="blockGradient2" x1="10" y1="10" x2="38" y2="38">
-                                        <stop offset="0%" stop-color="#10b981"/>
-                                        <stop offset="100%" stop-color="#059669"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">1</div>
-                        <div class="stat-card-label" data-i18n="stats.node.label">Core Stack</div>
-                        <div class="stat-card-desc" data-i18n="stats.node.desc">One network for agent accounts</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <path d="M24 8L40 16V24C40 32 34 38 24 42C14 38 8 32 8 24V16L24 8Z" stroke="url(#uptimeGradient2)" stroke-width="2"/>
-                                <path d="M18 24L22 28L30 20" stroke="url(#uptimeGradient2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="uptimeGradient2" x1="8" y1="8" x2="40" y2="42">
-                                        <stop offset="0%" stop-color="#3b82f6"/>
-                                        <stop offset="100%" stop-color="#2563eb"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">1</div>
-                        <div class="stat-card-label" data-i18n="stats.cli.label">Operator Path</div>
-                        <div class="stat-card-desc" data-i18n="stats.cli.desc">From nodes to agent fleets</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                <rect x="8" y="18" width="12" height="12" rx="2" stroke="url(#blocksGradient2)" stroke-width="2"/>
-                                <rect x="18" y="8" width="12" height="12" rx="2" stroke="url(#blocksGradient2)" stroke-width="2"/>
-                                <rect x="28" y="18" width="12" height="12" rx="2" stroke="url(#blocksGradient2)" stroke-width="2"/>
-                                <rect x="18" y="28" width="12" height="12" rx="2" stroke="url(#blocksGradient2)" stroke-width="2"/>
-                                <defs>
-                                    <linearGradient id="blocksGradient2" x1="8" y1="8" x2="40" y2="40">
-                                        <stop offset="0%" stop-color="#f59e0b"/>
-                                        <stop offset="100%" stop-color="#d97706"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div class="stat-card-value">~1s</div>
-                        <div class="stat-card-label" data-i18n="stats.cadence.label">Fast Cadence</div>
-                        <div class="stat-card-desc" data-i18n="stats.cadence.desc">For callbacks and settlement</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Documentation Section -->
-    <section class="docs-section" id="docs">
-        <div class="container">
-            <div class="docs-card">
-                <div class="docs-card__matrix" aria-hidden="true">
-                    <canvas class="docs-card__matrix-canvas" data-code-rain-word="TOS"></canvas>
-                </div>
-                <div class="docs-icon">
-                    <img src="img/features/documentation.svg" alt="TOS Documentation Icon">
-                </div>
-                <div class="docs-content">
-                    <h2 class="docs-title" data-i18n="docs.title">Start with the Agent Roadmap</h2>
-                    <p class="docs-description" data-i18n="docs.desc">
-                        The fastest way to understand TOS is to read the roadmap, the AI actor model, and the account permission model.
-                    </p>
-                    <div class="docs-links">
-                        <a href="https://github.com/tosnetwork/tos/blob/main/ROADMAP.md" class="docs-link" target="_blank" rel="noopener">
-                            <span data-i18n="docs.smartContracts">Read ROADMAP</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="https://github.com/tosnetwork/tos/blob/main/doc/ai-actors.md" class="docs-link" target="_blank" rel="noopener">
-                            <span data-i18n="docs.aiMining">Read AI Actors</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="https://github.com/tosnetwork/tos/blob/main/doc/tos-account-permission-model.md" class="docs-link docs-link-all" target="_blank" rel="noopener">
-                            <span data-i18n="docs.exploreAll">Read Account Model</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Whitepaper Section -->
-    <section class="whitepaper-section" id="whitepaper">
-        <div class="container">
-            <div class="whitepaper-card">
-                <div class="whitepaper-content">
-                    <h2 class="whitepaper-title" data-i18n="whitepaper.title">Whitepaper &amp; References</h2>
-                    <p class="whitepaper-description" data-i18n="whitepaper.desc">
-                        Read the latest TOS whitepaper, consensus paper, and low-level technical references bundled from the main repository.
-                    </p>
-                    <div class="whitepaper-links">
-                        <a href="pdf/simplex.pdf" class="whitepaper-link" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.devStatus">Simplex Consensus</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="pdf/catchain.pdf" class="whitepaper-link" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.networkUpgrades">Catchain Paper</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="pdf/fiftbase.pdf" class="whitepaper-link" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.fift">Fift Reference</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="pdf/func_v0.4.6.pdf" class="whitepaper-link" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.func">FunC Reference</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="pdf/thinking-forth.pdf" class="whitepaper-link" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.forth">Thinking Forth</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="pdf/tos.pdf" id="whitepaper-link-section" class="whitepaper-link whitepaper-link-primary" target="_blank" rel="noopener">
-                            <span data-i18n="whitepaper.link">Read Whitepaper</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="whitepaper-icon">
-                    <img src="img/wallet-3d.png" alt="TOS Wallet 3D">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="faq.title">Questions That Actually Matter</h2>
-            </div>
-
-            <div class="faq-accordion">
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q1">Why does TOS exist?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a1">TOS exists to give AI agents and autonomous services a wallet/account layer they can actually use: persistent identity, programmable authority, verifiable work receipts, and auditable settlement.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q2">What does the AI Actor Model change?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-subsection">
-                            <h4 data-i18n="faq.a2.h1">Wallets become actors</h4>
-                            <p data-i18n="faq.a2.p1">An agent wallet can receive messages, enforce policy, manage balances, record task history, and coordinate service calls.</p>
-                        </div>
-                        <div class="faq-subsection">
-                            <h4 data-i18n="faq.a2.h2">Work becomes settleable</h4>
-                            <p data-i18n="faq.a2.p2">AGIW receipts give agents a way to prove completed work before payment, dispute handling, or reputation updates.</p>
-                        </div>
-                        <div class="faq-subsection">
-                            <h4 data-i18n="faq.a2.h3">Authority becomes programmable</h4>
-                            <p data-i18n="faq.a2.p3">Controller keys, delegated permissions, spend limits, and approvals are part of the account model instead of app-only behavior.</p>
-                        </div>
-                        <div class="faq-subsection">
-                            <h4 data-i18n="faq.a2.h4">Services become payable</h4>
-                            <p data-i18n="faq.a2.p4">Agents can pay service actors for compute, data, verification, storage, routing, or other machine-facing services.</p>
-                        </div>
-                        <div class="faq-subsection">
-                            <h4 data-i18n="faq.a2.h5">Owners stay in control</h4>
-                            <p data-i18n="faq.a2.p5">Human owners can approve policy changes, review reports, rotate keys, pause agents, and inspect audit trails.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q3">Is TOS mainly building consumer phone wallets?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a3">No. Consumer mobile wallets are not the first product direction. TOS is prioritizing AI agent wallets, agent runners, automation clients, and operator tools.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q4">How can AI agents earn value?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a4">Agents can accept tasks, submit verifiable receipts, receive settlement, build reputation, and pay other service actors in a closed operational loop.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q5">Is this just positioning, or is there real infrastructure?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a5">The repository includes node, liteserver, CLI, account, documentation, and roadmap work. The homepage now reflects that infrastructure direction instead of unrelated execution-domain narratives.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q6">What makes this different from normal wallets?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a6">Normal wallets are built around human clicks. AI agent wallets are built around policy, delegation, automated execution, receipts, and owner auditability.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span data-i18n="faq.q7">What should builders read first?</span>
-                        <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a7">Start with ROADMAP.md, doc/ai-actors.md, and doc/tos-account-permission-model.md. Those files define the current product direction.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-footer">
-                <p data-i18n="faq.bottomText">The roadmap and source repository are the best way to verify the direction.</p>
-                <a href="https://github.com/tosnetwork/tos" class="btn btn-outline" target="_blank" rel="noopener" data-i18n="cta.viewGithub">View on GitHub</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer" id="footer">
-        <canvas id="wave-canvas" class="footer-wave-bg"></canvas>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3 class="footer-heading" data-i18n="footer.getStarted">Start Here</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://github.com/tosnetwork/tos/blob/main/README.md" target="_blank" rel="noopener" data-i18n="footer.getTOS">Read Overview</a></li>
-                        <li><a href="https://github.com/tosnetwork/tos/blob/main/BUILD.md" target="_blank" rel="noopener" data-i18n="footer.startMining">Build from Source</a></li>
-                        <li><a href="https://github.com/tosnetwork/tos/blob/main/doc/ai-actors.md" target="_blank" rel="noopener" data-i18n="footer.buildOnTOS">AI Actor Model</a></li>
-                        <li><a href="song/" data-i18n="footer.themeSong">Listen to "Digital Dawn"</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading" data-i18n="footer.learnMore">Technical Reading</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.resources">Repository</a></li>
-                        <li><a href="https://github.com/tosnetwork/tos/blob/main/ROADMAP.md" target="_blank" rel="noopener" data-i18n="footer.devTools">ROADMAP</a></li>
-                        <li><a href="https://github.com/tosnetwork/tos/tree/main/doc" target="_blank" rel="noopener" data-i18n="footer.documentation">Doc Index</a></li>
-                        <li><a href="pdf/tos.pdf" id="whitepaper-link-footer" target="_blank" rel="noopener" data-i18n="footer.whitepaper">Whitepaper</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading" data-i18n="footer.connect">Source</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.team">Source Repository</a></li>
-                        <li><a href="https://github.com/tosnetwork/tos/issues" target="_blank" rel="noopener" data-i18n="footer.connectWithUs">Open an Issue</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading" data-i18n="footer.community">Community</h3>
-                    <div class="footer-social">
-                        <a href="https://github.com/tosnetwork" class="social-link" target="_blank" rel="noopener" aria-label="GitHub">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-                            </svg>
-                        </a>
-                        <a href="https://twitter.com/tos_network" class="social-link" target="_blank" rel="noopener" aria-label="Twitter">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                            </svg>
-                        </a>
-                        <a href="https://t.me/tos_network" class="social-link" target="_blank" rel="noopener" aria-label="Telegram">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.68c.223-.198-.054-.308-.346-.11l-6.4 4.03-2.76-.918c-.6-.187-.612-.6.125-.89l10.782-4.156c.5-.18.943.11.78.89z"/>
-                            </svg>
-                        </a>
-                        <a href="https://discord.tos.network" class="social-link" target="_blank" rel="noopener" aria-label="Discord">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div class="footer-bottom-content">
-                    <img src="img/secure-badge.png" alt="100% Secure" class="secure-badge">
-                    <p class="footer-copyright">
-                        &copy; 2021-2026 TOS Network. All rights reserved.
-                    </p>
-                </div>
-            </div>
+        <div class="shell footer-bottom">
+            <p>© <span id="currentYear">2026</span> TOS Network. Open source. Owner operated.</p>
+            <p class="disclaimer">This website describes architecture and product direction. It is not an offer of securities or a promise of adoption, protocol revenue, investment return, or token appreciation.</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <!-- Internationalization -->
-    <script src="js/i18n.js"></script>
-    <script src="js/language.js"></script>
-
-    <!-- Main Scripts -->
-    <script src="js/main.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/dag-animation.js"></script>
-    <script src="js/faq.js"></script>
-    <script src="js/scroll-animations.js"></script>
-    <script src="js/wave-animation.js"></script>
-    <script src="js/docs-code-rain.js"></script>
-    <script src="js/tos-music.js"></script>
+    <script src="js/investor-home.js"></script>
 </body>
 </html>
