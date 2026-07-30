@@ -63,6 +63,7 @@
                 <a href="#platform">Platform</a>
                 <a href="#edge">Physical AI</a>
                 <a href="#foundation">Foundation</a>
+                <a href="#economics">Token</a>
                 <a href="#roadmap">Roadmap</a>
                 <a class="nav-cta" href="pdf/tos.pdf" target="_blank" rel="noopener">Read whitepaper</a>
             </nav>
@@ -446,6 +447,118 @@
             </div>
         </section>
 
+        <section class="section token-economics" id="economics">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker">Validator-led distribution</p>
+                    <h2>A bounded genesis. Transparent block creation. No insider allocation.</h2>
+                    <p>
+                        Nearly all native TOS is designed to be created for produced blocks and
+                        distributed through recurring validator elections. The policy targets
+                        approximately five billion TOS of gross creation over approximately seven
+                        years; neither figure is a hard consensus guarantee.
+                    </p>
+                </div>
+
+                <div class="token-metrics" aria-label="TOS supply policy">
+                    <article class="token-metric reveal">
+                        <span>Gross creation target</span>
+                        <strong>≈ 5B TOS</strong>
+                        <p>Policy target, not a guaranteed hard cap.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span>Provisional genesis</span>
+                        <strong>101,000 TOS</strong>
+                        <p>100,000 bootstrap + two 500-TOS system reserves.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span>Target duration</span>
+                        <strong>≈ 7 years</strong>
+                        <p>Actual timing follows finalized block production.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span>Insider allocation</span>
+                        <strong>0 TOS</strong>
+                        <p>No team, investor, foundation, ecosystem, or treasury allocation.</p>
+                    </article>
+                </div>
+
+                <div class="economics-layout">
+                    <article class="economics-card reveal">
+                        <p class="economics-label">How native TOS is created</p>
+                        <h3>Blocks fund the elected validator set.</h3>
+                        <div class="issuance-flow" aria-label="Validator reward flow">
+                            <span>Produced block</span>
+                            <i aria-hidden="true">→</i>
+                            <span>ConfigParam 14</span>
+                            <i aria-hidden="true">→</i>
+                            <span>Elector bonus pool</span>
+                            <i aria-hidden="true">→</i>
+                            <span>Effective-stake share</span>
+                        </div>
+                        <p>
+                            No finalized block means no native creation. Outages create no reward
+                            debt, catch-up multiplier, or later backfill. Transaction and service
+                            fees transfer existing TOS and continue after block creation is stopped.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label">How genesis is constrained</p>
+                        <h3>The bootstrap wallet is temporary.</h3>
+                        <p>
+                            Four original validators begin with equal consensus weight. Each
+                            controlling wallet may receive 20,000 TOS of stake principal plus no
+                            more than 100 TOS of measured bootstrap costs. After two overlapping
+                            elected sets succeed, the remaining main-wallet balance must be burned
+                            and its spendable balance reduced to zero.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label">How concentration is constrained</p>
+                        <h3>Open elections replace administrative allocation.</h3>
+                        <p>
+                            Equal bootstrap funding, an initial effective-stake factor of one,
+                            submitted-stake limits, recurring elections, operator-control
+                            disclosures, and public concentration metrics are designed to reduce
+                            single-entry dominance. The four-validator set is only a startup
+                            minimum; the public participation target is 64 independent operators
+                            and the long-term target is at least 75 eligible validators.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label">How creation ends</p>
+                        <h3>Governance tapers and then sets rewards to zero.</h3>
+                        <p>
+                            Finalized gross creation must be published continuously. A public taper
+                            review begins before the projected total reaches 4.95 billion TOS, and
+                            governance is expected to set masterchain and basechain creation values
+                            to zero near the five-billion policy target. Configuration authority
+                            means the target is transparent policy, not an immutable cap.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="economics-disclosure reveal">
+                    <div>
+                        <strong>Distribution controls reduce concentration risk; they cannot guarantee dispersed ownership.</strong>
+                        <p>
+                            Early rewards necessarily go to the validators then elected, and
+                            stake-proportional rewards may compound existing holdings. TOS provides
+                            no equity, debt, dividend, redemption, fixed yield, liquidity, or price
+                            support. Market value can fall, and participation remains subject to
+                            technical, custody, governance, concentration, and regulatory risk.
+                        </p>
+                    </div>
+                    <a class="button button-secondary" href="pdf/tos.pdf" target="_blank" rel="noopener">
+                        Read full token economics <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <section class="section roadmap" id="roadmap">
             <div class="shell">
                 <div class="section-intro reveal">
@@ -580,6 +693,15 @@
                     </details>
                     <details class="faq-item reveal">
                         <summary>
+                            <span>How is native TOS issued and distributed?</span>
+                            <i aria-hidden="true">+</i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>The policy targets approximately five billion TOS of gross creation over approximately seven years. Genesis is provisionally limited to 101,000 TOS for validator bootstrap and system-contract reserves; nearly all remaining TOS is created for finalized blocks and distributed through the Elector to active validators. Outages are not backfilled, and governance must taper and stop creation near the published target.</p>
+                        </div>
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>Does the website project token value or protocol revenue?</span>
                             <i aria-hidden="true">+</i>
                         </summary>
@@ -618,6 +740,7 @@
                     <strong>Explore</strong>
                     <a href="#thesis">Investment thesis</a>
                     <a href="#platform">Platform</a>
+                    <a href="#economics">Token economics</a>
                     <a href="#roadmap">Roadmap</a>
                 </div>
                 <div>

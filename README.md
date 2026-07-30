@@ -21,6 +21,9 @@ plan:
 - TOS Core is identified as implemented infrastructure
 - the TOS Service Protocol, discovery products, and AI Edge Computing
   Terminals are clearly identified as planned product layers
+- token economics are described as a validator-led distribution with a bounded
+  genesis, no team or treasury allocation, an approximate five-billion-TOS
+  gross-creation target, and an approximate seven-year policy horizon
 
 The homepage does not project adoption, protocol revenue, investment return,
 or token appreciation.
@@ -33,8 +36,9 @@ or token appreciation.
 4. Physical AI terminal wedge
 5. Network-effect and application-layer leverage thesis
 6. Implemented foundation versus planned product layer
-7. Focused delivery roadmap
-8. Due-diligence links and investor FAQ
+7. Validator-led token economics and concentration-risk disclosures
+8. Focused delivery roadmap
+9. Due-diligence links and investor FAQ
 
 The visual system uses a restrained institutional navy foundation, TOS
 champagne-gold brand accents, operational mint, and desaturated network blue.
@@ -67,6 +71,8 @@ song/DigitalDawn.mp3
 
 - TOS Network source: <https://github.com/tosnetwork/tos>
 - Whitepaper source: `tos/doc/tos.tex`
+- Validator-led token economics:
+  `tos/doc/tos-validator-only-token-economics.md`
 - Implementation plan:
   `tos/doc/the-tos-protocol-implementation-plan.md`
 - Physical AI terminal:
