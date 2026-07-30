@@ -17,6 +17,7 @@
         navToggle.setAttribute("aria-expanded", "false");
         navToggle.setAttribute("aria-label", "Open navigation");
         siteNav.classList.remove("is-open");
+        document.body.classList.remove("nav-open");
     };
 
     navToggle?.addEventListener("click", () => {
@@ -24,6 +25,7 @@
         navToggle.setAttribute("aria-expanded", String(!isOpen));
         navToggle.setAttribute("aria-label", isOpen ? "Open navigation" : "Close navigation");
         siteNav?.classList.toggle("is-open", !isOpen);
+        document.body.classList.toggle("nav-open", !isOpen);
     });
 
     siteNav?.querySelectorAll("a").forEach((link) => {

@@ -104,10 +104,19 @@ class TOSMusicPlayer {
         this.lyricsBar = document.createElement('div');
         this.lyricsBar.className = 'lyrics-bar';
         this.lyricsBar.style.display = 'none';
+        this.lyricsBar.setAttribute('role', 'region');
+        this.lyricsBar.setAttribute('aria-label', 'Digital Dawn theme song player');
 
         // Progress bar
         const progress = document.createElement('div');
         progress.className = 'lyrics-progress';
+        progress.tabIndex = 0;
+        progress.setAttribute('role', 'slider');
+        progress.setAttribute('aria-label', 'Song position');
+        progress.setAttribute('aria-valuemin', '0');
+        progress.setAttribute('aria-valuemax', '281');
+        progress.setAttribute('aria-valuenow', '0');
+        progress.setAttribute('aria-valuetext', '0:00 of 4:41');
         const progressFill = document.createElement('div');
         progressFill.className = 'lyrics-progress-fill';
         progress.appendChild(progressFill);
@@ -121,6 +130,7 @@ class TOSMusicPlayer {
         progress.addEventListener('pointercancel', (event) => this.endSeek(event));
         progress.addEventListener('mousedown', (event) => this.beginMouseSeek(event));
         progress.addEventListener('touchstart', (event) => this.beginTouchSeek(event), { passive: false });
+        progress.addEventListener('keydown', (event) => this.handleProgressKey(event));
         document.addEventListener('mousemove', (event) => this.updateMouseSeek(event));
         document.addEventListener('mouseup', () => this.endMouseSeek());
         document.addEventListener('touchmove', (event) => this.updateTouchSeek(event), { passive: false });
@@ -357,6 +367,49 @@ class TOSMusicPlayer {
             this.timeDisplay.textContent =
                 `${cm}:${cs < 10 ? '0' : ''}${cs} / ${dm}:${ds < 10 ? '0' : ''}${ds}`;
         }
+
+        this.updateProgressAccessibility(nextTime, duration);
+    }
+
+    handleProgressKey(event) {
+        if (!this.audio) return;
+
+        const duration = this.audio.duration || 281;
+        let nextTime = this.audio.currentTime;
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+            nextTime -= 5;
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+            nextTime += 5;
+        } else if (event.key === 'Home') {
+            nextTime = 0;
+        } else if (event.key === 'End') {
+            nextTime = duration;
+        } else {
+            return;
+        }
+
+        event.preventDefault();
+        const rect = this.progressBar.getBoundingClientRect();
+        const pct = Math.min(1, Math.max(0, nextTime / duration));
+        this.seekToClientX(rect.left + pct * rect.width);
+    }
+
+    updateProgressAccessibility(time, duration) {
+        if (!this.progressBar) return;
+
+        const current = Math.max(0, Math.min(duration, time));
+        const cm = Math.floor(current / 60);
+        const cs = Math.floor(current % 60);
+        const dm = Math.floor(duration / 60);
+        const ds = Math.floor(duration % 60);
+
+        this.progressBar.setAttribute('aria-valuemax', String(Math.round(duration)));
+        this.progressBar.setAttribute('aria-valuenow', String(Math.round(current)));
+        this.progressBar.setAttribute(
+            'aria-valuetext',
+            `${cm}:${cs < 10 ? '0' : ''}${cs} of ${dm}:${ds < 10 ? '0' : ''}${ds}`
+        );
     }
 
     beginSeek(event) {
@@ -476,6 +529,8 @@ class TOSMusicPlayer {
                 `${cm}:${cs < 10 ? '0' : ''}${cs} / ${dm}:${ds < 10 ? '0' : ''}${ds}`;
         }
 
+        this.updateProgressAccessibility(time, duration);
+
         // Find current lyric line
         let lineIdx = -1;
         for (let i = this.lyrics.length - 1; i >= 0; i--) {
@@ -532,7 +587,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btn.addEventListener('click', () => {
         const isPlaying = player.toggle();
+        document.body.classList.add('music-player-open');
         btn.classList.toggle('is-playing', isPlaying);
+        btn.classList.add('has-session');
+        btn.setAttribute('aria-label', isPlaying
+            ? 'Pause Digital Dawn - TOS Network Theme Song'
+            : 'Play Digital Dawn - TOS Network Theme Song');
+        btn.title = isPlaying ? 'Pause Digital Dawn' : 'Play Digital Dawn';
         btn.querySelector('.music-off').style.display = isPlaying ? 'none' : 'block';
         btn.querySelector('.music-on').style.display = isPlaying ? 'block' : 'none';
     });

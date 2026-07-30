@@ -36,6 +36,11 @@ or token appreciation.
 7. Focused delivery roadmap
 8. Due-diligence links and investor FAQ
 
+The visual system uses a restrained institutional navy foundation, TOS
+champagne-gold brand accents, operational mint, and desaturated network blue.
+The `Digital Dawn` TOS theme-song player remains available as a user-initiated
+brand element with synchronized lyrics.
+
 ## Local Development
 
 The site is static HTML, CSS, and JavaScript:
@@ -52,8 +57,10 @@ Primary files:
 index.html
 css/investor-home.css
 js/investor-home.js
+js/tos-music.js
 img/tos-network-vision.webp
 pdf/tos.pdf
+song/DigitalDawn.mp3
 ```
 
 ## Source Material
