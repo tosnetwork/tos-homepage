@@ -4,11 +4,14 @@
    ============================================ */
 
 class TOSMusicPlayer {
-    constructor() {
+    constructor(onStateChange = () => {}) {
         this.audio = null;
+        this.state = 'idle';
         this.playing = false;
+        this.onStateChange = onStateChange;
         this.lyricsBar = null;
         this.lyricsTrack = null;
+        this.currentLyricStatus = null;
         this.progressBar = null;
         this.visualizerCanvas = null;
         this.visualizerCtx = null;
@@ -23,7 +26,12 @@ class TOSMusicPlayer {
         this.isSeeking = false;
         this.seekPointerId = null;
         this.seekResumePlayback = false;
+        this.pendingSeekTime = null;
+        this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.reducedMotion = this.reducedMotionQuery.matches;
         this.handleResizeVisualizer = () => this.resizeVisualizer();
+        this.handleVisibilityChange = () => this.onVisibilityChange();
+        this.handleReducedMotionChange = (event) => this.onReducedMotionChange(event);
 
         // Lyrics with calibrated timestamps (seconds)
         this.lyrics = [
@@ -94,6 +102,28 @@ class TOSMusicPlayer {
         this.audio = new Audio('song/DigitalDawn.mp3');
         this.audio.preload = 'auto';
         this.audio.loop = true;
+        this.audio.addEventListener('timeupdate', () => {
+            if (this.reducedMotion || document.hidden) {
+                this.updatePlaybackUI();
+            }
+        });
+        this.audio.addEventListener('loadedmetadata', () => {
+            if (this.pendingSeekTime !== null) {
+                this.applySeekTime(this.pendingSeekTime);
+                this.pendingSeekTime = null;
+            }
+            this.updatePlaybackUI();
+        });
+        this.audio.addEventListener('error', () => {
+            this.handlePlaybackFailure(new Error('The theme song could not be loaded or decoded.'));
+        });
+        this.audio.addEventListener('ended', () => this.onEnded());
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
+        if (typeof this.reducedMotionQuery.addEventListener === 'function') {
+            this.reducedMotionQuery.addEventListener('change', this.handleReducedMotionChange);
+        } else {
+            this.reducedMotionQuery.addListener?.(this.handleReducedMotionChange);
+        }
         this.buildLyricsBar();
     }
 
@@ -145,17 +175,13 @@ class TOSMusicPlayer {
         lyricsWindow.style.position = 'relative';
         this.lyricsTrack = document.createElement('div');
         this.lyricsTrack.className = 'lyrics-track';
+        this.lyricsTrack.setAttribute('aria-hidden', 'true');
 
-        this.lyrics.forEach((line, idx) => {
+        this.lyrics.forEach((line) => {
             const el = document.createElement('span');
             el.className = 'lyrics-line';
             el.dataset.section = line.section;
             el.textContent = line.text;
-            el.addEventListener('click', () => {
-                if (this.audio) {
-                    this.audio.currentTime = line.t;
-                }
-            });
             this.lyricsTrack.appendChild(el);
         });
 
@@ -189,88 +215,146 @@ class TOSMusicPlayer {
         right.className = 'lyrics-bar-right';
         right.appendChild(timeDisplay);
 
+        const currentLyric = document.createElement('p');
+        currentLyric.className = 'visually-hidden';
+        currentLyric.textContent = 'Current lyric: instrumental.';
+        this.currentLyricStatus = currentLyric;
+
         this.lyricsBar.appendChild(progress);
         this.lyricsBar.appendChild(left);
         this.lyricsBar.appendChild(center);
         this.lyricsBar.appendChild(right);
+        this.lyricsBar.appendChild(currentLyric);
 
         document.body.appendChild(this.lyricsBar);
     }
 
     /* ========== Playback ========== */
 
-    play() {
-        this.init();
-        if (this.playing) return;
-        this.playing = true;
-        this.initVisualizer();
-        this.audioContext?.resume?.();
-        this.audio.play();
-        this.lyricsBar.style.display = 'flex';
-        this.lyricsBar.classList.add('is-playing');
-        this.syncLyrics();
+    setState(state, message = '') {
+        this.state = state;
+        this.playing = state === 'playing';
+        this.onStateChange({ state, message });
+    }
+
+    async play() {
+        if (this.state === 'playing') return true;
+        if (this.state === 'loading') return false;
+
+        this.setState('loading', 'Loading Digital Dawn.');
+
+        try {
+            this.init();
+            if (this.audio.error) {
+                this.audio.load();
+            }
+
+            if (!this.reducedMotion) {
+                this.initVisualizer();
+            }
+            if (this.audioContext?.state === 'suspended') {
+                await this.audioContext.resume();
+            }
+
+            await this.audio.play();
+            this.lyricsBar.style.display = 'flex';
+            this.lyricsBar.classList.add('is-playing');
+            this.setState('playing', 'Digital Dawn is playing.');
+            this.startSyncLoop();
+            return true;
+        } catch (error) {
+            this.handlePlaybackFailure(error);
+            return false;
+        }
     }
 
     pause() {
-        if (!this.playing) return;
-        this.playing = false;
-        this.audio.pause();
+        if (this.state !== 'playing') return false;
+        this.audio?.pause();
         this.lyricsBar?.classList.remove('is-playing');
+        this.stopSyncLoop();
         this.clearVisualizer();
-        if (this.animFrame) {
-            cancelAnimationFrame(this.animFrame);
-            this.animFrame = null;
-        }
+        this.updatePlaybackUI();
+        this.setState('paused', 'Digital Dawn is paused.');
+        return false;
     }
 
-    toggle() {
-        if (this.playing) {
-            this.pause();
-        } else {
-            this.play();
+    async toggle() {
+        if (this.state === 'playing') {
+            return this.pause();
         }
-        return this.playing;
+        return this.play();
     }
 
     onEnded() {
-        this.playing = false;
+        this.stopSyncLoop();
         this.currentLine = -1;
         this.lyricsBar?.classList.remove('is-playing');
         this.clearVisualizer();
-        // Reset UI
-        const btn = document.querySelector('.tos-music-btn');
-        if (btn) {
-            btn.classList.remove('is-playing');
-            btn.querySelector('.music-off').style.display = 'block';
-            btn.querySelector('.music-on').style.display = 'none';
+        this.updatePlaybackUI();
+        this.setState('paused', 'Digital Dawn has ended.');
+    }
+
+    handlePlaybackFailure(error) {
+        if (this.state === 'error') return;
+
+        this.audio?.pause();
+        this.stopSyncLoop();
+        this.clearVisualizer();
+        this.lyricsBar?.classList.remove('is-playing');
+        if (this.lyricsBar) {
+            this.lyricsBar.style.display = 'none';
         }
-        // Hide lyrics bar after fade
-        setTimeout(() => {
-            if (!this.playing && this.lyricsBar) {
-                this.lyricsBar.style.display = 'none';
-            }
-        }, 2000);
+        this.currentLine = -1;
+        const message = error instanceof Error && error.message
+            ? `Digital Dawn could not be played. ${error.message}`
+            : 'Digital Dawn could not be played in this browser.';
+        this.setState('error', message);
     }
 
     /* ========== Lyrics sync ========== */
 
     initVisualizer() {
-        if (this.analyser || !this.audio || !this.visualizerCanvas) return;
+        if (this.analyser || !this.audio || !this.visualizerCanvas || this.reducedMotion) return;
 
         const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextCtor) return;
 
-        this.audioContext = new AudioContextCtor();
-        this.audioSource = this.audioContext.createMediaElementSource(this.audio);
-        this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 128;
-        this.analyser.smoothingTimeConstant = 0.82;
-        this.audioSource.connect(this.analyser);
-        this.analyser.connect(this.audioContext.destination);
+        let context = null;
+        let source = null;
 
-        this.visualizerCtx = this.visualizerCanvas.getContext('2d');
-        this.resizeVisualizer();
-        window.addEventListener('resize', this.handleResizeVisualizer);
+        try {
+            context = new AudioContextCtor();
+            source = context.createMediaElementSource(this.audio);
+            const analyser = context.createAnalyser();
+            analyser.fftSize = 128;
+            analyser.smoothingTimeConstant = 0.82;
+            source.connect(analyser);
+            analyser.connect(context.destination);
+
+            this.audioContext = context;
+            this.audioSource = source;
+            this.analyser = analyser;
+            this.visualizerCtx = this.visualizerCanvas.getContext('2d');
+            this.resizeVisualizer();
+            window.addEventListener('resize', this.handleResizeVisualizer);
+        } catch (error) {
+            // If the media element was already captured, route it directly through
+            // the context so playback remains audible without the visualizer.
+            if (context && source) {
+                try {
+                    source.disconnect();
+                    source.connect(context.destination);
+                    this.audioContext = context;
+                    this.audioSource = source;
+                } catch {
+                    context.close?.().catch?.(() => {});
+                }
+            } else {
+                context?.close?.().catch?.(() => {});
+            }
+            console.warn('Theme-song visualizer unavailable; audio playback will continue.', error);
+        }
     }
 
     resizeVisualizer() {
@@ -353,7 +437,7 @@ class TOSMusicPlayer {
         const duration = this.audio.duration || 281;
         const nextTime = pct * duration;
 
-        this.audio.currentTime = nextTime;
+        this.applySeekTime(nextTime);
 
         if (this.progressFill) {
             this.progressFill.style.width = (pct * 100) + '%';
@@ -369,6 +453,16 @@ class TOSMusicPlayer {
         }
 
         this.updateProgressAccessibility(nextTime, duration);
+    }
+
+    applySeekTime(nextTime) {
+        if (!this.audio) return;
+
+        try {
+            this.audio.currentTime = nextTime;
+        } catch {
+            this.pendingSeekTime = nextTime;
+        }
     }
 
     handleProgressKey(event) {
@@ -500,26 +594,23 @@ class TOSMusicPlayer {
 
         if (this.seekResumePlayback) {
             const playPromise = this.audio?.play();
-            playPromise?.catch?.(() => {});
+            playPromise?.catch?.((error) => this.handlePlaybackFailure(error));
         }
 
         this.seekResumePlayback = false;
     }
 
-    syncLyrics() {
-        if (!this.playing) return;
+    updatePlaybackUI() {
+        if (!this.audio) return;
 
-        const time = this.audio.currentTime;
+        const time = this.audio.currentTime || 0;
         const syncedTime = Math.max(0, time - this.lyricDisplayLag);
         const duration = this.audio.duration || 281;
-        this.renderVisualizer();
 
-        // Update progress bar
         if (this.progressFill) {
             this.progressFill.style.width = (time / duration * 100) + '%';
         }
 
-        // Update time display
         if (this.timeDisplay) {
             const cm = Math.floor(time / 60);
             const cs = Math.floor(time % 60);
@@ -531,7 +622,6 @@ class TOSMusicPlayer {
 
         this.updateProgressAccessibility(time, duration);
 
-        // Find current lyric line
         let lineIdx = -1;
         for (let i = this.lyrics.length - 1; i >= 0; i--) {
             if (syncedTime >= this.lyrics[i].t) {
@@ -542,13 +632,16 @@ class TOSMusicPlayer {
 
         if (lineIdx !== this.currentLine) {
             this.currentLine = lineIdx;
-            // Update active class
+            if (this.currentLyricStatus) {
+                this.currentLyricStatus.textContent = lineIdx >= 0
+                    ? `Current lyric: ${this.lyrics[lineIdx].text}`
+                    : 'Current lyric: instrumental.';
+            }
             const lines = this.lyricsTrack.querySelectorAll('.lyrics-line');
             lines.forEach((el, i) => {
                 el.classList.toggle('active', i === lineIdx);
                 el.classList.toggle('past', i < lineIdx);
             });
-            // Scroll active line into view
             if (lineIdx >= 0 && lines[lineIdx]) {
                 const track = this.lyricsTrack;
                 const window = track.parentElement;
@@ -557,18 +650,70 @@ class TOSMusicPlayer {
                 track.style.transform = `translateX(${-Math.max(0, scrollTarget)}px)`;
             }
         }
+    }
 
-        this.animFrame = requestAnimationFrame(() => this.syncLyrics());
+    startSyncLoop() {
+        this.stopSyncLoop();
+        this.updatePlaybackUI();
+
+        if (this.reducedMotion || document.hidden || !this.playing) {
+            return;
+        }
+
+        const frame = () => {
+            if (!this.playing || this.reducedMotion || document.hidden) {
+                this.animFrame = null;
+                return;
+            }
+
+            this.renderVisualizer();
+            this.updatePlaybackUI();
+            this.animFrame = requestAnimationFrame(frame);
+        };
+
+        this.animFrame = requestAnimationFrame(frame);
+    }
+
+    stopSyncLoop() {
+        if (this.animFrame) {
+            cancelAnimationFrame(this.animFrame);
+            this.animFrame = null;
+        }
+    }
+
+    onVisibilityChange() {
+        if (!this.playing) return;
+
+        if (document.hidden) {
+            this.stopSyncLoop();
+            this.clearVisualizer();
+            this.updatePlaybackUI();
+        } else {
+            this.startSyncLoop();
+        }
+    }
+
+    onReducedMotionChange(event) {
+        this.reducedMotion = event.matches;
+        if (!this.playing) return;
+
+        if (this.reducedMotion) {
+            this.stopSyncLoop();
+            this.clearVisualizer();
+            this.updatePlaybackUI();
+        } else {
+            this.startSyncLoop();
+        }
     }
 }
 
 /* ========== UI: Floating music button ========== */
 document.addEventListener('DOMContentLoaded', () => {
-    const player = new TOSMusicPlayer();
-
     const btn = document.createElement('button');
     btn.className = 'tos-music-btn';
+    btn.type = 'button';
     btn.setAttribute('aria-label', 'Play Digital Dawn - TOS Network Theme Song');
+    btn.setAttribute('aria-pressed', 'false');
     btn.title = 'Digital Dawn';
     btn.innerHTML = `
         <svg class="music-icon music-off" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -585,18 +730,46 @@ document.addEventListener('DOMContentLoaded', () => {
         </svg>
     `;
 
-    btn.addEventListener('click', () => {
-        const isPlaying = player.toggle();
-        document.body.classList.add('music-player-open');
+    const status = document.createElement('p');
+    status.className = 'visually-hidden';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+
+    const renderState = ({ state, message }) => {
+        const isPlaying = state === 'playing';
+        const hasSession = state === 'playing' || state === 'paused';
+        const isLoading = state === 'loading';
+
+        btn.disabled = isLoading;
         btn.classList.toggle('is-playing', isPlaying);
-        btn.classList.add('has-session');
-        btn.setAttribute('aria-label', isPlaying
-            ? 'Pause Digital Dawn - TOS Network Theme Song'
-            : 'Play Digital Dawn - TOS Network Theme Song');
-        btn.title = isPlaying ? 'Pause Digital Dawn' : 'Play Digital Dawn';
+        btn.classList.toggle('has-session', hasSession);
+        btn.setAttribute('aria-pressed', String(isPlaying));
+        btn.setAttribute('aria-label', isLoading
+            ? 'Loading Digital Dawn - TOS Network Theme Song'
+            : isPlaying
+                ? 'Pause Digital Dawn - TOS Network Theme Song'
+                : 'Play Digital Dawn - TOS Network Theme Song');
+        btn.title = isLoading
+            ? 'Loading Digital Dawn'
+            : isPlaying
+                ? 'Pause Digital Dawn'
+                : 'Play Digital Dawn';
         btn.querySelector('.music-off').style.display = isPlaying ? 'none' : 'block';
         btn.querySelector('.music-on').style.display = isPlaying ? 'block' : 'none';
+        document.body.classList.toggle('music-player-open', hasSession);
+        status.textContent = message;
+    };
+
+    const player = new TOSMusicPlayer(renderState);
+
+    btn.addEventListener('click', async () => {
+        try {
+            await player.toggle();
+        } catch (error) {
+            player.handlePlaybackFailure(error);
+        }
     });
 
     document.body.appendChild(btn);
+    document.body.appendChild(status);
 });

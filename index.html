@@ -22,7 +22,6 @@
 
     <title>TOS Network — Open Coordination and Settlement for AI</title>
 
-    <script>document.documentElement.classList.add("js");</script>
     <link rel="icon" href="favicon.ico">
     <link rel="canonical" href="https://tos.network/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,11 +102,11 @@
                             <span aria-hidden="true">→</span>
                         </a>
                     </div>
-                    <div class="maturity-line" aria-label="Product maturity">
-                        <span><strong>Implemented</strong> TOS Core</span>
-                        <span><strong>Designed</strong> Service architecture</span>
-                        <span><strong>Planned</strong> Edge terminal products</span>
-                    </div>
+                    <ul class="maturity-line">
+                        <li><strong>Implemented</strong> TOS Core</li>
+                        <li><strong>Designed</strong> Service architecture</li>
+                        <li><strong>Planned</strong> Edge terminal products</li>
+                    </ul>
                 </div>
 
                 <aside class="hero-thesis reveal" aria-label="Investment thesis">
@@ -193,37 +192,33 @@
                     </p>
                 </div>
 
-                <div class="transaction-flow reveal" aria-label="TOS service transaction flow">
-                    <div class="flow-step">
+                <ol class="transaction-flow reveal">
+                    <li class="flow-step">
                         <span>01</span>
                         <strong>Discover</strong>
                         <p>Resolve identity, capability, policy, and endpoint.</p>
-                    </div>
-                    <div class="flow-connector" aria-hidden="true"></div>
-                    <div class="flow-step">
+                    </li>
+                    <li class="flow-step">
                         <span>02</span>
                         <strong>Authorize</strong>
                         <p>Bind a quote to permissions, budget, and limits.</p>
-                    </div>
-                    <div class="flow-connector" aria-hidden="true"></div>
-                    <div class="flow-step">
+                    </li>
+                    <li class="flow-step">
                         <span>03</span>
                         <strong>Execute</strong>
                         <p>Run an approved service under local admission policy.</p>
-                    </div>
-                    <div class="flow-connector" aria-hidden="true"></div>
-                    <div class="flow-step">
+                    </li>
+                    <li class="flow-step">
                         <span>04</span>
                         <strong>Evidence</strong>
                         <p>Return signed results, metering, and evidence references.</p>
-                    </div>
-                    <div class="flow-connector" aria-hidden="true"></div>
-                    <div class="flow-step">
+                    </li>
+                    <li class="flow-step">
                         <span>05</span>
                         <strong>Settle</strong>
                         <p>Release, refund, or dispute according to agreed policy.</p>
-                    </div>
-                </div>
+                    </li>
+                </ol>
 
                 <div class="principles-grid">
                     <article class="principle reveal">
@@ -336,7 +331,11 @@
                         </p>
                     </div>
 
-                    <div class="flywheel-ring reveal" aria-label="TOS Network flywheel">
+                    <figure class="flywheel-ring reveal" aria-labelledby="flywheel-caption">
+                        <figcaption class="visually-hidden" id="flywheel-caption">
+                            TOS Network flywheel: supply attracts demand, completed services
+                            create evidence, and shared standards lower integration cost.
+                        </figcaption>
                         <div class="flywheel-center">
                             <span>TOS</span>
                             <small>Open service economy</small>
@@ -345,7 +344,7 @@
                         <div class="flywheel-node node-two"><strong>Demand</strong><span>Agents and applications</span></div>
                         <div class="flywheel-node node-three"><strong>Evidence</strong><span>Receipts and outcomes</span></div>
                         <div class="flywheel-node node-four"><strong>Standards</strong><span>Lower integration cost</span></div>
-                    </div>
+                    </figure>
                 </div>
 
                 <div class="leverage-grid">
@@ -519,6 +518,19 @@
                         <div><strong>Source repository</strong><small>Consensus, networking, contracts, tests, and history</small></div>
                         <b>↗</b>
                     </a>
+                    <div class="diligence-disclosure">
+                        <span>04</span>
+                        <div>
+                            <strong>Disclosure boundary</strong>
+                            <small>
+                                Institutional materials covering legal entity, team, financing,
+                                customers, commercial metrics, and independent security audits
+                                are not published on this website. The technical materials above
+                                do not substitute for those disclosures.
+                            </small>
+                        </div>
+                        <b aria-hidden="true">—</b>
+                    </div>
                 </div>
             </div>
         </section>
@@ -530,51 +542,51 @@
                     <h2>What matters before the narrative becomes consensus.</h2>
                 </div>
                 <div class="faq-list">
-                    <article class="faq-item reveal">
-                        <button type="button" aria-expanded="false">
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>Is TOS another decentralized GPU marketplace?</span>
                             <i aria-hidden="true">+</i>
-                        </button>
+                        </summary>
                         <div class="faq-answer">
                             <p>No. TOS is designed around policy-bound service outcomes. The provider exposes an approved capability, not a raw accelerator, public shell, or arbitrary execution environment.</p>
                         </div>
-                    </article>
-                    <article class="faq-item reveal">
-                        <button type="button" aria-expanded="false">
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>Why does Physical AI strengthen the thesis?</span>
                             <i aria-hidden="true">+</i>
-                        </button>
+                        </summary>
                         <div class="faq-answer">
                             <p>Physical AI creates services whose value comes from location, local data, privacy, and real-time execution. Those advantages cannot always be replicated by moving the workload to a remote centralized cloud.</p>
                         </div>
-                    </article>
-                    <article class="faq-item reveal">
-                        <button type="button" aria-expanded="false">
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>What exists today?</span>
                             <i aria-hidden="true">+</i>
-                        </button>
+                        </summary>
                         <div class="faq-answer">
                             <p>TOS Core exists in open source: actor execution, consensus, sharding, networking, wallets, query foundations, and service-oriented contracts. The interoperable service protocol, discovery product, and edge terminals remain planned product work.</p>
                         </div>
-                    </article>
-                    <article class="faq-item reveal">
-                        <button type="button" aria-expanded="false">
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>Where can network effects emerge?</span>
                             <i aria-hidden="true">+</i>
-                        </button>
+                        </summary>
                         <div class="faq-answer">
                             <p>Compatible supply improves discovery and composition; demand improves utilization; signed receipts improve operational evidence; shared standards reduce the cost of adding the next model, device, site, or service profile.</p>
                         </div>
-                    </article>
-                    <article class="faq-item reveal">
-                        <button type="button" aria-expanded="false">
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
                             <span>Does the website project token value or protocol revenue?</span>
                             <i aria-hidden="true">+</i>
-                        </button>
+                        </summary>
                         <div class="faq-answer">
                             <p>No. Service transaction volume, validator fees, protocol revenue, and token value accrual are distinct. The project publishes architecture and delivery objectives, not investment-return promises.</p>
                         </div>
-                    </article>
+                    </details>
                 </div>
             </div>
         </section>
