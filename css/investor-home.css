@@ -738,6 +738,241 @@ h3 {
     font-size: 13px;
 }
 
+.ard-discovery {
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background:
+        radial-gradient(circle at 9% 12%, rgba(114, 210, 178, 0.1), transparent 26rem),
+        radial-gradient(circle at 91% 84%, rgba(77, 136, 223, 0.14), transparent 30rem),
+        rgba(6, 17, 30, 0.72);
+}
+
+.ard-stack {
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(2, 8, 16, 0.55);
+    box-shadow: var(--shadow);
+}
+
+.ard-layer {
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+}
+
+.ard-layer-open {
+    border-color: rgba(114, 210, 178, 0.26);
+    background:
+        linear-gradient(135deg, rgba(114, 210, 178, 0.08), rgba(5, 16, 28, 0.78));
+}
+
+.ard-layer-tos {
+    border-color: rgba(120, 207, 231, 0.28);
+    background:
+        linear-gradient(135deg, rgba(77, 136, 223, 0.1), rgba(5, 16, 28, 0.82));
+}
+
+.ard-layer-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 28px;
+}
+
+.ard-layer-heading span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.ard-layer-heading h3 {
+    margin: 0;
+    font-size: clamp(23px, 2.6vw, 35px);
+    line-height: 1.15;
+}
+
+.ard-layer-heading b {
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--cyan-bright);
+    font-size: 9px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    background: rgba(120, 207, 231, 0.06);
+}
+
+.ard-layer-open .ard-layer-heading b {
+    border-color: rgba(114, 210, 178, 0.34);
+    color: var(--mint);
+    background: rgba(114, 210, 178, 0.06);
+}
+
+.ard-flow {
+    display: grid;
+    grid-template-columns: 1fr 30px 1fr 30px 1fr;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.ard-flow > div {
+    min-width: 0;
+    padding: 19px;
+    border: 1px solid rgba(114, 210, 178, 0.18);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.ard-flow > i {
+    display: grid;
+    place-items: center;
+    color: var(--mint);
+    font-style: normal;
+}
+
+.ard-flow small,
+.ard-flow strong,
+.ard-flow code {
+    display: block;
+}
+
+.ard-flow small {
+    margin-bottom: 14px;
+    color: var(--mint);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.ard-flow strong {
+    margin-bottom: 7px;
+    font-family: var(--font-display);
+    font-size: 17px;
+}
+
+.ard-flow code {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.ard-handoff {
+    display: flex;
+    min-height: 88px;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.ard-handoff span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.ard-handoff i {
+    color: var(--cyan);
+    font-size: 20px;
+    font-style: normal;
+}
+
+.ard-handoff strong {
+    color: var(--muted-strong);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ard-transaction {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ard-transaction li {
+    min-width: 0;
+    padding: 19px;
+    border: 1px solid rgba(120, 207, 231, 0.17);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.ard-transaction span,
+.ard-transaction strong,
+.ard-transaction small {
+    display: block;
+}
+
+.ard-transaction span {
+    margin-bottom: 18px;
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ard-transaction strong {
+    margin-bottom: 7px;
+    font-family: var(--font-display);
+    font-size: 16px;
+}
+
+.ard-transaction small {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.ard-value-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.ard-value {
+    padding: 28px;
+    border-top: 1px solid var(--line-strong);
+    background: linear-gradient(180deg, rgba(120, 207, 231, 0.045), transparent);
+}
+
+.ard-value > span {
+    display: block;
+    margin-bottom: 38px;
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ard-value h3 {
+    margin-bottom: 11px;
+    font-size: 21px;
+}
+
+.ard-value p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.ard-spec-link {
+    margin-top: 30px;
+}
+
 .vision-section {
     padding-top: 32px;
 }
@@ -2081,7 +2316,8 @@ body.music-player-open {
 
     .shift-grid,
     .principles-grid,
-    .leverage-grid {
+    .leverage-grid,
+    .ard-value-grid {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -2090,6 +2326,19 @@ body.music-player-open {
     }
 
     .transaction-flow {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ard-flow {
+        grid-template-columns: 1fr;
+    }
+
+    .ard-flow > i {
+        min-height: 22px;
+        transform: rotate(90deg);
+    }
+
+    .ard-transaction {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -2194,6 +2443,7 @@ body.music-player-open {
     .shift-grid,
     .principles-grid,
     .leverage-grid,
+    .ard-value-grid,
     .token-metrics,
     .transaction-flow,
     .footer-links {
@@ -2222,6 +2472,45 @@ body.music-player-open {
 
     .shift-card {
         min-height: 290px;
+    }
+
+    .ard-stack {
+        padding: 7px;
+        border-radius: 19px;
+    }
+
+    .ard-layer {
+        padding: 22px;
+        border-radius: 14px;
+    }
+
+    .ard-layer-heading {
+        display: block;
+        margin-bottom: 22px;
+    }
+
+    .ard-layer-heading b {
+        display: inline-block;
+        margin-top: 15px;
+    }
+
+    .ard-handoff {
+        display: grid;
+        min-height: 104px;
+        gap: 2px;
+        padding: 14px 0;
+    }
+
+    .ard-transaction {
+        grid-template-columns: 1fr;
+    }
+
+    .ard-value {
+        padding: 24px 4px;
+    }
+
+    .ard-value > span {
+        margin-bottom: 22px;
     }
 
     .token-metric,

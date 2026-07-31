@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TOS Network is building the open coordination and settlement network for AI services, autonomous agents, and physical edge intelligence.">
-    <meta name="keywords" content="TOS Network, AI services, physical AI, edge intelligence, autonomous agents, settlement network, blockchain">
+    <meta name="description" content="TOS Network is building the ARD-compatible coordination and settlement network for AI services, autonomous agents, and physical edge intelligence.">
+    <meta name="keywords" content="TOS Network, Agentic Resource Discovery, ARD Registry, AI services, physical AI, edge intelligence, autonomous agents, settlement network, blockchain">
     <meta name="author" content="TOS Network">
     <meta name="theme-color" content="#07111f">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="TOS Network — The Transaction Layer for the Machine Economy">
-    <meta property="og:description" content="Open coordination and settlement for AI services and physical edge intelligence.">
+    <meta property="og:description" content="ARD-compatible discovery, coordination, and settlement for AI services and physical edge intelligence.">
     <meta property="og:image" content="https://tos.network/img/tos-network-vision.webp">
     <meta property="og:url" content="https://tos.network">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@tos_network">
     <meta name="twitter:title" content="TOS Network — The Transaction Layer for the Machine Economy">
-    <meta name="twitter:description" content="Open coordination and settlement for AI services and physical edge intelligence.">
+    <meta name="twitter:description" content="ARD-compatible discovery, coordination, and settlement for AI services and physical edge intelligence.">
     <meta name="twitter:image" content="https://tos.network/img/tos-network-vision.webp">
 
     <title>TOS Network — Open Coordination and Settlement for AI</title>
@@ -61,6 +61,7 @@
             <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
                 <a href="#thesis">Thesis</a>
                 <a href="#platform">Platform</a>
+                <a href="#ard">ARD</a>
                 <a href="#edge">Physical AI</a>
                 <a href="#foundation">Foundation</a>
                 <a href="#economics">Token</a>
@@ -90,8 +91,9 @@
                     </p>
                     <p class="hero-detail">
                         Providers keep their hardware, models, data, and operating control.
-                        TOS standardizes how services are discovered, authorized, evidenced,
-                        composed, and paid across organizational boundaries.
+                        Open ARD discovery makes their services legible to agents. TOS then
+                        standardizes authorization, live admission, evidence, and payment
+                        across organizational boundaries.
                     </p>
                     <div class="hero-actions">
                         <a class="button button-primary" href="pdf/tos.pdf" target="_blank" rel="noopener">
@@ -139,7 +141,7 @@
 
         <section class="proof-strip" aria-label="TOS design principles">
             <div class="shell proof-grid">
-                <div><span>Open</span><strong>Standards, not a walled cloud</strong></div>
+                <div><span>Open</span><strong>ARD-compatible, not a walled cloud</strong></div>
                 <div><span>Owner-operated</span><strong>Supply without platform custody</strong></div>
                 <div><span>Policy-bound</span><strong>Authority before execution</strong></div>
                 <div><span>Verifiable</span><strong>Receipts, evidence, settlement</strong></div>
@@ -197,7 +199,7 @@
                     <li class="flow-step">
                         <span>01</span>
                         <strong>Discover</strong>
-                        <p>Resolve identity, capability, policy, and endpoint.</p>
+                        <p>Search ARD catalogs and federated registries for a compatible service.</p>
                     </li>
                     <li class="flow-step">
                         <span>02</span>
@@ -243,6 +245,96 @@
                         <p>Signed records connect service actions to accounting and settlement without putting private payloads on-chain.</p>
                     </article>
                 </div>
+            </div>
+        </section>
+
+        <section class="section ard-discovery" id="ard">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker">Open discovery, native transaction</p>
+                    <h2>ARD lets agents find the world. TOS turns discovery into accountable execution.</h2>
+                    <p>
+                        TOS is designed for compatibility with the open Agentic Resource
+                        Discovery specification and to run an independently deployable ARD
+                        Registry. Providers publish once; agents can discover across plural
+                        registries; TOS completes the economic and operational loop.
+                    </p>
+                </div>
+
+                <div class="ard-stack reveal" aria-label="ARD discovery to TOS execution architecture">
+                    <article class="ard-layer ard-layer-open">
+                        <div class="ard-layer-heading">
+                            <div>
+                                <span>Open ecosystem layer</span>
+                                <h3>Agentic Resource Discovery</h3>
+                            </div>
+                            <b>ARD-compatible</b>
+                        </div>
+                        <div class="ard-flow" aria-label="ARD publication and discovery flow">
+                            <div>
+                                <small>Publish</small>
+                                <strong>AI catalog</strong>
+                                <code>/.well-known/ai-catalog.json</code>
+                            </div>
+                            <i aria-hidden="true">→</i>
+                            <div>
+                                <small>Federate</small>
+                                <strong>ARD Registry</strong>
+                                <code>POST /search</code>
+                            </div>
+                            <i aria-hidden="true">→</i>
+                            <div>
+                                <small>Discover</small>
+                                <strong>Agents + apps</strong>
+                                <code>MCP · A2A · OpenAPI</code>
+                            </div>
+                        </div>
+                    </article>
+
+                    <div class="ard-handoff">
+                        <span>Discovery handoff</span>
+                        <i aria-hidden="true">↓</i>
+                        <strong>Verify before value moves</strong>
+                    </div>
+
+                    <article class="ard-layer ard-layer-tos">
+                        <div class="ard-layer-heading">
+                            <div>
+                                <span>TOS transaction layer</span>
+                                <h3>From a resource claim to a settled service</h3>
+                            </div>
+                            <b>TOS-native</b>
+                        </div>
+                        <ol class="ard-transaction">
+                            <li><span>01</span><strong>Verify</strong><small>Publisher, TOS identity, endpoint, and policy</small></li>
+                            <li><span>02</span><strong>Quote + admit</strong><small>Current price, capacity, revision, and limits</small></li>
+                            <li><span>03</span><strong>Execute + evidence</strong><small>Bounded local work and signed receipts</small></li>
+                            <li><span>04</span><strong>Settle</strong><small>Payment, refund, or dispute under explicit rules</small></li>
+                        </ol>
+                    </article>
+                </div>
+
+                <div class="ard-value-grid">
+                    <article class="ard-value reveal">
+                        <span>01</span>
+                        <h3>Distribution without lock-in</h3>
+                        <p>One open discovery surface can expose TOS services to the wider agentic ecosystem instead of trapping supply in a proprietary marketplace.</p>
+                    </article>
+                    <article class="ard-value reveal">
+                        <span>02</span>
+                        <h3>Plural registries by design</h3>
+                        <p>Public, private, regional, and industry-specific registries can compete and federate. No single TOS index is mandatory.</p>
+                    </article>
+                    <article class="ard-value reveal">
+                        <span>03</span>
+                        <h3>A hard trust boundary</h3>
+                        <p>ARD discovers; it does not authorize, reserve hardware, move funds, update a fleet, or control a physical device. TOS verifies every consequential handoff.</p>
+                    </article>
+                </div>
+
+                <a class="text-link ard-spec-link" href="https://agenticresourcediscovery.org/spec/" target="_blank" rel="noopener">
+                    Read the open ARD specification <span aria-hidden="true">↗</span>
+                </a>
             </div>
         </section>
 
@@ -406,7 +498,8 @@
                         </div>
                         <ul>
                             <li>Canonical service descriptors, sessions, quotes, and receipts</li>
-                            <li>Public <code>.tos</code> registration and plural service discovery</li>
+                            <li>ARD catalogs, independently deployable Registry, and bounded federation</li>
+                            <li>Public <code>.tos</code> registration with verified ARD gateway bindings</li>
                             <li>Edge Core, terminal installers, and runtime adapters</li>
                             <li>Managed AI terminal and Physical AI terminal distributions</li>
                             <li>Home and site relays, low-latency settlement, and stronger evidence</li>
@@ -427,7 +520,7 @@
                     </div>
                     <div class="architecture-row architecture-service">
                         <span>Service plane</span>
-                        <div>Discovery</div>
+                        <div>ARD Registry</div>
                         <div>Authentication + quotes</div>
                         <div>Receipts + evidence</div>
                     </div>
@@ -572,7 +665,7 @@
                         <span class="roadmap-phase">Phase 0</span>
                         <div>
                             <h3>Base protocol and Edge Core</h3>
-                            <p>Identity, manifests, authentication, quotes, payment, receipts, evidence, discovery schema, SDKs, and conformance.</p>
+                            <p>ARD compatibility, catalog publishing, Registry search and federation, identity, authentication, quotes, receipts, SDKs, and conformance.</p>
                         </div>
                         <span class="roadmap-state">Next foundation</span>
                     </li>
@@ -626,13 +719,18 @@
                         <div><strong>Implementation plan</strong><small>Repository boundaries, missing work, and release gates</small></div>
                         <b>↗</b>
                     </a>
-                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                    <a href="https://agenticresourcediscovery.org/spec/" target="_blank" rel="noopener">
                         <span>03</span>
+                        <div><strong>ARD specification</strong><small>The open catalog, Registry, and federation baseline adopted by TOS</small></div>
+                        <b>↗</b>
+                    </a>
+                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                        <span>04</span>
                         <div><strong>Source repository</strong><small>Consensus, networking, contracts, tests, and history</small></div>
                         <b>↗</b>
                     </a>
                     <div class="diligence-disclosure">
-                        <span>04</span>
+                        <span>05</span>
                         <div>
                             <strong>Disclosure boundary</strong>
                             <small>
@@ -671,6 +769,15 @@
                         </summary>
                         <div class="faq-answer">
                             <p>Physical AI creates services whose value comes from location, local data, privacy, and real-time execution. Those advantages cannot always be replicated by moving the workload to a remote centralized cloud.</p>
+                        </div>
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
+                            <span>What does ARD compatibility add?</span>
+                            <i aria-hidden="true">+</i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>ARD gives TOS services an open publication and search surface through standard catalogs and federated registries. TOS begins where discovery ends: it verifies the TOS binding, obtains a live quote and admission decision, executes under local policy, returns evidence, and settles value.</p>
                         </div>
                     </details>
                     <details class="faq-item reveal">
@@ -717,7 +824,7 @@
             <div class="shell closing-inner reveal">
                 <p class="kicker">The opportunity</p>
                 <h2>The cloud organized computing.<br>TOS is built to organize independent intelligence.</h2>
-                <p>Open identity. Bounded authority. Verifiable service actions. Native settlement.</p>
+                <p>Open ARD discovery. Bounded authority. Verifiable service actions. Native settlement.</p>
                 <div class="hero-actions">
                     <a class="button button-primary" href="pdf/tos.pdf" target="_blank" rel="noopener">Read the whitepaper <span aria-hidden="true">↗</span></a>
                     <a class="button button-secondary" href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">Explore TOS Core <span aria-hidden="true">→</span></a>
@@ -740,6 +847,7 @@
                     <strong>Explore</strong>
                     <a href="#thesis">Investment thesis</a>
                     <a href="#platform">Platform</a>
+                    <a href="#ard">ARD discovery</a>
                     <a href="#economics">Token economics</a>
                     <a href="#roadmap">Roadmap</a>
                 </div>
