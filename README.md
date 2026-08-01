@@ -16,6 +16,9 @@ plan:
 - providers retain control of hardware, models, data, pricing, and local policy
 - autonomous agents receive persistent identity, delegated authority, budgets,
   receipts, and settlement
+- OpenFox is presented as the proposed autonomous earning agent that discovers
+  candidate paid work, applies owner policy, and coordinates execution through
+  approved TOS capacity
 - physical AI terminals remain local-first, continue approved work while
   disconnected, and keep safety and hard real-time control outside blockchain
 - TOS Core is identified as implemented infrastructure
@@ -33,12 +36,13 @@ or token appreciation.
 1. Investment thesis and structural market transition
 2. TOS service transaction model
 3. AI services and Physical Edge Intelligence vision
-4. Physical AI terminal wedge
-5. Network-effect and application-layer leverage thesis
-6. Implemented foundation versus planned product layer
-7. Validator-led token economics and concentration-risk disclosures
-8. Focused delivery roadmap
-9. Due-diligence links and investor FAQ
+4. OpenFox autonomous earning agent and its bounded economic loop
+5. Physical AI terminal wedge
+6. Network-effect and application-layer leverage thesis
+7. Implemented foundation versus planned product layer
+8. Validator-led token economics and concentration-risk disclosures
+9. Focused delivery roadmap
+10. Due-diligence links and investor FAQ
 
 The visual system uses a restrained institutional navy foundation, TOS
 champagne-gold brand accents, operational mint, and desaturated network blue.
@@ -77,6 +81,8 @@ song/DigitalDawn.mp3
   `tos/doc/the-tos-protocol-implementation-plan.md`
 - Physical AI terminal:
   `tos/doc/physical-ai-edge-terminal-use-case.md`
+- OpenFox autonomous earning agent:
+  `tos/doc/openfox-autonomous-earning-agent.md`
 
 ## License
 

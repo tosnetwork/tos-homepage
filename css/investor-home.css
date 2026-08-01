@@ -738,6 +738,279 @@ h3 {
     font-size: 13px;
 }
 
+.openfox {
+    overflow: hidden;
+    border-top: 1px solid rgba(216, 183, 107, 0.22);
+    border-bottom: 1px solid rgba(216, 183, 107, 0.22);
+    background:
+        radial-gradient(circle at 18% 28%, rgba(216, 183, 107, 0.13), transparent 28rem),
+        radial-gradient(circle at 88% 78%, rgba(114, 210, 178, 0.09), transparent 28rem),
+        linear-gradient(155deg, rgba(12, 27, 42, 0.96), rgba(4, 11, 20, 0.98));
+}
+
+.openfox-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.25;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(216, 183, 107, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(216, 183, 107, 0.055) 1px, transparent 1px);
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(ellipse at 35% 40%, black, transparent 72%);
+    mask-image: radial-gradient(ellipse at 35% 40%, black, transparent 72%);
+}
+
+.openfox-intro {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(300px, 0.68fr) minmax(0, 1.32fr);
+    gap: 76px;
+    align-items: center;
+}
+
+.openfox-identity {
+    position: relative;
+    display: grid;
+    min-height: 470px;
+    place-items: center;
+    align-content: center;
+    padding: 46px 36px;
+    border: 1px solid rgba(216, 183, 107, 0.25);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    background:
+        linear-gradient(145deg, rgba(216, 183, 107, 0.08), rgba(8, 21, 34, 0.88));
+    box-shadow: var(--shadow);
+}
+
+.openfox-identity::before,
+.openfox-identity::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    background: var(--navy-900);
+    box-shadow: 0 0 18px rgba(216, 183, 107, 0.55);
+}
+
+.openfox-identity::before {
+    top: 22px;
+    right: 24px;
+}
+
+.openfox-identity::after {
+    bottom: 26px;
+    left: 22px;
+    border-color: var(--mint);
+    box-shadow: 0 0 18px rgba(114, 210, 178, 0.48);
+}
+
+.openfox-state {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    padding: 7px 10px;
+    border: 1px solid rgba(216, 183, 107, 0.3);
+    border-radius: 999px;
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(216, 183, 107, 0.05);
+}
+
+.openfox-identity img {
+    width: 190px;
+    height: 190px;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.28));
+}
+
+.openfox-wordmark {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: clamp(39px, 4vw, 55px);
+    font-weight: 800;
+    letter-spacing: -0.07em;
+    line-height: 1;
+}
+
+.openfox-wordmark span {
+    color: var(--ink);
+}
+
+.openfox-wordmark strong {
+    color: var(--gold);
+    font-weight: 800;
+}
+
+.openfox-identity > p {
+    max-width: 310px;
+    margin: 21px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.openfox-pitch h2 {
+    max-width: 800px;
+    margin-bottom: 27px;
+    font-size: clamp(40px, 4.5vw, 67px);
+    line-height: 1.04;
+}
+
+.openfox-pitch .openfox-lede {
+    max-width: 790px;
+    margin-bottom: 17px;
+    color: var(--muted-strong);
+    font-size: 19px;
+}
+
+.openfox-pitch > p:not(.kicker):not(.openfox-lede) {
+    max-width: 740px;
+    margin-bottom: 13px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.openfox-pitch code {
+    color: var(--cyan-bright);
+}
+
+.openfox-equation {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 42px 1fr 42px 1fr;
+    gap: 10px;
+    align-items: stretch;
+    margin-top: 74px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(2, 8, 15, 0.58);
+}
+
+.openfox-equation article {
+    min-width: 0;
+    padding: 27px;
+    border: 1px solid rgba(120, 207, 231, 0.18);
+    border-radius: 14px;
+    background: rgba(120, 207, 231, 0.035);
+}
+
+.openfox-equation article.openfox-equation-fox {
+    border-color: rgba(216, 183, 107, 0.32);
+    background: linear-gradient(145deg, rgba(216, 183, 107, 0.1), rgba(114, 210, 178, 0.035));
+}
+
+.openfox-equation article > span,
+.openfox-equation article > strong {
+    display: block;
+}
+
+.openfox-equation article > span {
+    margin-bottom: 18px;
+    color: var(--cyan);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.openfox-equation article.openfox-equation-fox > span {
+    color: var(--gold);
+}
+
+.openfox-equation article > strong {
+    margin-bottom: 12px;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 24px;
+}
+
+.openfox-equation article > p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.openfox-equation > i {
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-style: normal;
+}
+
+.openfox-loop {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.openfox-loop li {
+    min-height: 230px;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.openfox-loop span,
+.openfox-loop strong {
+    display: block;
+}
+
+.openfox-loop span {
+    margin-bottom: 48px;
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.openfox-loop strong {
+    margin-bottom: 9px;
+    font-family: var(--font-display);
+    font-size: 18px;
+}
+
+.openfox-loop p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.openfox-boundary {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.65fr) minmax(0, 1.35fr);
+    gap: 38px;
+    align-items: center;
+    margin-top: 22px;
+    padding: 27px 30px;
+    border-left: 2px solid var(--gold);
+    background: rgba(216, 183, 107, 0.055);
+}
+
+.openfox-boundary strong {
+    font-family: var(--font-display);
+    font-size: 17px;
+}
+
+.openfox-boundary p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
 .ard-discovery {
     overflow: hidden;
     border-top: 1px solid var(--line);
@@ -1381,6 +1654,11 @@ h3 {
 .architecture-service > div {
     border-color: rgba(101, 221, 255, 0.25);
     background: rgba(101, 221, 255, 0.04);
+}
+
+.architecture-openfox > div {
+    border-color: rgba(216, 183, 107, 0.3);
+    background: rgba(216, 183, 107, 0.055);
 }
 
 .architecture-core > div {
@@ -2098,7 +2376,11 @@ body.music-player-open {
     }
 
     .site-nav {
-        gap: 20px;
+        gap: 16px;
+    }
+
+    .site-nav > a {
+        font-size: 13px;
     }
 
     .hero-layout {
@@ -2133,6 +2415,14 @@ body.music-player-open {
 
     .section-intro > p:last-child {
         grid-column: 2;
+    }
+
+    .openfox-intro {
+        gap: 46px;
+    }
+
+    .openfox-loop li {
+        padding: 22px;
     }
 
     .token-metrics {
@@ -2329,6 +2619,32 @@ body.music-player-open {
         grid-template-columns: 1fr 1fr;
     }
 
+    .openfox-intro {
+        grid-template-columns: 1fr;
+    }
+
+    .openfox-identity {
+        width: min(100%, 560px);
+        min-height: 420px;
+        margin-inline: auto;
+    }
+
+    .openfox-pitch {
+        max-width: 800px;
+    }
+
+    .openfox-equation {
+        grid-template-columns: 1fr;
+    }
+
+    .openfox-equation > i {
+        min-height: 22px;
+    }
+
+    .openfox-loop {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .ard-flow {
         grid-template-columns: 1fr;
     }
@@ -2444,6 +2760,7 @@ body.music-player-open {
     .principles-grid,
     .leverage-grid,
     .ard-value-grid,
+    .openfox-loop,
     .token-metrics,
     .transaction-flow,
     .footer-links {
@@ -2463,6 +2780,7 @@ body.music-player-open {
     }
 
     .section-intro h2,
+    .openfox-pitch h2,
     .edge h2,
     .flywheel h2,
     .diligence h2,
@@ -2472,6 +2790,44 @@ body.music-player-open {
 
     .shift-card {
         min-height: 290px;
+    }
+
+    .openfox-identity {
+        min-height: 390px;
+        padding: 68px 22px 34px;
+    }
+
+    .openfox-identity img {
+        width: 155px;
+        height: 155px;
+    }
+
+    .openfox-state {
+        top: 18px;
+        left: 18px;
+    }
+
+    .openfox-equation {
+        margin-top: 50px;
+        padding: 7px;
+    }
+
+    .openfox-equation article {
+        padding: 23px;
+    }
+
+    .openfox-loop li {
+        min-height: 0;
+    }
+
+    .openfox-loop span {
+        margin-bottom: 27px;
+    }
+
+    .openfox-boundary {
+        grid-template-columns: 1fr;
+        gap: 11px;
+        padding: 23px;
     }
 
     .ard-stack {
