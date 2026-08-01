@@ -824,9 +824,11 @@ h3 {
 }
 
 .openfox-identity img {
-    width: 190px;
-    height: 190px;
+    width: auto;
+    height: 150px;
+    max-width: 100%;
     margin-bottom: 24px;
+    object-fit: contain;
     filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.28));
 }
 
@@ -2798,8 +2800,7 @@ body.music-player-open {
     }
 
     .openfox-identity img {
-        width: 155px;
-        height: 155px;
+        height: 120px;
     }
 
     .openfox-state {
