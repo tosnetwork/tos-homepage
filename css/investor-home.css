@@ -825,31 +825,11 @@ h3 {
 
 .openfox-identity img {
     width: auto;
-    height: 150px;
+    height: 210px;
     max-width: 100%;
     margin-bottom: 24px;
     object-fit: contain;
     filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.28));
-}
-
-.openfox-wordmark {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: clamp(39px, 4vw, 55px);
-    font-weight: 800;
-    letter-spacing: -0.07em;
-    line-height: 1;
-}
-
-.openfox-wordmark span {
-    color: var(--ink);
-}
-
-.openfox-wordmark strong {
-    color: var(--gold);
-    font-weight: 800;
 }
 
 .openfox-identity > p {
@@ -2800,7 +2780,7 @@ body.music-player-open {
     }
 
     .openfox-identity img {
-        height: 120px;
+        height: 165px;
     }
 
     .openfox-state {
