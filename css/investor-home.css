@@ -585,6 +585,11 @@ h3 {
     background: linear-gradient(180deg, rgba(8, 20, 34, 0.84), rgba(3, 8, 18, 0));
 }
 
+:where(.opportunity) .section-intro > p:last-child {
+    grid-column: 3;
+    margin-top: 20px;
+}
+
 .a2a-economy {
     border-top: 1px solid var(--line);
 }
