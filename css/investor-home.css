@@ -589,6 +589,10 @@ h3 {
     border-top: 1px solid var(--line);
 }
 
+.a2a-visual {
+    margin-bottom: 46px;
+}
+
 .shift-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
