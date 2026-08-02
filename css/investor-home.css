@@ -585,6 +585,10 @@ h3 {
     background: linear-gradient(180deg, rgba(8, 20, 34, 0.84), rgba(3, 8, 18, 0));
 }
 
+.a2a-economy {
+    border-top: 1px solid var(--line);
+}
+
 .shift-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
