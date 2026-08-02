@@ -594,6 +594,19 @@ h3 {
     border-top: 1px solid var(--line);
 }
 
+.a2a-tagline {
+    margin: 0 0 28px;
+    max-width: 640px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.25;
+    background: linear-gradient(100deg, #fff 0%, var(--gold) 60%, #f2c879 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
 .a2a-visual {
     position: relative;
     margin-bottom: 46px;
