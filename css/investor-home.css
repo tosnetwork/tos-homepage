@@ -590,7 +590,39 @@ h3 {
 }
 
 .a2a-visual {
+    position: relative;
     margin-bottom: 46px;
+}
+
+.a2a-visual-copy {
+    position: absolute;
+    inset: 18px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 640px;
+    padding: 44px 48px;
+    background: linear-gradient(115deg, rgba(3, 8, 18, 0.92) 0%, rgba(3, 8, 18, 0.78) 42%, rgba(3, 8, 18, 0.1) 82%, rgba(3, 8, 18, 0) 100%);
+    pointer-events: none;
+}
+
+.a2a-visual-copy .kicker {
+    margin: 0;
+}
+
+.a2a-visual-copy h2 {
+    margin: 0;
+    font-size: clamp(28px, 3vw, 42px);
+    line-height: 1.15;
+}
+
+.a2a-visual-copy > p:last-child {
+    margin: 0;
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
 }
 
 .shift-grid {
@@ -2405,6 +2437,26 @@ body.music-player-open {
 
     .section-intro > p:last-child {
         grid-column: 2;
+    }
+
+    .a2a-visual {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .a2a-visual-copy {
+        order: -1;
+        position: static;
+        inset: auto;
+        max-width: none;
+        padding: 0;
+        margin-bottom: 24px;
+        background: none;
+        pointer-events: auto;
+    }
+
+    .a2a-visual-copy > p:last-child {
+        max-width: 730px;
     }
 
     .openfox-intro {
