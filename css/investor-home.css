@@ -585,9 +585,13 @@ h3 {
     background: linear-gradient(180deg, rgba(8, 20, 34, 0.84), rgba(3, 8, 18, 0));
 }
 
-:where(.opportunity) .section-intro > p:last-child {
-    grid-column: 3;
-    margin-top: 20px;
+.opportunity .section-intro.narrow {
+    max-width: 1020px;
+}
+
+.opportunity .section-intro.narrow h2 + p {
+    max-width: 730px;
+    margin-top: 22px;
 }
 
 .a2a-economy {
