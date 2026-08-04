@@ -43,7 +43,11 @@
                 <span>PROJECT SEMANTIC FIELD</span>
                 <strong>WAKE THE MATRIX</strong>
             </div>
+            <canvas id="matrixGpu" aria-hidden="true"></canvas>
             <canvas id="matrixCanvas" tabindex="0" aria-label="Animated TOS network graph. Use arrow keys to cycle entities, Enter to inspect, mouse wheel to zoom, drag to pan, and double-click to reset the camera."></canvas>
+            <div class="mode-sigil" id="modeSigil" aria-hidden="true"><span>CONSENSUS</span><i>01 · WEIGHT FIELD</i></div>
+            <div class="scene-alert" id="sceneAlert" data-kind="signal" hidden role="status" aria-live="assertive"><i></i><span id="sceneAlertCode">SIGNAL LOST</span><strong id="sceneAlertTitle">GRAPH STREAM INTERRUPTED</strong><em id="sceneAlertCopy">Holding the last deterministic projection.</em></div>
+            <div class="spectral-slices" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="scanline" aria-hidden="true"></div>
             <div class="scene-vignette" aria-hidden="true"></div>
             <div class="matrix-hud" aria-hidden="true">
@@ -51,7 +55,7 @@
                 <span id="hudFrame">FRAME · 000000</span>
                 <span id="hudEntities">VISIBLE · 000</span>
                 <span id="hudCamera">LENS · 1.00× / 0,0</span>
-                <span>RENDER · SEMANTIC 2D</span>
+                <span id="hudRenderer">RENDER · WEBGL2 + SEMANTIC 2D</span>
                 <span id="hudSignal">SIGNAL · GRAPH EVENT CLOCK</span>
             </div>
 
@@ -169,6 +173,7 @@
                 <button id="proofVerify" type="button">VERIFY FIXTURE</button>
                 <button id="stressToggle" type="button">STRESS · NORMAL</button>
                 <button id="entityNavToggle" type="button">DOM NAVIGATOR</button>
+                <button id="explorerToggle" type="button">EXPLORER INDEX</button>
                 <button id="grammarToggle" type="button" aria-keyshortcuts="?">VISUAL GRAMMAR · ?</button>
             </div>
         </section>
@@ -196,6 +201,7 @@
     </main>
 
     <noscript><div class="noscript">TOS Birdeye requires JavaScript to render its interactive graph.</div></noscript>
+    <script src="js/birdeye-gpu.js?v=20260804" defer></script>
     <script src="js/birdeye.js?v=20260804" defer></script>
 </body>
 </html>

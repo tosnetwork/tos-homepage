@@ -40,6 +40,20 @@
       {"id":"cluster-unknown","label":"UNKNOWN REGION","count":150,"x":0.02,"y":-0.74,"truth":"declared"}
     ]
   },
+  "ai_execution_population": {
+    "concurrent_tasks": 384,
+    "population_kind": "modeled_fixture",
+    "source": "deterministic static execution cosmos — not live chain activity",
+    "generated_at": "2026-08-04T12:00:00Z",
+    "clusters": [
+      {"id":"ai-galaxy-reasoning","label":"REASONING SWARM","tasks":92,"agents":31,"terminals":18,"state":"executing","truth":"attested","x":-0.72,"y":-0.55,"color":"cyan"},
+      {"id":"ai-galaxy-vision","label":"VISION FORGE","tasks":71,"agents":24,"terminals":14,"state":"executing","truth":"observed","x":0.72,"y":-0.52,"color":"amber"},
+      {"id":"ai-galaxy-code","label":"CODE SANDBOX","tasks":68,"agents":19,"terminals":12,"state":"verifying","truth":"node_validated","x":-0.78,"y":0.28,"color":"green"},
+      {"id":"ai-galaxy-data","label":"DATA ORACLE","tasks":59,"agents":27,"terminals":9,"state":"settling","truth":"signed_offchain","x":0.78,"y":0.25,"color":"cyan"},
+      {"id":"ai-galaxy-commerce","label":"AUTONOMOUS COMMERCE","tasks":54,"agents":22,"terminals":8,"state":"queued","truth":"chain_reported","x":-0.43,"y":0.68,"color":"green"},
+      {"id":"ai-galaxy-media","label":"MEDIA SYNTHESIS","tasks":40,"agents":16,"terminals":11,"state":"executing","truth":"declared","x":0.45,"y":0.68,"color":"purple"}
+    ]
+  },
   "validator_sets": {
     "previous": {
       "id":"set-4181730","valid_from":4181700,"valid_to":4181734,

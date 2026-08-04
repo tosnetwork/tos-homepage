@@ -35,7 +35,10 @@
         stressProbe: null,
         traceIds: null,
         frame: 0,
+        labelBoxes: [],
+        viewportSize: { width: 0, height: 0 },
         modeTransition: 0,
+        alertTimer: 0,
         parallax: { x: 0, y: 0 },
         camera: { zoom: 1, targetZoom: 1, x: 0, y: 0, targetX: 0, targetY: 0, dragging: false, moved: false, dragX: 0, dragY: 0 }
     };
@@ -44,7 +47,7 @@
     const modeCopy = {
         consensus: ["01 / SKYVIEW", "Consensus Matrix", "Simulated proof-derived participation · curated fixture evidence"],
         chain: ["02 / BLOCKSPACE", "Chain Matrix", "10-block fixture window · 243 tx total · 16 sampled transactions"],
-        ai: ["03 / INTELLIGENCE", "AI Execution Matrix", "Task funding, remote compute, evidence receipt · end to end"]
+        ai: ["03 / INTELLIGENCE", "AI Execution Cosmos", "384 modeled parallel tasks · selected T-2048 causal path · not live"]
     };
 
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
@@ -197,11 +200,13 @@
     }
 
     function clearTrace() {
+        const resetGalaxyCamera = state.selected?.raw?.kind === "ai_cluster";
         state.selected = null;
         state.traceIds = null;
         state.pendingFocusId = null;
         $("traceStatus").hidden = true;
         $("inspector").classList.remove("open");
+        if (resetGalaxyCamera) resetCamera();
         const url = new URL(location.href);
         url.searchParams.delete("entity");
         history.replaceState(null, "", url);
@@ -297,18 +302,53 @@
             });
             ctx.restore();
         }
-        if (state.layers.labels) {
-            ctx.fillStyle = "rgba(220,255,235,.92)";
-            ctx.font = "600 10px 'IBM Plex Mono', monospace";
-            ctx.textAlign = "center";
-            ctx.fillText(label, node.x, node.y + radius + 16);
-            if (sublabel) {
-                ctx.fillStyle = "rgba(150,190,169,.7)";
-                ctx.font = "9px 'IBM Plex Mono', monospace";
-                ctx.fillText(sublabel, node.x, node.y + radius + 29);
-            }
-        }
+        if (state.layers.labels && label) drawSemanticLabel(node, radius, label, sublabel);
         ctx.restore();
+    }
+
+    function drawSemanticLabel(node, radius, label, sublabel) {
+        const selected = state.selected?.id === node.id || (state.keyboardIndex >= 0 && state.nodes[state.keyboardIndex]?.id === node.id);
+        const zoom = state.camera.zoom;
+        ctx.font = "600 10px 'IBM Plex Mono', monospace";
+        const width = Math.max(ctx.measureText(label).width, sublabel ? sublabel.length * 5.4 : 0) + 12;
+        const height = sublabel ? 31 : 18;
+        const gap = radius + 16;
+        const candidates = [
+            { x: node.x, y: node.y + gap, align: "center" },
+            { x: node.x, y: node.y - gap - (sublabel ? 10 : 0), align: "center" },
+            { x: node.x + radius + 12, y: node.y + 3, align: "left" },
+            { x: node.x - radius - 12, y: node.y + 3, align: "right" }
+        ];
+        let placement = null;
+        for (const candidate of candidates) {
+            const left = candidate.align === "center" ? candidate.x - width / 2 : candidate.align === "left" ? candidate.x : candidate.x - width;
+            const top = candidate.y - 11;
+            const screenLeft = (left - state.viewportSize.width / 2) * zoom + state.viewportSize.width / 2 + state.camera.x;
+            const screenTop = (top - state.viewportSize.height / 2) * zoom + state.viewportSize.height / 2 + state.camera.y;
+            const box = { left: screenLeft - 3, top: screenTop - 3, right: screenLeft + width * zoom + 3, bottom: screenTop + height * zoom + 3 };
+            const inspectorUnsafe = $("inspector").classList.contains("open") && innerWidth > 700 && box.right > state.viewportSize.width - 340;
+            const overlap = state.labelBoxes.some((other) => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top);
+            if (selected || (!inspectorUnsafe && !overlap)) { placement = { ...candidate, box }; break; }
+        }
+        if (!placement) return;
+        state.labelBoxes.push(placement.box);
+        if (placement.x !== node.x || placement.y < node.y) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y + Math.sign(placement.y - node.y || 1) * (radius + 3));
+            ctx.lineTo(placement.x, placement.y + (placement.y < node.y ? 5 : -8));
+            ctx.strokeStyle = "rgba(122,190,154,.28)";
+            ctx.lineWidth = .6;
+            ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(220,255,235,.92)";
+        ctx.font = "600 10px 'IBM Plex Mono', monospace";
+        ctx.textAlign = placement.align;
+        ctx.fillText(label, placement.x, placement.y);
+        if (sublabel) {
+            ctx.fillStyle = "rgba(150,190,169,.7)";
+            ctx.font = "9px 'IBM Plex Mono', monospace";
+            ctx.fillText(sublabel, placement.x, placement.y + 13);
+        }
     }
 
     function particle(a, b, offset, color = "#31ff89") {
@@ -332,6 +372,41 @@
         ctx.beginPath();
         ctx.arc(x, y, 2.2, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+    }
+
+    function drawSignalLens() {
+        if (!state.nodes.length) return;
+        const hovered = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < 34);
+        const target = hovered || (state.selected && state.nodes.find((node) => node.id === state.selected.id));
+        if (!target) return;
+        const truth = target.raw.truth || target.raw.provenance || target.raw.evidence || "node_validated";
+        const palette = (["observed", "declared"].includes(truth)) ? "255,204,107" : (["attested", "signed_offchain"].includes(truth)) ? "104,232,255" : "120,255,178";
+        const pulse = state.lowGpu || reducedMotion ? 0 : Math.sin(state.elapsed / 240) * 2.5;
+        const radius = 29 + pulse;
+        ctx.save();
+        ctx.strokeStyle = `rgba(${palette},.62)`;
+        ctx.lineWidth = .8;
+        ctx.setLineDash([9, 7]);
+        ctx.beginPath(); ctx.arc(target.x, target.y, radius, -.2, 1.35); ctx.stroke();
+        ctx.beginPath(); ctx.arc(target.x, target.y, radius, Math.PI - .2, Math.PI + 1.35); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = `rgba(${palette},.34)`;
+        [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx, sy]) => {
+            ctx.beginPath();
+            ctx.moveTo(target.x + sx * 37, target.y + sy * 29);
+            ctx.lineTo(target.x + sx * 37, target.y + sy * 37);
+            ctx.lineTo(target.x + sx * 29, target.y + sy * 37);
+            ctx.stroke();
+        });
+        const labelOnLeft = target.x > state.viewportSize.width * .68;
+        const labelX = target.x + (labelOnLeft ? -43 : 43);
+        ctx.font = "7px 'IBM Plex Mono', monospace";
+        ctx.textAlign = labelOnLeft ? "right" : "left";
+        ctx.fillStyle = `rgba(${palette},.8)`;
+        ctx.fillText(`LOCK · ${target.type.toUpperCase()} · ${truthLabel(truth)}`, labelX, target.y - 29);
+        ctx.fillStyle = `rgba(${palette},.42)`;
+        ctx.fillText(`ID ${target.id} / ${Math.round(target.x)},${Math.round(target.y)}`, labelX, target.y - 18);
         ctx.restore();
     }
 
@@ -479,31 +554,63 @@
         const y = h * .42;
         const left = Math.max(55, w * .055);
         const usable = w - left * 2;
-        const replayCount = state.projection.block_count;
-        const blockData = state.data.blocks.slice(0, replayCount);
-        const blocks = blockData.map((b, i) => ({ id: b.id, x: left + usable * i / Math.max(blockData.length - 1, 1), y, type: "block", raw: b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b }));
-        const totalTransactions = blockData.reduce((sum, block) => sum + block.tx_count, 0);
+        const windowStart = 9000;
+        const commitInterval = 600;
+        const inReplayWindow = state.elapsed >= windowStart && state.elapsed < 15000;
+        const replayPosition = inReplayWindow ? Math.max(0, (state.elapsed - windowStart) / commitInterval) : state.data.blocks.length - 1;
+        const committedCount = Math.min(state.data.blocks.length, Math.floor(replayPosition) + 1);
+        const incomingProgress = committedCount < state.data.blocks.length ? replayPosition - Math.floor(replayPosition) : 0;
+        const renderedCount = Math.min(state.data.blocks.length, committedCount + (committedCount < state.data.blocks.length ? 1 : 0));
+        const spacing = usable / Math.max(state.data.blocks.length - 1, 1);
+        const right = w - left;
+        const blockData = state.data.blocks.slice(0, renderedCount);
+        const blocks = blockData.map((b, i) => {
+            const incoming = i >= committedCount;
+            const x = incoming
+                ? right + spacing * (1 - incomingProgress)
+                : right - spacing * (committedCount - 1 - i) - spacing * incomingProgress;
+            const corrected = b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b;
+            return { id: b.id, x, y, type: "block", pending: incoming, raw: incoming ? { ...corrected, status: "incoming fixture signal" } : corrected };
+        });
+        const committedBlocks = blocks.filter((block) => !block.pending);
+        const totalTransactions = committedBlocks.reduce((sum, block) => sum + block.raw.tx_count, 0);
         if (w >= 700) {
             ctx.fillStyle = "rgba(104,232,255,.46)";
             ctx.font = "8px 'IBM Plex Mono', monospace";
             ctx.textAlign = "center";
-            ctx.fillText(`CHAIN WINDOW · ${blocks.length} BLOCKS · ${totalTransactions} TX TOTAL · ${state.data.transactions.length} FIXTURE SAMPLES`, w / 2, 104);
+            const nextMs = committedCount < state.data.blocks.length ? Math.ceil((1 - incomingProgress) * commitInterval) : 0;
+            ctx.fillText(`FIXTURE WINDOW REPLAY · ${committedCount}/10 COMMITTED · ${totalTransactions} TX · ${nextMs ? `NEXT SIGNAL ${nextMs}ms` : "WINDOW COMPLETE"}`, w / 2, 104);
         }
+        ctx.save();
+        ctx.strokeStyle = "rgba(202,255,54,.36)";
+        ctx.setLineDash([2, 5]);
+        ctx.beginPath(); ctx.moveTo(right, y - 58); ctx.lineTo(right, y + 58); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(202,255,54,.72)";
+        ctx.font = "7px 'IBM Plex Mono', monospace";
+        ctx.textAlign = "right";
+        ctx.fillText("CHAIN HEAD · FIXTURE REPLAY", right - 5, y - 65);
+        ctx.restore();
         blocks.slice(0, -1).forEach((b, i) => {
-            line(b, blocks[i + 1], "rgba(49,255,137,.35)", 2);
-            particle(b, blocks[i + 1], i * .19);
+            const entering = blocks[i + 1].pending;
+            line(b, blocks[i + 1], entering ? "rgba(202,255,54,.42)" : "rgba(49,255,137,.35)", entering ? 1 : 2, entering ? [4, 6] : []);
+            if (!entering) particle(b, blocks[i + 1], i * .19);
         });
         blocks.forEach((b, i) => {
-            const important = w >= 760 || i % 3 === 0 || b === blocks.at(-1) || [state.selected?.id, state.pendingFocusId].includes(b.id);
-            glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", important ? `#${String(b.raw.seqno).slice(-4)}` : "", important ? `${b.raw.tx_count} TX TOTAL` : "", "square");
+            const head = b === committedBlocks.at(-1);
+            const important = w >= 760 || i % 3 === 0 || head || b.pending || [state.selected?.id, state.pendingFocusId].includes(b.id);
+            ctx.save();
+            if (b.pending) ctx.globalAlpha = Math.max(.12, incomingProgress);
+            glowDot(b, head ? 20 : b.pending ? 14 : 10, head ? "#caff36" : b.pending ? "#68e8ff" : "#31ff89", important ? `${b.pending ? "INCOMING " : ""}#${String(b.raw.seqno).slice(-4)}` : "", important ? `${b.raw.tx_count} TX · ${b.pending ? "FIXTURE SIGNAL" : "COMMITTED"}` : "", "square");
+            ctx.restore();
             ctx.fillStyle = "rgba(80,255,150,.18)";
             ctx.font = "7px 'IBM Plex Mono', monospace";
             ctx.textAlign = "center";
             if (important) ctx.fillText(`LT ${String(b.raw.seqno).slice(-3)}·${i}`, b.x, y + 48);
         });
-        const shardData = w < 700 ? state.data.shards.filter((shard) => shard.parent === blocks.at(-1)?.id) : state.data.shards;
+        const shardData = w < 700 ? state.data.shards.filter((shard) => shard.parent === committedBlocks.at(-1)?.id) : state.data.shards;
         const shards = state.layers.shards && state.projection.shards ? shardData.map((shard) => {
-            const parent = blocks.find((b) => b.id === shard.parent);
+            const parent = committedBlocks.find((b) => b.id === shard.parent);
             if (!parent) return null;
             const transition = shard.split_state.includes("split") ? Math.sin(state.elapsed / 900) * 6 : shard.split_state.includes("merge") ? Math.cos(state.elapsed / 900) * 5 : 0;
             const node = { id: shard.id, x: parent.x + shard.lane * 24 + transition, y: y + (shard.lane || -0.45) * 88, type: "shard", raw: shard };
@@ -512,9 +619,9 @@
         }).filter(Boolean) : [];
         shards.forEach((node) => glowDot(node, 8, "#ffcc6b", w < 700 ? "" : node.raw.label, w < 700 ? "" : node.raw.split_state, "diamond"));
         const requestedEntityId = state.pendingFocusId || state.selected?.id || null;
-        const transactionWindow = state.data.transactions.filter((tx) => blocks.some((block) => block.id === tx.block));
+        const transactionWindow = state.data.transactions.filter((tx) => committedBlocks.some((block) => block.id === tx.block));
         const visibleTransactions = w < 700
-            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted", "compute_failed"].includes(tx.state) || [tx.id, tx.from, tx.to].includes(requestedEntityId))
+            ? transactionWindow.filter((tx) => tx.block === committedBlocks.at(-1)?.id || ["bounced", "aborted", "compute_failed"].includes(tx.state) || [tx.id, tx.from, tx.to].includes(requestedEntityId))
             : transactionWindow;
         const txs = visibleTransactions.map((tx, i) => {
             const parent = blocks.find((b) => b.id === tx.block);
@@ -546,7 +653,85 @@
         state.nodes = [...blocks, ...shards, ...txs, ...endpoints];
     }
 
+    function renderAIGalaxies(w, h) {
+        const population = state.data.ai_execution_population;
+        if (!population) return [];
+        const palette = { cyan: "104,232,255", amber: "255,204,107", green: "120,255,178", purple: "181,158,255" };
+        const galaxyNodes = [];
+        const focusedId = state.selected?.raw?.kind === "ai_cluster" ? state.selected.id : null;
+        ctx.save();
+        ctx.fillStyle = "rgba(104,232,255,.48)";
+        ctx.font = "8px 'IBM Plex Mono', monospace";
+        ctx.textAlign = "center";
+        if (w >= 700) ctx.fillText(`AI EXECUTION COSMOS · ${population.concurrent_tasks} MODELED CONCURRENT TASKS · ${population.clusters.length} FIXTURE GALAXIES · NOT LIVE`, w / 2, 104);
+        population.clusters.forEach((cluster, index) => {
+            const cx = w / 2 + cluster.x * w * (w < 700 ? .42 : .39);
+            const cy = h * .48 + cluster.y * h * (w < 700 ? .38 : .36);
+            const focused = focusedId === cluster.id;
+            const radius = ((w < 700 ? 12 : 22) + Math.sqrt(cluster.tasks) * (w < 700 ? .65 : 1.2)) * (focused ? 1.42 : 1);
+            const color = palette[cluster.color] || palette.green;
+            const rotation = (state.lowGpu || reducedMotion ? index * .7 : state.elapsed / (5200 + index * 370)) + index * .9;
+            ctx.save();
+            ctx.globalAlpha = focusedId && !focused ? .1 : focused ? .92 : w < 700 ? .32 : .62;
+            ctx.translate(cx, cy);
+            ctx.rotate(rotation * .16);
+            ctx.strokeStyle = `rgba(${color},.25)`;
+            ctx.lineWidth = .7;
+            ctx.setLineDash([2, 5]);
+            ctx.beginPath(); ctx.ellipse(0, 0, radius * 1.7, radius * .72, 0, 0, Math.PI * 2); ctx.stroke();
+            ctx.rotate(-rotation * .35);
+            ctx.beginPath(); ctx.ellipse(0, 0, radius * 1.15, radius * .48, 0, 0, Math.PI * 2); ctx.stroke();
+            ctx.setLineDash([]);
+            const satellites = focused ? Math.min(14, Math.max(10, Math.round(cluster.agents / 2.5))) : Math.min(7, Math.max(4, Math.round(cluster.agents / 5)));
+            for (let satellite = 0; satellite < satellites; satellite += 1) {
+                const angle = rotation + Math.PI * 2 * satellite / satellites;
+                const orbit = radius * (satellite % 2 ? 1.05 : 1.55);
+                const sx = Math.cos(angle) * orbit;
+                const sy = Math.sin(angle) * orbit * .46;
+                ctx.fillStyle = `rgba(${color},${satellite % 3 === 0 ? .85 : .5})`;
+                ctx.shadowColor = `rgb(${color})`;
+                ctx.shadowBlur = satellite % 3 === 0 ? 9 : 3;
+                if (focused) {
+                    ctx.strokeStyle = `rgba(${color},.13)`;
+                    ctx.lineWidth = .5;
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sx, sy); ctx.stroke();
+                }
+                ctx.beginPath(); ctx.arc(sx, sy, satellite % 3 === 0 ? (w < 700 ? 1.8 : 2.4) : (w < 700 ? 1 : 1.35), 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.shadowBlur = 14;
+            ctx.fillStyle = `rgba(${color},.75)`;
+            ctx.beginPath(); ctx.arc(0, 0, Math.max(3, radius * .16), 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+            const raw = { ...cluster, kind: "ai_cluster", detail: `${cluster.tasks} modeled parallel tasks · ${cluster.agents} agents · ${cluster.terminals} terminals`, population_kind: population.population_kind, source: population.source };
+            galaxyNodes.push({ id: cluster.id, x: cx, y: cy, type: "cluster", raw });
+            if (w >= 700 || index % 2 === 0) {
+                ctx.fillStyle = `rgba(${color},${w < 700 ? .38 : .68})`;
+                ctx.font = `${w < 700 ? 6 : 7}px 'IBM Plex Mono', monospace`;
+                ctx.textAlign = "center";
+                ctx.fillText(`${focused ? "FOCUS · " : ""}${cluster.label}`, cx, cy + radius + 13);
+                if (w >= 700) {
+                    ctx.fillStyle = "rgba(145,185,164,.42)";
+                    ctx.fillText(`${cluster.tasks} TASKS · ${cluster.state.toUpperCase()} · ${cluster.truth.toUpperCase()}${focused ? ` · ${satellites} TASK BUNDLES EXPANDED` : ""}`, cx, cy + radius + 23);
+                }
+            }
+        });
+        ctx.restore();
+        return galaxyNodes;
+    }
+
     function renderAI(w, h) {
+        const galaxyNodes = renderAIGalaxies(w, h);
+        const galaxyFocused = state.selected?.raw?.kind === "ai_cluster";
+        if (galaxyFocused) {
+            ctx.save();
+            ctx.fillStyle = "rgba(104,232,255,.5)";
+            ctx.font = "8px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("AGGREGATE GALAXY VIEW · MODELED TASK BUNDLES · CLEAR TRACE TO RETURN TO T-2048", w / 2, h - 54);
+            ctx.restore();
+            state.nodes = galaxyNodes;
+            return;
+        }
         const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3", "settlement-2048"];
         const phaseCount = state.projection.ai_phase;
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
@@ -604,11 +789,13 @@
         ctx.font = "10px 'IBM Plex Mono', monospace";
         ctx.textAlign = "left";
         ctx.fillText("REMOTE EDGE COMPUTE FIELD", pad, h * .67);
-        state.nodes = [...nodes, ...forkNodes, ...terminals];
+        state.nodes = [...galaxyNodes, ...nodes, ...forkNodes, ...terminals];
     }
 
     function render(now) {
         const rect = canvas.getBoundingClientRect();
+        state.viewportSize = { width: rect.width, height: rect.height };
+        state.labelBoxes = [];
         const delta = Math.min(now - state.lastFrame, 50);
         state.frameSamples.push(delta);
         if (state.frameSamples.length > 180) state.frameSamples.shift();
@@ -636,7 +823,8 @@
             if (state.mode === "chain") renderChain(rect.width, rect.height);
             if (state.mode === "ai") renderAI(rect.width, rect.height);
             semanticEdges();
-            drawEventShockwave(rect.width, rect.height);
+            drawSignalLens();
+            if (state.selected?.raw?.kind !== "ai_cluster") drawEventShockwave(rect.width, rect.height);
             if (state.stress > 1) renderStress(rect.width, rect.height);
             ctx.restore();
             state.frame += 1;
@@ -684,12 +872,16 @@
     function setMode(mode, fromTour = false) {
         if (state.mode !== mode) state.modeTransition = performance.now();
         state.mode = mode;
+        document.body.dataset.matrixMode = mode;
         document.querySelectorAll("[data-mode]").forEach((button) => {
             const active = button.dataset.mode === mode;
             button.classList.toggle("active", active);
             button.setAttribute("aria-selected", String(active));
         });
         const copy = modeCopy[mode];
+        const sigils = { consensus: ["CONSENSUS", "01 · WEIGHT FIELD"], chain: ["BLOCKSPACE", "02 · CAUSAL TIME"], ai: ["INTELLIGENCE", "03 · EVIDENCE PORTAL"] };
+        $("modeSigil").querySelector("span").textContent = sigils[mode][0];
+        $("modeSigil").querySelector("i").textContent = sigils[mode][1];
         $("sceneIndex").textContent = copy[0];
         $("sceneTitle").textContent = copy[1];
         $("sceneSubtitle").textContent = copy[2];
@@ -768,6 +960,8 @@
         });
         const population = data?.validator_population;
         if (population && population.clusters.reduce((sum, cluster) => sum + cluster.count, 0) !== population.population_total) problems.push("validator population total");
+        const aiPopulation = data?.ai_execution_population;
+        if (aiPopulation && aiPopulation.clusters.reduce((sum, cluster) => sum + cluster.tasks, 0) !== aiPopulation.concurrent_tasks) problems.push("AI execution population total");
         if (Array.isArray(data?.graph_events) && new Set(data.graph_events.map((item) => item.cursor)).size !== data.graph_events.length) problems.push("duplicate event cursor");
         return problems;
     }
@@ -776,7 +970,7 @@
         if (!node) return;
         const rect = canvas.getBoundingClientRect();
         const inspectorAllowance = rect.width > 700 ? 155 : 0;
-        state.camera.targetZoom = Math.max(1.08, Math.min(1.42, rect.width < 700 ? 1.14 : 1.26));
+        state.camera.targetZoom = node.raw?.kind === "ai_cluster" ? (rect.width < 700 ? 1.22 : 1.5) : Math.max(1.08, Math.min(1.42, rect.width < 700 ? 1.14 : 1.26));
         state.camera.targetX = rect.width / 2 - node.x - inspectorAllowance;
         state.camera.targetY = rect.height / 2 - node.y;
         state.pointer = { x: node.x, y: node.y };
@@ -807,6 +1001,7 @@
     function inspect(node) {
         const raw = node.raw;
         state.selected = node;
+        if (raw.kind === "ai_cluster" && Number.isFinite(node.x) && Number.isFinite(node.y)) focusCamera(node);
         updateTrace(node);
         $("inspector").classList.add("open");
         if (node.type === "edge") {
@@ -836,8 +1031,9 @@
         else if (node.type === "transaction") facts = [["Value", raw.value], ["Fee", raw.fee], ["State", raw.state], ["Compute", raw.exit_code === undefined ? "exit 0" : `exit ${raw.exit_code} · ${raw.gas_used} gas`], ["Block", raw.block.replace("block-", "#")]];
         else if (node.type === "shard") facts = [["Masterchain", raw.parent.replace("block-", "#")], ["Transactions", raw.tx_count], ["Split state", raw.split_state], ["Lane", raw.lane]];
         else if (node.type === "terminal") facts = [["Region", raw.region], ["Hardware claim", raw.hardware], ["Model", raw.model], ["Capabilities", raw.capabilities.join(", ")], ["Price", raw.price], ["Admission", raw.state], ["Latency", raw.latency], ["Manifest expires", raw.expires_at]];
+        else if (raw.kind === "ai_cluster") facts = [["Modeled tasks", raw.tasks], ["Agent population", raw.agents], ["Terminal population", raw.terminals], ["Aggregate state", raw.state], ["Evidence class", truthLabel(raw.truth)], ["Population", raw.population_kind], ["Source", raw.source]];
         else facts = [["Type", raw.kind], ["Detail", raw.detail], ...(raw.kind === "receipt" ? [["Disclosure", state.receiptMode]] : []), ["Balance", raw.balance || "—"], ["State", raw.state || "active"], ["Truth", truthLabel(truth)], ["Graph", state.mode === "chain" ? "Chain account/contract neighborhood" : "AI task T-2048"]];
-        const marks = { account: "AC", contract: "CT", agent: "AG", service: "SV", terminal: "ET", receipt: "RC", verifier: "VR", settlement: "ST", dispute: "DP", refund: "RF", validator_cluster: "CL" };
+        const marks = { account: "AC", contract: "CT", agent: "AG", service: "SV", terminal: "ET", receipt: "RC", verifier: "VR", settlement: "ST", dispute: "DP", refund: "RF", validator_cluster: "CL", ai_cluster: "GX" };
         $("entityMark").textContent = marks[raw.kind] || kind.slice(0, 2);
         $("entityKind").textContent = kind;
         $("entityName").textContent = name;
@@ -881,6 +1077,7 @@
             ...state.data.transactions.map((raw) => ({ raw, type: "transaction" })),
             ...state.data.shards.map((raw) => ({ raw, type: "shard" })),
             ...state.data.validator_population.clusters.map((raw) => ({ raw: { ...raw, kind: "validator_cluster", detail: `${raw.count} modeled validators · fixture population` }, type: "cluster" })),
+            ...(state.data.ai_execution_population?.clusters || []).map((raw) => ({ raw: { ...raw, kind: "ai_cluster", detail: `${raw.tasks} modeled parallel AI tasks · fixture aggregate`, population_kind: state.data.ai_execution_population.population_kind, source: state.data.ai_execution_population.source }, type: "cluster" })),
             ...state.data.entities.map((raw) => ({ raw, type: "entity" })),
             ...state.data.terminals.map((raw) => ({ raw, type: "terminal" }))
         ];
@@ -937,7 +1134,7 @@
     function openSearchResult(result) {
         const aiEntityIds = new Set(["contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "receipt-rejected", "verifier-3", "settlement-2048", "dispute-17", "refund-17"]);
         const chainEntity = result.type === "entity" && (result.raw.kind === "account" || !aiEntityIds.has(result.raw.id));
-        const mode = ["validator", "cluster"].includes(result.type) ? "consensus" : ["block", "transaction", "shard"].includes(result.type) || chainEntity ? "chain" : "ai";
+        const mode = result.raw.kind === "ai_cluster" ? "ai" : ["validator", "cluster"].includes(result.type) ? "consensus" : ["block", "transaction", "shard"].includes(result.type) || chainEntity ? "chain" : "ai";
         if (result.type === "validator" && result.raw.set && state.data.validator_sets[result.raw.set]) {
             state.validatorScope = "active";
             $("validatorScope").value = "active";
@@ -945,7 +1142,7 @@
             $("validatorSet").value = result.raw.set;
             updateValidatorSummary();
         }
-        if (result.type === "cluster") {
+        if (result.type === "cluster" && result.raw.kind !== "ai_cluster") {
             state.validatorScope = "network";
             $("validatorScope").value = "network";
             updateValidatorSummary();
@@ -968,9 +1165,22 @@
         });
     }
 
+    function activateMode(mode) {
+        const anchors = { consensus: 0, chain: 9000, ai: 15000 };
+        state.elapsed = anchors[mode];
+        state.playing = true;
+        setMode(mode, true);
+        updateTour(false);
+        const url = new URL(location.href);
+        url.searchParams.set("mode", mode);
+        url.searchParams.set("t", String(state.elapsed));
+        history.replaceState(null, "", url);
+        syncPlayButton();
+    }
+
     function bind() {
         addEventListener("resize", resize);
-        document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+        document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => activateMode(button.dataset.mode)));
         document.querySelector(".mode-switch").addEventListener("keydown", (event) => {
             if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
             event.preventDefault();
@@ -978,7 +1188,7 @@
             const current = tabs.indexOf(document.activeElement);
             const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (current + (event.key === "ArrowLeft" ? -1 : 1) + tabs.length) % tabs.length;
             tabs[next].focus();
-            setMode(tabs[next].dataset.mode);
+            activateMode(tabs[next].dataset.mode);
         });
         $("playToggle").addEventListener("click", () => { state.playing = !state.playing; syncPlayButton(); });
         $("restartTour").addEventListener("click", () => { state.elapsed = 0; state.playing = true; updateTour(); syncPlayButton(); });
@@ -1025,6 +1235,7 @@
             $("gpuToggle").textContent = state.lowGpu ? "GPU · LOW" : "GPU · HIGH";
             $("gpuToggle").setAttribute("aria-pressed", String(state.lowGpu));
             document.body.classList.toggle("low-gpu", state.lowGpu);
+            $("hudRenderer").textContent = state.lowGpu ? "RENDER · SEMANTIC 2D FALLBACK" : "RENDER · WEBGL2 + SEMANTIC 2D";
             if (state.data) updateValidatorSummary();
         });
         $("streamToggle").addEventListener("click", simulateTransport);
@@ -1033,6 +1244,7 @@
         $("proofVerify").addEventListener("click", verifyFixtureProof);
         $("stressToggle").addEventListener("click", cycleStress);
         $("entityNavToggle").addEventListener("click", openEntityNavigator);
+        $("explorerToggle").addEventListener("click", () => showExplorerIndex("blocks", 0));
         $("grammarToggle").addEventListener("click", showVisualGrammar);
         $("closeSystem").addEventListener("click", () => closeDialog("systemPanel"));
         $("closeEntityNav").addEventListener("click", () => closeDialog("entityNavigator"));
@@ -1139,6 +1351,17 @@
         $("closeSystem").focus();
     }
 
+    function showSceneAlert(kind, code, title, copy, duration = 1800) {
+        clearTimeout(state.alertTimer);
+        const alert = $("sceneAlert");
+        alert.dataset.kind = kind;
+        $("sceneAlertCode").textContent = code;
+        $("sceneAlertTitle").textContent = title;
+        $("sceneAlertCopy").textContent = copy;
+        alert.hidden = false;
+        if (duration) state.alertTimer = setTimeout(() => { alert.hidden = true; }, duration);
+    }
+
     function showVisualGrammar() {
         showSystem("MATRIX VISUAL GRAMMAR", `<div class="grammar-grid">
             <section class="grammar-group"><h3>ENTITY SHAPES</h3>
@@ -1177,9 +1400,64 @@
         </div>`);
     }
 
+    function explorerRows(view) {
+        if (view === "blocks") return state.data.blocks.slice().reverse().map((block) => ({
+            id: block.id, type: "block", cells: [`#${block.seqno}`, block.timestamp, block.status, `${block.tx_count}`, `${block.shards} / WC ${block.workchain}`]
+        }));
+        if (view === "transactions") return state.data.transactions.map((tx) => ({
+            id: tx.id, type: "transaction", cells: [tx.label, tx.block.replace("block-", "#"), `${tx.from} → ${tx.to}`, tx.value, tx.state.replaceAll("_", " ")]
+        }));
+        if (view === "accounts") return state.data.entities.filter((entity) => ["account", "contract", "agent", "service"].includes(entity.kind)).map((entity) => {
+            const related = state.data.transactions.filter((tx) => tx.from === entity.id || tx.to === entity.id);
+            return { id: entity.id, type: "entity", cells: [entity.label, entity.kind, entity.detail, entity.balance || "—", `${related.length} sampled`] };
+        });
+        if (view === "tvm") return state.data.transactions.map((tx, index) => ({
+            id: tx.id, type: "transaction", cells: [tx.label, tx.state === "compute_failed" ? "compute" : tx.state === "aborted" ? "action" : "compute → action", String(tx.exit_code ?? (tx.state === "success" ? 0 : index + 32)), String(tx.gas_used ?? 12400 + index * 731), tx.state]
+        }));
+        return [
+            { id: "acct-user", type: "entity", cells: ["TOS", "native currency", "OPERATOR", "184.250000000", "chain-reported fixture"] },
+            { id: "contract-task", type: "entity", cells: ["T-2048 ESCROW", "locked budget", "TASK ESCROW", "8.00 TOS", "node-validated fixture"] },
+            { id: "receipt-91", type: "entity", cells: ["R91 RECEIPT", "evidence artifact", "SGP EDGE 04", "hash envelope", `${state.receiptMode} fixture`] }
+        ];
+    }
+
+    function showExplorerIndex(view = "blocks", page = 0) {
+        const views = ["blocks", "transactions", "accounts", "tvm", "assets"];
+        if (!views.includes(view)) view = "blocks";
+        const headings = {
+            blocks: ["BLOCK", "TIME", "FINALITY", "TX TOTAL", "SHARDS / WORKCHAIN"],
+            transactions: ["TRANSACTION", "BLOCK", "ROUTE", "VALUE", "OUTCOME"],
+            accounts: ["ACCOUNT / CONTRACT", "KIND", "DETAIL", "BALANCE", "WINDOW HISTORY"],
+            tvm: ["TRANSACTION", "TVM PHASE", "EXIT", "GAS", "RESULT"],
+            assets: ["ASSET / OBJECT", "CLASS", "OWNER", "AMOUNT", "PROVENANCE"]
+        };
+        const rows = explorerRows(view);
+        const perPage = 5;
+        const pages = Math.max(1, Math.ceil(rows.length / perPage));
+        page = Math.max(0, Math.min(pages - 1, Number(page) || 0));
+        const visible = rows.slice(page * perPage, (page + 1) * perPage);
+        showSystem("EXPLORER INDEX · BOUNDED FIXTURE WINDOW", `<div class="explorer-intro"><b>STATIC INDEX, NOT NETWORK HISTORY</b><span>10 blocks · 243 authoritative transaction total · 16 transaction samples. Pagination, traces and balances below only navigate the bundled deterministic fixture.</span></div>
+            <div class="explorer-tabs" role="tablist" aria-label="Explorer dataset">${views.map((name) => `<button type="button" role="tab" data-explorer-view="${name}" aria-selected="${name === view}">${name.toUpperCase()}</button>`).join("")}</div>
+            <div class="explorer-scroll"><table class="explorer-table"><thead><tr>${headings[view].map((heading) => `<th scope="col">${heading}</th>`).join("")}</tr></thead><tbody>${visible.map((row) => `<tr><td><button type="button" data-explorer-entity="${escapeHtml(row.id)}">${escapeHtml(row.cells[0])}</button></td>${row.cells.slice(1).map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+            <div class="explorer-pages"><span>PAGE ${page + 1} / ${pages} · ${rows.length} FIXTURE RECORDS</span><button type="button" data-explorer-page="${page - 1}" ${page === 0 ? "disabled" : ""}>← PREVIOUS</button><button type="button" data-explorer-page="${page + 1}" ${page === pages - 1 ? "disabled" : ""}>NEXT →</button></div>`);
+        $("systemContent").querySelectorAll("[data-explorer-view]").forEach((button) => button.addEventListener("click", () => showExplorerIndex(button.dataset.explorerView, 0)));
+        $("systemContent").querySelectorAll("[data-explorer-page]").forEach((button) => button.addEventListener("click", () => showExplorerIndex(view, Number(button.dataset.explorerPage))));
+        $("systemContent").querySelectorAll("[data-explorer-entity]").forEach((button) => button.addEventListener("click", () => {
+            closeDialog("systemPanel");
+            search(button.dataset.explorerEntity);
+        }));
+        const url = new URL(location.href);
+        url.searchParams.set("panel", "explorer");
+        url.searchParams.set("view", view);
+        url.searchParams.set("page", String(page + 1));
+        history.replaceState(null, "", url);
+    }
+
     function simulateTransport() {
         if (!state.connected) return;
         state.connected = false;
+        document.body.classList.add("stream-lost");
+        showSceneAlert("signal", "SIGNAL LOST · gd-0007", "GRAPH STREAM INTERRUPTED", "Holding the last deterministic projection.", 0);
         state.playing = false;
         syncPlayButton();
         $("transportState").textContent = "FIXTURE WS · DISCONNECTED";
@@ -1188,11 +1466,16 @@
         const cursorExpired = state.recoveryCount % 2 === 0;
         showSystem("STREAM RECOVERY", `<div class="system-grid"><div class="system-card"><b>CONNECTION LOST</b>last cursor · ${cursorExpired ? "gd-expired" : "gd-0007"}<br>queue · bounded / 0 dropped</div><div class="system-card"><b>RECOVERY POLICY</b>${cursorExpired ? "retained cursor expired" : "request replay from retained cursor"}<br>fallback · compact snapshot</div></div>`);
         setTimeout(() => {
+            document.body.classList.remove("stream-lost");
+            document.body.classList.add("stream-recovering");
+            showSceneAlert("recover", "CURSOR RECOVERY", cursorExpired ? "SNAPSHOT FALLBACK" : "REPLAYING GRAPH DELTAS", cursorExpired ? "Retained cursor expired; loading the compact fixture snapshot." : "Applying retained deltas without duplicate entities.", 0);
             $("transportState").textContent = cursorExpired ? "FIXTURE WS · SNAPSHOT FALLBACK" : "FIXTURE WS · REPLAYING gd-0007";
             $("streamToggle").textContent = "RESYNC…";
         }, 700);
         setTimeout(() => {
             state.connected = true;
+            document.body.classList.remove("stream-lost", "stream-recovering");
+            showSceneAlert("proof", "SIGNAL RESTORED", "GRAPH PROJECTION RESYNCHRONIZED", "Cursor continuity and entity identity checks passed.", 1800);
             $("transportState").textContent = "FIXTURE WS · CONNECTED";
             $("streamToggle").textContent = "DROP STREAM";
             $("systemContent").innerHTML += `<div class="system-card"><b><strong>RESYNC COMPLETE</strong></b>${cursorExpired ? `expired cursor rejected · restored ${state.data.transport.snapshot_cursor} · duplicate IDs discarded` : "cursor resumed without duplication · snapshot not required"}</div>`;
@@ -1204,7 +1487,8 @@
         state.correctionInjected = !state.correctionInjected;
         document.body.classList.remove("reorg-glitch");
         requestAnimationFrame(() => document.body.classList.add("reorg-glitch"));
-        setTimeout(() => document.body.classList.remove("reorg-glitch"), 460);
+        showSceneAlert("signal", "CANONICALITY FRACTURE", state.correctionInjected ? "UPSTREAM VIEWS DIVERGED" : "CANONICAL VIEW RESTORED", "The correction is explicit; no silent graph replacement.", 2100);
+        setTimeout(() => document.body.classList.remove("reorg-glitch"), 760);
         const correction = state.data.corrections[1];
         showSystem("UPSTREAM DISAGREEMENT / CORRECTION", `<div class="system-grid">${state.data.transport.nodes.map((node) => `<div class="system-card"><b>${node.id.toUpperCase()}</b>tip · #${node.tip} · ${node.age}<br>view · ${node.view_hash}<br>state · ${node.status}</div>`).join("")}</div><div class="system-card"><b>${state.correctionInjected ? "EXPLICIT REPLACEMENT APPLIED" : "CORRECTION REWOUND"}</b>${correction.entity} · ${correction.reason}<br>${correction.old_hash} → <strong>${correction.new_hash}</strong><br>No silent full-page reload.</div>`);
         state.data.graph_events = state.data.graph_events.filter((event) => event.cursor !== "gd-0008");
@@ -1249,6 +1533,9 @@
         worker.onmessage = ({ data }) => {
             $("proofVerify").textContent = "VERIFY FIXTURE";
             showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-grid"><div class="system-card"><b><strong>${data.ok ? "FIXTURE HASH PASS" : "PINNED DIGEST MISMATCH"}</strong></b>worker · isolated<br>algorithm · ${data.algorithm}<br>bytes · ${data.bytes.toLocaleString()}<br>digest · ${data.digest.slice(0, 24)}…<br>pinned · ${expected.slice(0, 24)}…</div><div class="system-card"><b>CONTRACT VALIDATION</b>Schema version, unique IDs, graph references, validator weights, event ordering/cursors and population totals passed at load.</div><div class="system-card"><b>NOT A CHAIN PROOF</b>This checks bundled-file integrity and internal fixture consistency only. No BOC, validator signature, canonical chain, trust root, JSON-RPC response, or production WASM verifier was checked.</div></div>`);
+            document.body.classList.toggle("proof-pass", data.ok);
+            showSceneAlert(data.ok ? "proof" : "signal", data.ok ? "LOCAL INTEGRITY PASS" : "INTEGRITY MISMATCH", data.ok ? "FIXTURE DIGEST LOCKED" : "PINNED DIGEST REJECTED", data.ok ? "SHA-256 matched the bundled manifest; this is not a chain proof." : "The bundled payload did not match its pinned manifest.", 2300);
+            setTimeout(() => document.body.classList.remove("proof-pass"), 900);
             worker.terminate();
         };
         worker.onerror = () => { $("proofVerify").textContent = "VERIFY FIXTURE"; showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-card"><b>WORKER FAILED</b>The fixture hash worker could not complete. No verification state was changed.</div>`); worker.terminate(); };
@@ -1338,6 +1625,7 @@
             updateTour();
             if (["consensus", "chain", "ai"].includes(params.get("mode"))) setMode(params.get("mode"));
             if (params.get("entity")) search(params.get("entity"));
+            if (params.get("panel") === "explorer") showExplorerIndex(params.get("view") || "blocks", Math.max(0, Number(params.get("page") || 1) - 1));
         } catch (error) {
             $("tourTitle").textContent = "DATA SIGNAL LOST";
             $("tourCopy").textContent = "Serve this page over HTTP so the static JSON dataset can be loaded.";
