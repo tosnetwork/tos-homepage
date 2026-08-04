@@ -413,6 +413,7 @@
 
     function drawEventShockwave(w, h) {
         if (state.lowGpu || reducedMotion) return;
+        if (state.mode === "ai" && state.selected?.raw?.kind !== "ai_cluster") return;
         const event = [...state.data.graph_events].reverse().find((item) => state.elapsed >= item.at);
         if (!event) return;
         const age = state.elapsed - event.at;
@@ -701,14 +702,14 @@
             const columns = w < 700 ? 2 : 3;
             const row = Math.floor(index / columns);
             const column = index % columns;
-            const cx = w * (w < 700 ? .27 + column * .46 : .18 + column * .32);
-            const cy = h * (w < 700 ? .27 + row * .23 : .30 + row * .40);
             const focused = focusedId === cluster.id;
-            const radius = ((w < 700 ? 12 : 22) + Math.sqrt(cluster.tasks) * (w < 700 ? .65 : 1.2)) * (focused ? 1.42 : overview ? (w < 700 ? 1.18 : 1.48) : 1);
+            const cx = focused ? w * (w < 700 ? .5 : .42) : w * (w < 700 ? .27 + column * .46 : .18 + column * .32);
+            const cy = focused ? h * (w < 700 ? .46 : .49) : h * (w < 700 ? .27 + row * .23 : .30 + row * .40);
+            const radius = ((w < 700 ? 12 : 22) + Math.sqrt(cluster.tasks) * (w < 700 ? .65 : 1.2)) * (focused ? 1.42 : overview ? (w < 700 ? 1.34 : 1.58) : 1);
             const color = palette[cluster.color] || palette.green;
             const rotation = (state.lowGpu || reducedMotion ? index * .7 : state.elapsed / (5200 + index * 370)) + index * .9;
             ctx.save();
-            ctx.globalAlpha = focusedId && !focused ? .1 : focused ? .92 : w < 700 ? .32 : .62;
+            ctx.globalAlpha = focusedId && !focused ? .1 : focused ? .92 : w < 700 ? .5 : .68;
             ctx.translate(cx, cy);
             ctx.rotate(rotation * .16);
             ctx.strokeStyle = `rgba(${color},.25)`;
@@ -728,7 +729,7 @@
                 const ty = Math.sin(angle + jitter) * radius * (w < 700 ? .92 : 1.28) * distance;
                 const hot = task % 11 === 0;
                 const pulse = state.lowGpu || reducedMotion ? 1 : .62 + .38 * Math.sin(state.elapsed / 280 + task * 1.7);
-                ctx.fillStyle = `rgba(${color},${(hot ? .96 : w < 700 ? .32 : .44) * pulse})`;
+                ctx.fillStyle = `rgba(${color},${(hot ? .96 : w < 700 ? .46 : .48) * pulse})`;
                 ctx.shadowColor = `rgb(${color})`;
                 ctx.shadowBlur = hot ? 7 : 0;
                 ctx.beginPath(); ctx.arc(tx, ty, hot ? (w < 700 ? 1.5 : 1.9) : (w < 700 ? .72 : .95), 0, Math.PI * 2); ctx.fill();
@@ -752,10 +753,21 @@
             ctx.shadowBlur = 14;
             ctx.fillStyle = `rgba(${color},.75)`;
             ctx.beginPath(); ctx.arc(0, 0, Math.max(3, radius * .16), 0, Math.PI * 2); ctx.fill();
+            const loadShare = cluster.tasks / population.concurrent_tasks;
+            ctx.shadowBlur = 0;
+            ctx.lineWidth = w < 700 ? 1.2 : 1.8;
+            ctx.strokeStyle = `rgba(${color},.12)`;
+            ctx.beginPath(); ctx.arc(0, 0, radius * .42, 0, Math.PI * 2); ctx.stroke();
+            ctx.strokeStyle = `rgba(${color},.9)`;
+            ctx.beginPath(); ctx.arc(0, 0, radius * .42, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * loadShare); ctx.stroke();
             ctx.restore();
+            ctx.fillStyle = `rgba(${color},${w < 700 ? .72 : .9})`;
+            ctx.font = `600 ${w < 700 ? 6 : 7}px 'IBM Plex Mono', monospace`;
+            ctx.textAlign = "center";
+            ctx.fillText(`${cluster.tasks}×`, cx, cy + (w < 700 ? 2 : 3));
             const raw = { ...cluster, kind: "ai_cluster", detail: `${cluster.tasks} modeled parallel tasks · ${cluster.agents} agents · ${cluster.terminals} terminals`, population_kind: population.population_kind, source: population.source };
             galaxyNodes.push({ id: cluster.id, x: cx, y: cy, type: "cluster", hitRadius: radius * (w < 700 ? 2.2 : 2.8), raw });
-            if (w >= 700 || index % 2 === 0) {
+            if (focused || (!focusedId && (w >= 700 || overview))) {
                 ctx.fillStyle = `rgba(${color},${w < 700 ? .38 : .68})`;
                 ctx.font = `600 ${w < 700 ? 7 : 9}px 'IBM Plex Mono', monospace`;
                 ctx.textAlign = "center";
@@ -1073,8 +1085,16 @@
     function focusCamera(node) {
         if (!node) return;
         const rect = canvas.getBoundingClientRect();
+        if (node.raw?.kind === "ai_cluster") {
+            state.camera.targetZoom = rect.width < 700 ? .94 : 1;
+            state.camera.targetX = 0;
+            state.camera.targetY = 0;
+            state.pointer = { x: node.x, y: node.y };
+            $("srStatus").textContent = `Execution field opened for ${node.raw.label || node.id}.`;
+            return;
+        }
         const inspectorAllowance = rect.width > 700 ? 155 : 0;
-        state.camera.targetZoom = node.raw?.kind === "ai_cluster" ? (rect.width < 700 ? 1.22 : 1.5) : Math.max(1.08, Math.min(1.42, rect.width < 700 ? 1.14 : 1.26));
+        state.camera.targetZoom = Math.max(1.08, Math.min(1.42, rect.width < 700 ? 1.14 : 1.26));
         state.camera.targetX = rect.width / 2 - node.x - inspectorAllowance;
         state.camera.targetY = rect.height / 2 - node.y;
         state.pointer = { x: node.x, y: node.y };
