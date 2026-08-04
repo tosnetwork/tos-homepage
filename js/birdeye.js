@@ -33,6 +33,7 @@
         pendingFocusId: null,
         recoveryCount: 0,
         stressProbe: null,
+        aiSignalsRendered: 0,
         traceIds: null,
         frame: 0,
         labelBoxes: [],
@@ -659,11 +660,19 @@
         const palette = { cyan: "104,232,255", amber: "255,204,107", green: "120,255,178", purple: "181,158,255" };
         const galaxyNodes = [];
         const focusedId = state.selected?.raw?.kind === "ai_cluster" ? state.selected.id : null;
+        const taskBudget = state.lowGpu ? 72 : w < 700 ? 144 : population.concurrent_tasks;
+        state.aiSignalsRendered = taskBudget;
+        let remainingTasks = taskBudget;
+        const renderedByCluster = population.clusters.map((cluster, index) => {
+            const count = index === population.clusters.length - 1 ? remainingTasks : Math.round(taskBudget * cluster.tasks / population.concurrent_tasks);
+            remainingTasks -= count;
+            return count;
+        });
         ctx.save();
         ctx.fillStyle = "rgba(104,232,255,.48)";
         ctx.font = "8px 'IBM Plex Mono', monospace";
         ctx.textAlign = "center";
-        if (w >= 700) ctx.fillText(`AI EXECUTION COSMOS · ${population.concurrent_tasks} MODELED CONCURRENT TASKS · ${population.clusters.length} FIXTURE GALAXIES · NOT LIVE`, w / 2, 104);
+        if (w >= 700) ctx.fillText(`AI EXECUTION COSMOS · ${population.concurrent_tasks} MODELED CONCURRENT TASKS · ${taskBudget} TASK SIGNALS RENDERED · ${population.clusters.length} FIXTURE GALAXIES · NOT LIVE`, w / 2, 104);
         population.clusters.forEach((cluster, index) => {
             const cx = w / 2 + cluster.x * w * (w < 700 ? .42 : .39);
             const cy = h * .48 + cluster.y * h * (w < 700 ? .38 : .36);
@@ -682,6 +691,21 @@
             ctx.rotate(-rotation * .35);
             ctx.beginPath(); ctx.ellipse(0, 0, radius * 1.15, radius * .48, 0, 0, Math.PI * 2); ctx.stroke();
             ctx.setLineDash([]);
+            const taskSignals = renderedByCluster[index];
+            for (let task = 0; task < taskSignals; task += 1) {
+                const distance = Math.sqrt((task + .5) / taskSignals);
+                const arm = task % 3;
+                const angle = rotation * .55 + distance * 8.4 + arm * Math.PI * 2 / 3;
+                const jitter = ((task * 37 + index * 19) % 17 - 8) / 45;
+                const tx = Math.cos(angle + jitter) * radius * (w < 700 ? 2.15 : 3.05) * distance;
+                const ty = Math.sin(angle + jitter) * radius * (w < 700 ? .92 : 1.28) * distance;
+                const hot = task % 11 === 0;
+                const pulse = state.lowGpu || reducedMotion ? 1 : .62 + .38 * Math.sin(state.elapsed / 280 + task * 1.7);
+                ctx.fillStyle = `rgba(${color},${(hot ? .96 : w < 700 ? .32 : .44) * pulse})`;
+                ctx.shadowColor = `rgb(${color})`;
+                ctx.shadowBlur = hot ? 7 : 0;
+                ctx.beginPath(); ctx.arc(tx, ty, hot ? (w < 700 ? 1.5 : 1.9) : (w < 700 ? .72 : .95), 0, Math.PI * 2); ctx.fill();
+            }
             const satellites = focused ? Math.min(14, Math.max(10, Math.round(cluster.agents / 2.5))) : Math.min(7, Math.max(4, Math.round(cluster.agents / 5)));
             for (let satellite = 0; satellite < satellites; satellite += 1) {
                 const angle = rotation + Math.PI * 2 * satellite / satellites;
@@ -711,7 +735,7 @@
                 ctx.fillText(`${focused ? "FOCUS · " : ""}${cluster.label}`, cx, cy + radius + 13);
                 if (w >= 700) {
                     ctx.fillStyle = "rgba(145,185,164,.42)";
-                    ctx.fillText(`${cluster.tasks} TASKS · ${cluster.state.toUpperCase()} · ${cluster.truth.toUpperCase()}${focused ? ` · ${satellites} TASK BUNDLES EXPANDED` : ""}`, cx, cy + radius + 23);
+                    ctx.fillText(`${cluster.tasks} TASKS · ${renderedByCluster[index]} SIGNALS · ${cluster.state.toUpperCase()} · ${cluster.truth.toUpperCase()}${focused ? ` · ${satellites} AGENT BUNDLES` : ""}`, cx, cy + radius + 23);
                 }
             }
         });
@@ -831,7 +855,8 @@
             if (state.frame % 12 === 0) {
                 $("hudMode").textContent = `PROJECTION · ${state.mode.toUpperCase()}`;
                 $("hudFrame").textContent = `FRAME · ${String(state.frame).padStart(6, "0")}`;
-                $("hudEntities").textContent = `VISIBLE · ${String(state.nodes.length + state.edges.length).padStart(3, "0")}`;
+                const visibleSignals = state.nodes.length + state.edges.length + (state.mode === "ai" ? state.aiSignalsRendered : 0);
+                $("hudEntities").textContent = `VISIBLE · ${String(visibleSignals).padStart(3, "0")}`;
                 $("hudCamera").textContent = `LENS · ${state.camera.zoom.toFixed(2)}× / ${Math.round(state.camera.x)},${Math.round(state.camera.y)}`;
                 const activeEvent = [...state.data.graph_events].reverse().find((item) => item.at <= state.elapsed);
                 $("hudSignal").textContent = `SIGNAL · ${activeEvent ? `${activeEvent.cursor} ${activeEvent.kind.toUpperCase()}` : "SNAPSHOT"}`;
