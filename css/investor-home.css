@@ -1290,6 +1290,114 @@ h3 {
     margin-top: 30px;
 }
 
+.mesh {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+}
+
+.mesh > .shell {
+    position: relative;
+    z-index: 2;
+}
+
+.mesh-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin: 36px 0;
+}
+
+.mesh-flow-before,
+.mesh-flow-after {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.mesh-flow-after {
+    border-color: var(--line-strong);
+    background: linear-gradient(180deg, rgba(114, 210, 178, 0.06), transparent);
+}
+
+.mesh-flow > div > small {
+    display: block;
+    margin-bottom: 16px;
+    color: var(--mint);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mesh-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+}
+
+.mesh-chain span {
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.mesh-chain-wide span:last-child {
+    border-color: var(--line-strong);
+    color: var(--cyan-bright);
+}
+
+.mesh-chain i {
+    color: var(--mint);
+    font-style: normal;
+}
+
+.mesh-flow-after > p {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.mesh-tier-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.mesh-tier {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.mesh-tier-band {
+    display: block;
+    margin-bottom: 14px;
+    color: var(--cyan);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.mesh-tier h3 {
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.mesh-tier p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
 .vision-section {
     padding-top: 32px;
 }
@@ -2671,8 +2779,13 @@ body.music-player-open {
     .shift-grid,
     .principles-grid,
     .leverage-grid,
-    .ard-value-grid {
+    .ard-value-grid,
+    .mesh-tier-grid {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .mesh-chain-wide {
+        gap: 8px 10px;
     }
 
     .shift-card {
@@ -2824,6 +2937,7 @@ body.music-player-open {
     .principles-grid,
     .leverage-grid,
     .ard-value-grid,
+    .mesh-tier-grid,
     .openfox-loop,
     .token-metrics,
     .transaction-flow,

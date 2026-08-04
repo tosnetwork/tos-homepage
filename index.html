@@ -28,6 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/investor-home.css?v=20260802">
+    <link rel="stylesheet" href="css/mesh-animation.css?v=20260805">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -64,6 +65,7 @@
                 <a href="#a2a">A2A economy</a>
                 <a href="#openfox">OpenFox</a>
                 <a href="#ard">ARD</a>
+                <a href="#mesh">Agent mesh</a>
                 <a href="#edge">Physical AI</a>
                 <a href="#foundation">Foundation</a>
                 <a href="#economics">Token</a>
@@ -491,6 +493,70 @@
                 <a class="text-link ard-spec-link" href="https://agenticresourcediscovery.org/spec/" target="_blank" rel="noopener">
                     Read the open ARD specification <span aria-hidden="true">↗</span>
                 </a>
+            </div>
+        </section>
+
+        <section class="section mesh" id="mesh">
+            <div class="shell">
+                <div class="section-intro narrow reveal">
+                    <p class="kicker">The compute shift underneath the network</p>
+                    <h2>Intelligence is leaving the data center.</h2>
+                    <p>
+                        Open-weight models in the 8–14B range now run directly on a Mac
+                        mini, a gaming PC, a home NAS, or a Jetson-class box—capable enough
+                        for tool calling, coding, and retrieval, not just chat. That turns a
+                        growing population of ordinary owner-operated devices into potential
+                        agent nodes, not just endpoints.
+                    </p>
+                </div>
+
+                <div class="mesh-flow reveal" role="group" aria-label="Request routing across compute tiers">
+                    <div class="mesh-flow-before">
+                        <small>Cloud-only pattern</small>
+                        <div class="mesh-chain">
+                            <span>User</span><i aria-hidden="true">→</i><span>Cloud frontier model</span>
+                        </div>
+                    </div>
+                    <div class="mesh-flow-after">
+                        <small>Agent mesh pattern</small>
+                        <div class="mesh-chain mesh-chain-wide">
+                            <span>User</span><i aria-hidden="true">→</i>
+                            <span>Local agent</span><i aria-hidden="true">→</i>
+                            <span>Nearby edge node</span><i aria-hidden="true">→</i>
+                            <span>Regional compute</span><i aria-hidden="true">→</i>
+                            <span>Cloud frontier model</span>
+                        </div>
+                        <p>Escalates outward only when the nearer tier can't meet the request's capability, latency, privacy, or evidence bar.</p>
+                    </div>
+                </div>
+
+                <div class="mesh-tier-grid" role="group" aria-label="Compute tiers by model scale">
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">2–4B</span>
+                        <h3>Mobile AI</h3>
+                        <p>Phones, wearables, IoT. Voice, control loops, sensor interpretation.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">8–14B</span>
+                        <h3>Edge AI</h3>
+                        <p>Mac mini, MacBook, gaming PC, NAS, Jetson-class boxes. Agents, coding, RAG, tool calling.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">30–70B</span>
+                        <h3>Regional AI</h3>
+                        <p>Enterprise and aggregation-tier servers. Knowledge bases, complex reasoning.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">200B+</span>
+                        <h3>Cloud Frontier AI</h3>
+                        <p>Data-center deployments. Frontier research, large-scale training.</p>
+                    </article>
+                </div>
+
+                <div class="openfox-boundary reveal">
+                    <strong>Not a bet against any model provider.</strong>
+                    <p>TOS does not train models and is not trying to be preferred over any foundation-model provider or inference stack. It is neutral to which model a node runs—its job is the identity, discovery, quoting, evidence, and settlement that let that node be found, trusted, and paid at whichever tier the request lands on.</p>
+                </div>
             </div>
         </section>
 
@@ -1030,6 +1096,7 @@
                     <a href="#a2a">A2A economy</a>
                     <a href="#openfox">OpenFox</a>
                     <a href="#ard">ARD discovery</a>
+                    <a href="#mesh">Agent mesh</a>
                     <a href="#economics">Token economics</a>
                     <a href="#roadmap">Roadmap</a>
                 </div>
@@ -1058,6 +1125,7 @@
     </footer>
 
     <script src="js/investor-home.js?v=20260802"></script>
+    <script src="js/mesh-animation.js?v=20260805"></script>
     <script src="js/tos-music.js?v=20260802"></script>
 </body>
 </html>

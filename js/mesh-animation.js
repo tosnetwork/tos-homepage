@@ -1,14 +1,14 @@
 /**
- * TOS Network - BlockDAG Animation
- * Dynamic DAG (Directed Acyclic Graph) visualization
+ * TOS Network - Agent Mesh Animation
+ * Dynamic node-and-edge network visualization
  */
 
 (function() {
   'use strict';
 
-  class DAGAnimation {
+  class MeshAnimation {
     constructor() {
-      this.heroSection = document.querySelector('.hero');
+      this.hostSection = document.querySelector('.mesh');
       this.canvas = null;
       this.ctx = null;
       this.nodes = [];
@@ -27,13 +27,13 @@
         edgeOpacity: 0.4,
         nodeOpacity: 0.75,
         colors: {
-          blue: '#4A90E2',
-          blueLight: '#60a5fa',
-          blueDark: '#3b82f6',
-          red: '#ef4444',
-          redLight: '#f87171',
-          edge: '#60a5fa',
-          edgeGlow: '#93c5fd'
+          blue: '#78cfe7',
+          blueLight: '#b2e7f3',
+          blueDark: '#4fb8d6',
+          red: '#72d2b2',
+          redLight: '#9de3cd',
+          edge: '#78cfe7',
+          edgeGlow: '#b2e7f3'
         },
         // 3D depth effect
         depthScale: 0.3,
@@ -49,19 +49,19 @@
     }
 
     init() {
-      if (!this.heroSection) return;
+      if (!this.hostSection) return;
 
       // Create canvas container
-      const container = document.createElement('div');
-      container.className = 'dag-animation-container';
+      this.container = document.createElement('div');
+      this.container.className = 'mesh-animation-container';
 
       // Create canvas
       this.canvas = document.createElement('canvas');
-      this.canvas.className = 'dag-canvas';
-      container.appendChild(this.canvas);
+      this.canvas.className = 'mesh-animation-canvas';
+      this.container.appendChild(this.canvas);
 
-      // Insert at the beginning of hero section
-      this.heroSection.insertBefore(container, this.heroSection.firstChild);
+      // Insert at the beginning of the host section
+      this.hostSection.insertBefore(this.container, this.hostSection.firstChild);
 
       // Get context
       this.ctx = this.canvas.getContext('2d');
@@ -80,7 +80,7 @@
     }
 
     setupCanvas() {
-      const rect = this.heroSection.getBoundingClientRect();
+      const rect = this.container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
 
       this.canvas.width = rect.width * dpr;
@@ -539,10 +539,10 @@
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      new DAGAnimation();
+      new MeshAnimation();
     });
   } else {
-    new DAGAnimation();
+    new MeshAnimation();
   }
 
 })();
