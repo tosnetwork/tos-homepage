@@ -418,7 +418,19 @@
         const age = state.elapsed - event.at;
         if (age > 1200) return;
         const progress = age / 1200;
-        const center = state.mode === "consensus" ? { x: w * .5, y: h * .5 } : state.mode === "chain" ? { x: w * (.18 + .64 * (event.state?.block_count || state.projection.block_count) / 10), y: h * .42 } : { x: w * .58, y: h * .43 };
+        const anchors = {
+            "gd-0001": ["block-4181741"],
+            "gd-0002": ["block-4181741"],
+            "gd-0003": ["shard-a-1741"],
+            "gd-0004": ["contract-task"],
+            "gd-0005": ["receipt-91"],
+            "gd-0006": ["edge-syd"],
+            "gd-0007": ["settlement-2048"],
+            "gd-0008": ["block-4181740"]
+        };
+        const semanticAnchor = (anchors[event.cursor] || []).map((id) => state.nodes.find((node) => node.id === id)).find(Boolean);
+        const chainHead = state.nodes.filter((node) => node.type === "block" && !node.pending).sort((a, b) => Number(b.raw.seqno) - Number(a.raw.seqno))[0];
+        const center = semanticAnchor || (state.mode === "consensus" ? state.nodes.find((node) => node.id === "block-4181741") : state.mode === "chain" ? chainHead : null) || { x: w * .5, y: h * .5 };
         ctx.save();
         ctx.globalAlpha = 1 - progress;
         ctx.strokeStyle = event.kind === "retract" ? "#ff6378" : event.kind === "snapshot" ? "#68e8ff" : "#78ffb2";
@@ -426,7 +438,9 @@
         ctx.beginPath(); ctx.arc(center.x, center.y, 18 + progress * Math.min(w, h) * .34, 0, Math.PI * 2); ctx.stroke();
         ctx.font = "8px 'IBM Plex Mono', monospace";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.fillText(`${event.cursor} · ${event.kind.toUpperCase()}`, center.x + 14, center.y - 16 - progress * 24);
+        const labelOnLeft = center.x > w * .72;
+        ctx.textAlign = labelOnLeft ? "right" : "left";
+        ctx.fillText(`${event.cursor} · ${event.kind.toUpperCase()}`, center.x + (labelOnLeft ? -14 : 14), center.y - 16 - progress * 24);
         ctx.restore();
     }
 
@@ -674,10 +688,14 @@
         ctx.textAlign = "center";
         if (w >= 700) ctx.fillText(`AI EXECUTION COSMOS · ${population.concurrent_tasks} MODELED CONCURRENT TASKS · ${taskBudget} TASK SIGNALS RENDERED · ${population.clusters.length} FIXTURE GALAXIES · NOT LIVE`, w / 2, 104);
         population.clusters.forEach((cluster, index) => {
-            const cx = w / 2 + cluster.x * w * (w < 700 ? .42 : .39);
-            const cy = h * .48 + cluster.y * h * (w < 700 ? .38 : .36);
+            const overview = !focusedId;
+            const columns = w < 700 ? 2 : 3;
+            const row = Math.floor(index / columns);
+            const column = index % columns;
+            const cx = w * (w < 700 ? .27 + column * .46 : .18 + column * .32);
+            const cy = h * (w < 700 ? .27 + row * .23 : .30 + row * .40);
             const focused = focusedId === cluster.id;
-            const radius = ((w < 700 ? 12 : 22) + Math.sqrt(cluster.tasks) * (w < 700 ? .65 : 1.2)) * (focused ? 1.42 : 1);
+            const radius = ((w < 700 ? 12 : 22) + Math.sqrt(cluster.tasks) * (w < 700 ? .65 : 1.2)) * (focused ? 1.42 : overview ? (w < 700 ? 1.18 : 1.48) : 1);
             const color = palette[cluster.color] || palette.green;
             const rotation = (state.lowGpu || reducedMotion ? index * .7 : state.elapsed / (5200 + index * 370)) + index * .9;
             ctx.save();
@@ -743,19 +761,64 @@
         return galaxyNodes;
     }
 
+    function renderGalaxyExecutionDetail(w, h, galaxyNodes) {
+        const cluster = state.selected.raw;
+        const core = galaxyNodes.find((node) => node.id === cluster.id);
+        if (!core) { state.nodes = galaxyNodes; return; }
+        const reasoning = cluster.id === "ai-galaxy-reasoning";
+        const realIds = ["contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "settlement-2048"];
+        const aggregateStages = [
+            ["AGENT POOL", "agent", `${cluster.agents} modeled agents coordinating tasks`],
+            ["TASK ESCROWS", "contract", `${cluster.tasks} modeled task escrows in aggregate`],
+            ["SERVICE ROUTERS", "service", `${Math.max(3, Math.round(cluster.agents / 4))} modeled service policies`],
+            ["EDGE TERMINALS", "terminal", `${cluster.terminals} modeled admitted terminals`],
+            ["RECEIPT STREAM", "receipt", `${cluster.tasks} modeled receipt slots`],
+            ["SETTLEMENT", "settlement", `${cluster.state} aggregate execution state`]
+        ];
+        const sourceEntities = reasoning
+            ? realIds.map((id) => state.data.entities.find((entity) => entity.id === id)).filter(Boolean)
+            : aggregateStages.map(([label, kind, detail], index) => ({ id: `${cluster.id}-stage-${index}`, label, kind: "ai_stage", stage_kind: kind, detail, state: cluster.state, truth: cluster.truth, population_kind: cluster.population_kind }));
+        const rx = w < 700 ? 112 : 215;
+        const ry = w < 700 ? 92 : 132;
+        const stageNodes = sourceEntities.map((entity, index) => {
+            const angle = -Math.PI / 2 + Math.PI * 2 * index / sourceEntities.length;
+            return { id: entity.id, x: core.x + Math.cos(angle) * rx, y: core.y + Math.sin(angle) * ry, type: entity.kind === "terminal" ? "terminal" : "entity", raw: entity };
+        });
+        stageNodes.forEach((node, index) => {
+            const next = stageNodes[(index + 1) % stageNodes.length];
+            directedLine(node, next, reasoning ? "rgba(120,255,178,.42)" : "rgba(104,232,255,.34)", 1.2, reasoning ? [] : [4, 5]);
+            particle(node, next, index / stageNodes.length, reasoning ? "#78ffb2" : "#68e8ff");
+        });
+        stageNodes.forEach((node) => {
+            const kind = node.raw.stage_kind || node.raw.kind;
+            const shape = kind === "terminal" ? "hex" : kind === "receipt" ? "diamond" : "square";
+            const label = w < 700 ? node.raw.label.split(" ")[0] : node.raw.label;
+            glowDot(node, kind === "terminal" ? 13 : 11, reasoning ? "#78ffb2" : "#68e8ff", label, reasoning ? kind.toUpperCase() : "MODELED AGGREGATE", shape);
+        });
+        ctx.save();
+        ctx.fillStyle = reasoning ? "rgba(120,255,178,.72)" : "rgba(104,232,255,.68)";
+        ctx.font = "8px 'IBM Plex Mono', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(`${cluster.label} · ${reasoning ? "T-2048 FIXTURE EXECUTION" : "MODELED AGGREGATE EXECUTION"} · CLEAR TRACE TO RETURN`, core.x, core.y - ry - 28);
+        ctx.restore();
+        state.nodes = [...galaxyNodes, ...stageNodes];
+    }
+
     function renderAI(w, h) {
         const galaxyNodes = renderAIGalaxies(w, h);
         const galaxyFocused = state.selected?.raw?.kind === "ai_cluster";
-        if (galaxyFocused) {
+        if (!galaxyFocused) {
             ctx.save();
             ctx.fillStyle = "rgba(104,232,255,.5)";
             ctx.font = "8px 'IBM Plex Mono', monospace";
             ctx.textAlign = "center";
-            ctx.fillText("AGGREGATE GALAXY VIEW · MODELED TASK BUNDLES · CLEAR TRACE TO RETURN TO T-2048", w / 2, h - 54);
+            ctx.fillText("SELECT A GALAXY TO ENTER ITS CONTRACT EXECUTION FIELD", w / 2, h - 54);
             ctx.restore();
             state.nodes = galaxyNodes;
             return;
         }
+        renderGalaxyExecutionDetail(w, h, galaxyNodes);
+        return;
         const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3", "settlement-2048"];
         const phaseCount = state.projection.ai_phase;
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
