@@ -36,9 +36,24 @@
 
     <main class="be-main" id="birdeyeMain">
         <section class="viewport" aria-labelledby="sceneTitle">
-            <canvas id="matrixCanvas" tabindex="0" aria-label="Animated TOS network graph. Use arrow keys to cycle entities and Enter to inspect."></canvas>
+            <div class="matrix-boot" id="matrixBoot" aria-hidden="true">
+                <span>TOS/BIRDEYE :: LOAD FIXTURE GRAPH</span>
+                <span id="bootSchema">VALIDATE FIXTURE ..... PENDING</span>
+                <span>RESTORE CURSOR ....... gd-0001</span>
+                <span>PROJECT SEMANTIC FIELD</span>
+                <strong>WAKE THE MATRIX</strong>
+            </div>
+            <canvas id="matrixCanvas" tabindex="0" aria-label="Animated TOS network graph. Use arrow keys to cycle entities, Enter to inspect, mouse wheel to zoom, drag to pan, and double-click to reset the camera."></canvas>
             <div class="scanline" aria-hidden="true"></div>
             <div class="scene-vignette" aria-hidden="true"></div>
+            <div class="matrix-hud" aria-hidden="true">
+                <span id="hudMode">PROJECTION · CONSENSUS</span>
+                <span id="hudFrame">FRAME · 000000</span>
+                <span id="hudEntities">VISIBLE · 000</span>
+                <span id="hudCamera">LENS · 1.00× / 0,0</span>
+                <span>RENDER · SEMANTIC 2D</span>
+                <span id="hudSignal">SIGNAL · GRAPH EVENT CLOCK</span>
+            </div>
 
             <div class="scene-title">
                 <span id="sceneIndex">01 / SKYVIEW</span>
@@ -56,6 +71,13 @@
                 <span>GUIDED SIGNAL</span>
                 <strong id="tourTitle">NETWORK AWAKENS</strong>
                 <p id="tourCopy">Current validator set materializes around the masterchain backbone.</p>
+            </div>
+
+            <div class="trace-status" id="traceStatus" hidden aria-live="polite">
+                <span>CAUSAL TRACE</span>
+                <strong id="traceTitle">NO ENTITY SELECTED</strong>
+                <em id="traceMeta">0 related signals</em>
+                <button id="clearTrace" type="button">CLEAR TRACE</button>
             </div>
 
             <button class="soundless-note" id="demoNotice" type="button" aria-expanded="false">
@@ -85,7 +107,7 @@
             <p class="entity-kind" id="entityKind">MASTERCHAIN BLOCK</p>
             <h2 id="entityName">#4,181,741</h2>
             <p class="entity-id" id="entityId">-1:8000000000000000:4181741</p>
-            <div class="truth-badge" id="truthBadge"><i></i> NODE VALIDATED</div>
+            <div class="truth-badge" id="truthBadge" data-truth="node_validated"><i aria-hidden="true"></i> NODE VALIDATED FIXTURE</div>
             <div class="inspector-tabs" role="tablist">
                 <button id="tabFacts" class="active" data-inspector-tab="facts" role="tab" aria-selected="true" aria-controls="entityFacts">Facts</button>
                 <button id="tabRelations" data-inspector-tab="relations" role="tab" aria-selected="false" aria-controls="relationsPanel">Relations</button>

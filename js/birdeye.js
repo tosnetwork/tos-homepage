@@ -27,7 +27,15 @@
         pointer: { x: -1000, y: -1000 },
         lastDialogTrigger: null,
         frameSamples: [],
-        projection: { block_count: 3, signatures: false, shards: false, ai_phase: 2, expired: [] }
+        projection: { block_count: 10, signatures: false, shards: false, ai_phase: 2, expired: [] },
+        pendingFocusId: null,
+        recoveryCount: 0,
+        stressProbe: null,
+        traceIds: null,
+        frame: 0,
+        modeTransition: 0,
+        parallax: { x: 0, y: 0 },
+        camera: { zoom: 1, targetZoom: 1, x: 0, y: 0, targetX: 0, targetY: 0, dragging: false, moved: false, dragX: 0, dragY: 0 }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -39,13 +47,14 @@
 
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
 
-    function makeRain() {
+    function makeRain(data) {
         const rain = $("rain");
-        const glyphs = "01TOSアイネットワーク鳥瞰";
+        rain.replaceChildren();
+        const tokens = [data.meta.schema_version, ...data.graph_events.map((event) => event.cursor), ...data.blocks.map((block) => String(block.seqno)), ...data.entities.map((entity) => entity.id)];
         const columns = Math.min(44, Math.ceil(innerWidth / 34));
         for (let i = 0; i < columns; i += 1) {
             const column = document.createElement("span");
-            column.textContent = Array.from({ length: 20 }, (_, row) => glyphs[(i * 7 + row * 3) % glyphs.length]).join("\n");
+            column.textContent = Array.from({ length: 20 }, (_, row) => tokens[(i * 7 + row * 3) % tokens.length]).join("\n");
             column.style.left = `${(i / columns) * 100}%`;
             column.style.animationDelay = `${-(i * 1.7) % 14}s`;
             column.style.animationDuration = `${10 + (i * 5) % 12}s`;
@@ -74,6 +83,76 @@
         ctx.setLineDash([]);
     }
 
+    function directedLine(a, b, color, width = 1, dash = []) {
+        line(a, b, color, width, dash);
+        const angle = Math.atan2(b.y - a.y, b.x - a.x);
+        const t = .72;
+        const x = a.x + (b.x - a.x) * t;
+        const y = a.y + (b.y - a.y) * t;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(6, 0);
+        ctx.lineTo(-4, -3);
+        ctx.lineTo(-4, 3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawMatrixField(w, h) {
+        const horizon = h * .52;
+        ctx.save();
+        const px = state.lowGpu ? 0 : (state.pointer.x - w / 2) * .012;
+        const py = state.lowGpu ? 0 : (state.pointer.y - h / 2) * .008;
+        state.parallax.x += (px - state.parallax.x) * .06;
+        state.parallax.y += (py - state.parallax.y) * .06;
+        ctx.translate(state.parallax.x, state.parallax.y);
+        ctx.strokeStyle = "rgba(56,255,142,.055)";
+        ctx.lineWidth = 1;
+        for (let i = -12; i <= 12; i += 1) {
+            ctx.beginPath();
+            ctx.moveTo(w / 2 + i * 18, horizon);
+            ctx.lineTo(w / 2 + i * w * .085, h);
+            ctx.stroke();
+        }
+        for (let i = 0; i < 12; i += 1) {
+            const depth = i / 11;
+            const y = horizon + depth * depth * (h - horizon);
+            ctx.globalAlpha = .2 + depth * .8;
+            line({ x: 0, y }, { x: w, y }, "rgba(56,255,142,.08)");
+        }
+        ctx.globalAlpha = 1;
+        const activeEvent = state.data ? [...state.data.graph_events].reverse().find((item) => item.at <= state.elapsed) : null;
+        const glyphs = `${activeEvent?.cursor || "gd-0001"}${state.mode}TOSΔΣ◇`.replace(/[^a-zA-Z0-9ΔΣ◇]/g, "");
+        ctx.font = "8px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "rgba(94,255,159,.11)";
+        const columns = Math.min(24, Math.ceil(w / 58));
+        for (let column = 0; column < columns; column += 1) {
+            const x = 24 + column * (w - 48) / Math.max(columns - 1, 1);
+            const offset = state.playing && !state.lowGpu ? (state.elapsed / 28 + column * 31) % (h + 120) : column * 41 % h;
+            for (let row = 0; row < 5; row += 1) ctx.fillText(glyphs[(column * 3 + row) % glyphs.length], x, (offset + row * 17) % (h + 30) - 15);
+        }
+        ctx.restore();
+    }
+
+    function drawTransition(w, h, now) {
+        const age = now - state.modeTransition;
+        if (age < 0 || age > 520 || reducedMotion || state.lowGpu) return;
+        const progress = age / 520;
+        const x = w * progress;
+        ctx.save();
+        const gradient = ctx.createLinearGradient(x - 90, 0, x + 20, 0);
+        gradient.addColorStop(0, "transparent");
+        gradient.addColorStop(.75, "rgba(120,255,178,.09)");
+        gradient.addColorStop(1, "rgba(185,255,213,.65)");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(Math.max(0, x - 100), 0, 120, h);
+        ctx.restore();
+    }
+
     function pointToSegment(point, a, b) {
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -85,24 +164,77 @@
     function projectAt(elapsed) {
         const events = state.data.graph_events.filter((event) => event.at <= elapsed && event.state);
         const latest = events.at(-1) || state.data.graph_events.find((event) => event.state);
-        return latest ? { ...latest.state, expired: [...latest.state.expired] } : { block_count: 3, signatures: false, shards: false, ai_phase: 2, expired: [] };
+        return latest ? { ...latest.state, expired: [...latest.state.expired] } : { block_count: 10, signatures: false, shards: false, ai_phase: 2, expired: [] };
+    }
+
+    function buildTraceIds(selected) {
+        if (!selected || !state.data) return null;
+        const ids = new Set([selected.id]);
+        const raw = selected.raw;
+        if (selected.type === "edge") [raw.from, raw.to].forEach((id) => ids.add(id));
+        state.data.edges.forEach((edge) => {
+            if ([edge.id, edge.from, edge.to].includes(selected.id)) [edge.id, edge.from, edge.to].forEach((id) => ids.add(id));
+        });
+        state.data.transactions.forEach((transaction) => {
+            if ([transaction.id, transaction.block, transaction.from, transaction.to].includes(selected.id)) [transaction.id, transaction.block, transaction.from, transaction.to].forEach((id) => ids.add(id));
+        });
+        state.data.shards.forEach((shard) => {
+            if ([shard.id, shard.parent].includes(selected.id)) [shard.id, shard.parent].forEach((id) => ids.add(id));
+        });
+        if (selected.type === "validator") ids.add("block-4181741");
+        return ids;
+    }
+
+    function updateTrace(selected) {
+        state.traceIds = buildTraceIds(selected);
+        const panel = $("traceStatus");
+        panel.hidden = !selected;
+        if (!selected) return;
+        $("traceTitle").textContent = selected.raw.label || (selected.raw.seqno ? `#${selected.raw.seqno}` : selected.id);
+        $("traceMeta").textContent = `${Math.max(0, state.traceIds.size - 1)} related entities / signals`;
+    }
+
+    function clearTrace() {
+        state.selected = null;
+        state.traceIds = null;
+        state.pendingFocusId = null;
+        $("traceStatus").hidden = true;
+        $("inspector").classList.remove("open");
+        const url = new URL(location.href);
+        url.searchParams.delete("entity");
+        history.replaceState(null, "", url);
+        $("srStatus").textContent = "Causal trace cleared.";
+    }
+
+    function nodeSignalActive(node) {
+        if (state.selected?.id === node.id) return true;
+        const event = [...state.data.graph_events].reverse().find((item) => item.at <= state.elapsed);
+        if (!event || state.elapsed - event.at > 1200) return false;
+        if (state.mode === "consensus") return node.type === "block" || (node.type === "validator" && state.projection.signatures && node.raw.status === "signed");
+        if (state.mode === "chain") return ["block", "transaction", "shard"].includes(node.type);
+        return node.type === "entity" || node.type === "terminal";
     }
 
     function semanticEdges() {
         state.edges = [];
         state.data.edges.forEach((raw) => {
+            if (raw.kind === "signed" && !state.projection.signatures) return;
             const from = state.nodes.find((node) => node.id === raw.from);
             const to = state.nodes.find((node) => node.id === raw.to);
             if (!from || !to) return;
             const edge = { id: raw.id, type: "edge", raw, from, to };
             state.edges.push(edge);
-            line(from, to, raw.truth === "signed_offchain" ? "rgba(35,214,255,.45)" : "rgba(202,255,54,.32)", 2);
+            const related = !state.traceIds || [raw.from, raw.to, raw.id].some((id) => state.traceIds.has(id));
+            const color = raw.truth === "signed_offchain" ? `rgba(35,214,255,${related ? .62 : .16})` : `rgba(202,255,54,${related ? .46 : .12})`;
+            directedLine(from, to, color, related ? 1.7 : .8, raw.truth === "signed_offchain" ? [5, 4] : []);
+            if (related) particle(from, to, (state.edges.length * .173) % 1, raw.truth === "signed_offchain" ? "#23d6ff" : "#caff36");
         });
     }
 
     function glowDot(node, radius, color, label, sublabel, shape = "circle") {
         const hover = Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < radius + 12;
         ctx.save();
+        if (state.traceIds && !state.traceIds.has(node.id)) ctx.globalAlpha = .22;
         ctx.shadowColor = color;
         ctx.shadowBlur = hover || state.selected?.id === node.id ? 24 : 12;
         ctx.strokeStyle = color;
@@ -117,12 +249,50 @@
             ctx.closePath();
         } else if (shape === "square") {
             ctx.rect(node.x - radius, node.y - radius, radius * 2, radius * 2);
+        } else if (shape === "hex") {
+            for (let side = 0; side < 6; side += 1) {
+                const angle = Math.PI / 3 * side - Math.PI / 2;
+                const x = node.x + Math.cos(angle) * radius;
+                const y = node.y + Math.sin(angle) * radius;
+                if (!side) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
         } else {
             ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
         }
         ctx.fill();
         ctx.stroke();
+        if (!state.lowGpu && nodeSignalActive(node)) {
+            const wave = (state.elapsed / 900 + node.x * .001) % 1;
+            ctx.globalAlpha = 1 - wave;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, radius + 5 + wave * 13, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = .6;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
         ctx.shadowBlur = 0;
+        ctx.fillStyle = color;
+        ctx.font = `600 ${Math.max(7, radius * .48)}px 'IBM Plex Mono', monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(({ validator: "V", block: "▦", transaction: "↦", shard: "S", terminal: "E", entity: "◇" })[node.type] || "·", node.x, node.y + .5);
+        ctx.textBaseline = "alphabetic";
+        if (state.selected?.id === node.id || (state.keyboardIndex >= 0 && state.nodes[state.keyboardIndex]?.id === node.id)) {
+            ctx.save();
+            ctx.translate(node.x, node.y);
+            ctx.rotate(state.lowGpu ? 0 : state.elapsed / 1800);
+            ctx.strokeStyle = "rgba(185,255,213,.8)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 5]);
+            ctx.strokeRect(-radius - 12, -radius - 12, (radius + 12) * 2, (radius + 12) * 2);
+            ctx.setLineDash([]);
+            [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sy]) => {
+                ctx.beginPath(); ctx.moveTo(sx * (radius + 17), sy * (radius + 9)); ctx.lineTo(sx * (radius + 9), sy * (radius + 9)); ctx.stroke();
+            });
+            ctx.restore();
+        }
         if (state.layers.labels) {
             ctx.fillStyle = "rgba(220,255,235,.92)";
             ctx.font = "600 10px 'IBM Plex Mono', monospace";
@@ -142,7 +312,16 @@
         const t = (state.elapsed / 1500 + offset) % 1;
         const x = a.x + (b.x - a.x) * t;
         const y = a.y + (b.y - a.y) * t;
+        const tailT = Math.max(0, t - .07);
+        const tailX = a.x + (b.x - a.x) * tailT;
+        const tailY = a.y + (b.y - a.y) * tailT;
         ctx.save();
+        const trail = ctx.createLinearGradient(tailX, tailY, x, y);
+        trail.addColorStop(0, "transparent");
+        trail.addColorStop(1, color);
+        ctx.strokeStyle = trail;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(tailX, tailY); ctx.lineTo(x, y); ctx.stroke();
         ctx.fillStyle = color;
         ctx.shadowColor = color;
         ctx.shadowBlur = 12;
@@ -150,6 +329,52 @@
         ctx.arc(x, y, 2.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
+    }
+
+    function drawEventShockwave(w, h) {
+        if (state.lowGpu || reducedMotion) return;
+        const event = [...state.data.graph_events].reverse().find((item) => state.elapsed >= item.at);
+        if (!event) return;
+        const age = state.elapsed - event.at;
+        if (age > 1200) return;
+        const progress = age / 1200;
+        const center = state.mode === "consensus" ? { x: w * .5, y: h * .5 } : state.mode === "chain" ? { x: w * (.18 + .64 * (event.state?.block_count || state.projection.block_count) / 10), y: h * .42 } : { x: w * .58, y: h * .43 };
+        ctx.save();
+        ctx.globalAlpha = 1 - progress;
+        ctx.strokeStyle = event.kind === "retract" ? "#ff6378" : event.kind === "snapshot" ? "#68e8ff" : "#78ffb2";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(center.x, center.y, 18 + progress * Math.min(w, h) * .34, 0, Math.PI * 2); ctx.stroke();
+        ctx.font = "8px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.fillText(`${event.cursor} · ${event.kind.toUpperCase()}`, center.x + 14, center.y - 16 - progress * 24);
+        ctx.restore();
+    }
+
+    function applyCamera(w, h) {
+        const camera = state.camera;
+        camera.zoom += (camera.targetZoom - camera.zoom) * .12;
+        camera.x += (camera.targetX - camera.x) * .12;
+        camera.y += (camera.targetY - camera.y) * .12;
+        ctx.translate(w / 2 + camera.x, h / 2 + camera.y);
+        ctx.scale(camera.zoom, camera.zoom);
+        ctx.translate(-w / 2, -h / 2);
+    }
+
+    function screenToWorld(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const screenX = clientX - rect.left;
+        const screenY = clientY - rect.top;
+        return {
+            x: (screenX - rect.width / 2 - state.camera.x) / state.camera.zoom + rect.width / 2,
+            y: (screenY - rect.height / 2 - state.camera.y) / state.camera.zoom + rect.height / 2
+        };
+    }
+
+    function resetCamera() {
+        state.camera.targetZoom = 1;
+        state.camera.targetX = 0;
+        state.camera.targetY = 0;
+        $("srStatus").textContent = "Matrix camera reset.";
     }
 
     function renderConsensus(w, h) {
@@ -179,6 +404,26 @@
         ctx.beginPath();
         ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
         ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = "rgba(104,232,255,.08)";
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx * .73, ry * .73, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        if (state.projection.signatures) {
+            const signedWeight = nodes.filter((node) => node.raw.status === "signed").reduce((sum, node) => sum + node.raw.weight, 0);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "rgba(202,255,54,.72)";
+            ctx.shadowColor = "#caff36";
+            ctx.shadowBlur = 14;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx * .52, ry * .52, 0, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * signedWeight / 100);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = "rgba(202,255,54,.72)";
+            ctx.font = "8px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`THRESHOLD FIELD · ${signedWeight.toFixed(1)}%`, cx, cy - ry * .58);
+        }
         ctx.restore();
         nodes.forEach((n) => glowDot(n, 5 + n.raw.weight * .32, n.raw.status === "signed" ? "#31ff89" : "#667a70", n.raw.label, `${n.raw.weight}% · ${n.raw.region}`));
         const signedCount = state.projection.signatures ? nodes.filter((node) => node.raw.status === "signed").length : 0;
@@ -197,8 +442,16 @@
             line(b, blocks[i + 1], "rgba(49,255,137,.35)", 2);
             particle(b, blocks[i + 1], i * .19);
         });
-        blocks.forEach((b, i) => glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", `#${String(b.raw.seqno).slice(-4)}`, `${b.raw.tx_count} TX`, "square"));
-        const shards = state.layers.shards && state.projection.shards ? state.data.shards.map((shard) => {
+        blocks.forEach((b, i) => {
+            const important = w >= 760 || i % 3 === 0 || b === blocks.at(-1) || [state.selected?.id, state.pendingFocusId].includes(b.id);
+            glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", important ? `#${String(b.raw.seqno).slice(-4)}` : "", important ? `${b.raw.tx_count} TX` : "", "square");
+            ctx.fillStyle = "rgba(80,255,150,.18)";
+            ctx.font = "7px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            if (important) ctx.fillText(`LT ${String(b.raw.seqno).slice(-3)}·${i}`, b.x, y + 48);
+        });
+        const shardData = w < 700 ? state.data.shards.filter((shard) => shard.parent === blocks.at(-1)?.id) : state.data.shards;
+        const shards = state.layers.shards && state.projection.shards ? shardData.map((shard) => {
             const parent = blocks.find((b) => b.id === shard.parent);
             if (!parent) return null;
             const transition = shard.split_state.includes("split") ? Math.sin(state.elapsed / 900) * 6 : shard.split_state.includes("merge") ? Math.cos(state.elapsed / 900) * 5 : 0;
@@ -206,18 +459,31 @@
             line(parent, node, "rgba(255,204,107,.32)", 1, [3, 4]);
             return node;
         }).filter(Boolean) : [];
-        shards.forEach((node) => glowDot(node, 8, "#ffcc6b", node.raw.label, node.raw.split_state, "diamond"));
-        const visibleTransactions = state.data.transactions.filter((tx) => blocks.some((block) => block.id === tx.block));
+        shards.forEach((node) => glowDot(node, 8, "#ffcc6b", w < 700 ? "" : node.raw.label, w < 700 ? "" : node.raw.split_state, "diamond"));
+        const transactionWindow = state.data.transactions.filter((tx) => blocks.some((block) => block.id === tx.block));
+        const visibleTransactions = w < 700
+            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted"].includes(tx.state))
+            : transactionWindow;
         const txs = visibleTransactions.map((tx, i) => {
             const parent = blocks.find((b) => b.id === tx.block);
             const above = i % 2 === 0;
-            const n = { id: tx.id, x: left + usable * (i + .5) / visibleTransactions.length, y: y + (above ? -152 : 152), type: "transaction", raw: tx };
+            const n = { id: tx.id, x: left + usable * (i + .5) / visibleTransactions.length, y: w < 700 ? h * .64 : y + (above ? -152 : 152), type: "transaction", raw: tx };
             const color = tx.state === "success" ? "rgba(35,214,255,.25)" : "rgba(255,99,120,.55)";
             line(parent, n, color, tx.state === "success" ? 1 : 2, [3, 5]);
             return n;
         });
-        txs.forEach((n) => glowDot(n, 7, n.raw.state === "success" ? "#23d6ff" : "#ff6378", n.raw.label, `${n.raw.value} · ${n.raw.state}`));
-        const focusTx = txs.find((n) => n.id === "tx-a81f") || txs[0];
+        txs.forEach((n, index) => {
+            const showLabel = w >= 700 || index % 2 === 0 || [state.selected?.id, state.pendingFocusId].includes(n.id);
+            glowDot(n, 7, n.raw.state === "success" ? "#23d6ff" : "#ff6378", showLabel ? n.raw.label : "", showLabel ? `${n.raw.value} · ${n.raw.state}` : "");
+        });
+        if (w < 700) {
+            ctx.fillStyle = "rgba(104,232,255,.48)";
+            ctx.font = "8px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`LOD · ${visibleTransactions.length} EXPANDED / ${transactionWindow.length} FIXTURE TX`, w / 2, h * .64 - 30);
+        }
+        const requestedTx = state.pendingFocusId || (state.selected?.type === "transaction" ? state.selected.id : null);
+        const focusTx = txs.find((n) => n.id === requestedTx) || txs.find((n) => n.id === "tx-a81f") || txs[0];
         const endpointData = focusTx ? state.data.entities.filter((e) => [focusTx.raw.from, focusTx.raw.to].includes(e.id)) : [];
         const endpoints = endpointData.map((entity, i) => ({ id: entity.id, x: focusTx.x + (i ? 105 : -105), y: focusTx.y, type: "entity", raw: entity }));
         endpoints.forEach((node) => { line(node, focusTx, "rgba(105,255,176,.28)", 1); glowDot(node, 11, "#78ffb2", node.raw.label, node.raw.kind, "circle"); });
@@ -230,6 +496,14 @@
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
         const pad = Math.max(70, w * .07);
         const y = h * .43;
+        ctx.save();
+        ctx.setLineDash([5, 9]);
+        line({ x: pad * .55, y: h * .63 }, { x: w - pad * .55, y: h * .63 }, "rgba(104,232,255,.22)", 1, [5, 9]);
+        ctx.fillStyle = "rgba(104,232,255,.42)";
+        ctx.font = "8px 'IBM Plex Mono', monospace";
+        ctx.textAlign = "right";
+        ctx.fillText("CHAIN / OFF-CHAIN EVIDENCE BOUNDARY", w - pad * .55, h * .63 - 8);
+        ctx.restore();
         const nodes = labels.map((entity, i) => ({
             id: entity.id,
             x: w < 700 ? 42 + (w - 84) * (i % 4) / 3 : pad + (w - pad * 2) * i / Math.max(labels.length - 1, 1),
@@ -241,7 +515,11 @@
             line(n, nodes[i + 1], i >= 4 ? "rgba(35,214,255,.5)" : "rgba(49,255,137,.34)", 1.5);
             particle(n, nodes[i + 1], i * .13, i >= 4 ? "#23d6ff" : "#31ff89");
         });
-        nodes.forEach((n) => glowDot(n, n.raw.kind === "terminal" ? 19 : 14, n.raw.kind === "receipt" ? "#23d6ff" : "#31ff89", n.raw.label, n.raw.kind.toUpperCase(), n.raw.kind === "receipt" ? "diamond" : "square"));
+        nodes.forEach((n) => {
+            const shape = n.raw.kind === "receipt" ? "diamond" : n.raw.kind === "terminal" ? "hex" : "square";
+            const semanticNode = n.raw.kind === "terminal" ? { ...n, type: "terminal" } : n;
+            glowDot(semanticNode, n.raw.kind === "terminal" ? 19 : 14, n.raw.kind === "receipt" ? "#23d6ff" : "#31ff89", n.raw.label, n.raw.kind.toUpperCase(), shape);
+        });
         const disputeRaw = state.data.entities.find((e) => e.id === "dispute-17");
         const dispute = { id: disputeRaw.id, x: w * .69, y: h * .21, type: "entity", raw: disputeRaw };
         if (nodes[4]) {
@@ -252,7 +530,7 @@
         const terminals = state.data.terminals.filter((t) => t.id !== "edge-sgp").map((t, i) => ({
             id: t.id, x: w < 700 ? 40 + (w - 80) * i / 3 : pad + (w - pad * 2) * (i + .7) / 4.7, y: h * .74, type: "terminal", raw: state.projection.expired.includes(t.id) ? { ...t, evidence: "stale", state: "offline" } : { ...t, evidence: t.evidence === "stale" ? "declared" : t.evidence }
         }));
-        terminals.forEach((n) => glowDot(n, 9, n.raw.evidence === "stale" ? "#ff6378" : n.raw.state === "available" ? "#31ff89" : "#768d81", n.raw.label, `${n.raw.latency} · ${n.raw.evidence}`));
+        terminals.forEach((n) => glowDot(n, 9, n.raw.evidence === "stale" ? "#ff6378" : n.raw.state === "available" ? "#31ff89" : "#768d81", n.raw.label, `${n.raw.latency} · ${n.raw.evidence}`, "hex"));
         ctx.fillStyle = "rgba(156,196,174,.55)";
         ctx.font = "10px 'IBM Plex Mono', monospace";
         ctx.textAlign = "left";
@@ -265,6 +543,10 @@
         const delta = Math.min(now - state.lastFrame, 50);
         state.frameSamples.push(delta);
         if (state.frameSamples.length > 180) state.frameSamples.shift();
+        if (state.stressProbe && state.stressProbe.level === state.stress) {
+            state.stressProbe.samples.push(delta);
+            if (state.stressProbe.samples.length === 90) reportStressProbe();
+        }
         state.lastFrame = now;
         if (state.playing) {
             state.elapsed = (state.elapsed + delta * state.speed) % duration;
@@ -277,13 +559,28 @@
         gradient.addColorStop(1, "rgba(0,4,3,.04)");
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, rect.width, rect.height);
+        drawMatrixField(rect.width, rect.height);
         if (state.data) {
+            ctx.save();
+            applyCamera(rect.width, rect.height);
             if (state.mode === "consensus") renderConsensus(rect.width, rect.height);
             if (state.mode === "chain") renderChain(rect.width, rect.height);
             if (state.mode === "ai") renderAI(rect.width, rect.height);
             semanticEdges();
+            drawEventShockwave(rect.width, rect.height);
             if (state.stress > 1) renderStress(rect.width, rect.height);
+            ctx.restore();
+            state.frame += 1;
+            if (state.frame % 12 === 0) {
+                $("hudMode").textContent = `PROJECTION · ${state.mode.toUpperCase()}`;
+                $("hudFrame").textContent = `FRAME · ${String(state.frame).padStart(6, "0")}`;
+                $("hudEntities").textContent = `VISIBLE · ${String(state.nodes.length + state.edges.length).padStart(3, "0")}`;
+                $("hudCamera").textContent = `LENS · ${state.camera.zoom.toFixed(2)}× / ${Math.round(state.camera.x)},${Math.round(state.camera.y)}`;
+                const activeEvent = [...state.data.graph_events].reverse().find((item) => item.at <= state.elapsed);
+                $("hudSignal").textContent = `SIGNAL · ${activeEvent ? `${activeEvent.cursor} ${activeEvent.kind.toUpperCase()}` : "SNAPSHOT"}`;
+            }
         }
+        drawTransition(rect.width, rect.height, now);
         if (!document.hidden) requestAnimationFrame(render);
     }
 
@@ -316,6 +613,7 @@
     }
 
     function setMode(mode, fromTour = false) {
+        if (state.mode !== mode) state.modeTransition = performance.now();
         state.mode = mode;
         document.querySelectorAll("[data-mode]").forEach((button) => {
             const active = button.dataset.mode === mode;
@@ -360,6 +658,34 @@
         return ({ fixture_verified: "SIMULATED PROOF PASS", node_validated: "NODE VALIDATED FIXTURE", signed_offchain: "SIGNED OFF-CHAIN FIXTURE", attested: "ATTESTED FIXTURE", audited: "AUDITED FIXTURE", benchmarked: "BENCHMARKED FIXTURE", replicated: "REPLICATED FIXTURE", chain_reported: "CHAIN-REPORTED FIXTURE", observed: "OBSERVED FIXTURE", declared: "DECLARED FIXTURE", inferred: "INFERRED FIXTURE", stale: "EXPIRED / STALE FIXTURE" })[value] || "FIXTURE DATA";
     }
 
+    function setTruthBadge(truth) {
+        const badge = $("truthBadge");
+        badge.dataset.truth = truth;
+        badge.innerHTML = `<i aria-hidden="true"></i> ${escapeHtml(truthLabel(truth))}`;
+    }
+
+    function validateFixture(data) {
+        const requiredArrays = ["validators", "blocks", "transactions", "entities", "graph_events", "edges", "tour"];
+        const problems = [];
+        if (data?.meta?.schema_version !== "birdeye.graph.v1") problems.push("schema_version");
+        requiredArrays.forEach((key) => { if (!Array.isArray(data?.[key])) problems.push(key); });
+        if (!data?.validator_sets?.current?.members?.length) problems.push("validator_sets.current");
+        if (Array.isArray(data?.blocks) && new Set(data.blocks.map((item) => item.id)).size !== data.blocks.length) problems.push("duplicate block id");
+        if (Array.isArray(data?.graph_events) && data.graph_events.some((item, index, list) => index && item.at < list[index - 1].at)) problems.push("event ordering");
+        return problems;
+    }
+
+    function focusCamera(node) {
+        if (!node) return;
+        const rect = canvas.getBoundingClientRect();
+        const inspectorAllowance = rect.width > 700 ? 155 : 0;
+        state.camera.targetZoom = Math.max(1.08, Math.min(1.42, rect.width < 700 ? 1.14 : 1.26));
+        state.camera.targetX = rect.width / 2 - node.x - inspectorAllowance;
+        state.camera.targetY = rect.height / 2 - node.y;
+        state.pointer = { x: node.x, y: node.y };
+        $("srStatus").textContent = `Camera focused on ${node.raw.label || node.raw.seqno || node.id}.`;
+    }
+
     function updateValidatorSummary() {
         const selectedSet = state.data.validator_sets[state.validatorSet];
         const signedWeight = selectedSet.members.filter((member) => member.status === "signed").reduce((sum, member) => sum + member.weight, 0);
@@ -371,13 +697,14 @@
     function inspect(node) {
         const raw = node.raw;
         state.selected = node;
+        updateTrace(node);
         $("inspector").classList.add("open");
         if (node.type === "edge") {
             $("entityMark").textContent = "→";
             $("entityKind").textContent = `${raw.kind.toUpperCase()} EDGE`;
             $("entityName").textContent = `${raw.from} → ${raw.to}`;
             $("entityId").textContent = raw.id;
-            $("truthBadge").innerHTML = `<i></i> ${escapeHtml(truthLabel(raw.truth))}`;
+            setTruthBadge(raw.truth);
             $("entityFacts").innerHTML = [["Relation", raw.kind], ["From", raw.from], ["To", raw.to], ["Value/event", raw.value]].map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
             $("evidencePath").textContent = `${truthLabel(raw.truth)} edge → versioned graph projection`;
             $("relationsPanel").innerHTML = `<div class="relation-row"><b>UPSTREAM</b>${escapeHtml(raw.from)}</div><div class="relation-row"><b>DOWNSTREAM</b>${escapeHtml(raw.to)}</div>`;
@@ -399,12 +726,12 @@
         else if (node.type === "transaction") facts = [["Value", raw.value], ["Fee", raw.fee], ["State", raw.state], ["Compute", raw.exit_code === undefined ? "exit 0" : `exit ${raw.exit_code} · ${raw.gas_used} gas`], ["Block", raw.block.replace("block-", "#")]];
         else if (node.type === "shard") facts = [["Masterchain", raw.parent.replace("block-", "#")], ["Transactions", raw.tx_count], ["Split state", raw.split_state], ["Lane", raw.lane]];
         else if (node.type === "terminal") facts = [["Region", raw.region], ["Hardware claim", raw.hardware], ["Model", raw.model], ["Capabilities", raw.capabilities.join(", ")], ["Price", raw.price], ["Admission", raw.state], ["Latency", raw.latency], ["Manifest expires", raw.expires_at]];
-        else facts = [["Type", raw.kind], ["Detail", raw.detail], ["Balance", raw.balance || "—"], ["State", raw.state || "active"], ["Truth", truthLabel(truth)], ["Graph", "AI task T-2048"]];
+        else facts = [["Type", raw.kind], ["Detail", raw.detail], ...(raw.kind === "receipt" ? [["Disclosure", state.receiptMode]] : []), ["Balance", raw.balance || "—"], ["State", raw.state || "active"], ["Truth", truthLabel(truth)], ["Graph", "AI task T-2048"]];
         $("entityMark").textContent = kind.slice(0, 2);
         $("entityKind").textContent = kind.replace("ENTITY", raw.kind?.toUpperCase() || "ENTITY");
         $("entityName").textContent = name;
         $("entityId").textContent = id;
-        $("truthBadge").innerHTML = `<i></i> ${escapeHtml(truthLabel(truth))}`;
+        setTruthBadge(truth);
         $("entityFacts").innerHTML = facts.map(([key, value]) => {
             const field = String(key).toLowerCase().replace(/ claim$/, "");
             const provenance = state.data.field_provenance[`${raw.id}.${field}`];
@@ -502,6 +829,11 @@
             $("validatorSet").value = result.raw.set;
             updateValidatorSummary();
         }
+        if (mode === "ai" && state.elapsed < 28500) {
+            state.elapsed = 28500;
+            updateTour(false);
+        }
+        state.pendingFocusId = result.raw.id;
         setMode(mode);
         const url = new URL(location.href);
         url.searchParams.set("entity", result.raw.id);
@@ -509,7 +841,9 @@
         history.replaceState(null, "", url);
         requestAnimationFrame(() => {
             const visible = state.nodes.find((node) => node.id === result.raw.id);
+            if (visible) focusCamera(visible);
             inspect(visible || { id: result.raw.id, raw: result.raw, type: result.type });
+            state.pendingFocusId = null;
         });
     }
 
@@ -546,7 +880,8 @@
             if (event.key === "ArrowDown" && !$("searchResults").hidden) { event.preventDefault(); $("searchResults").querySelector("button")?.focus(); }
             if (event.key === "Escape") { $("searchResults").hidden = true; event.currentTarget.setAttribute("aria-expanded", "false"); }
         });
-        $("closeInspector").addEventListener("click", () => { $("inspector").classList.remove("open"); state.selected = null; });
+        $("closeInspector").addEventListener("click", () => { $("inspector").classList.remove("open"); });
+        $("clearTrace").addEventListener("click", clearTrace);
         $("demoNotice").addEventListener("click", () => {
             const popover = $("noticePopover");
             popover.hidden = !popover.hidden;
@@ -589,20 +924,51 @@
             else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
         });
         canvas.addEventListener("pointermove", (event) => {
-            const rect = canvas.getBoundingClientRect();
-            state.pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+            if (state.camera.dragging) {
+                const moveX = event.clientX - state.camera.dragX;
+                const moveY = event.clientY - state.camera.dragY;
+                state.camera.targetX += moveX;
+                state.camera.targetY += moveY;
+                if (Math.abs(moveX) + Math.abs(moveY) > 2) state.camera.moved = true;
+                state.camera.dragX = event.clientX;
+                state.camera.dragY = event.clientY;
+            }
+            state.pointer = screenToWorld(event.clientX, event.clientY);
         });
         canvas.addEventListener("pointerleave", () => { state.pointer = { x: -1000, y: -1000 }; });
+        canvas.addEventListener("pointerdown", (event) => {
+            state.camera.dragging = true;
+            state.camera.moved = false;
+            state.camera.dragX = event.clientX;
+            state.camera.dragY = event.clientY;
+            canvas.setPointerCapture?.(event.pointerId);
+            canvas.classList.add("dragging");
+        });
+        const stopDragging = (event) => {
+            state.camera.dragging = false;
+            canvas.releasePointerCapture?.(event.pointerId);
+            canvas.classList.remove("dragging");
+        };
+        canvas.addEventListener("pointerup", stopDragging);
+        canvas.addEventListener("pointercancel", stopDragging);
+        canvas.addEventListener("dblclick", resetCamera);
+        canvas.addEventListener("wheel", (event) => {
+            event.preventDefault();
+            state.camera.targetZoom = Math.max(.65, Math.min(1.8, state.camera.targetZoom * (event.deltaY > 0 ? .9 : 1.1)));
+            $("srStatus").textContent = `Matrix camera zoom ${state.camera.targetZoom.toFixed(2)} times. Double-click to reset.`;
+        }, { passive: false });
         canvas.addEventListener("click", () => {
+            if (state.camera.moved) { state.camera.moved = false; return; }
             const hit = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < 34);
             const edge = state.edges.find((item) => pointToSegment(state.pointer, item.from, item.to) < 7);
             if (hit) inspect(hit);
             else if (edge) inspect(edge);
         });
         canvas.addEventListener("keydown", (event) => {
-            if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Enter"].includes(event.key)) return;
+            if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Enter", "0"].includes(event.key)) return;
             event.preventDefault();
-            if (event.key === "Enter" && state.keyboardIndex >= 0) inspect(state.nodes[state.keyboardIndex]);
+            if (event.key === "0") resetCamera();
+            else if (event.key === "Enter" && state.keyboardIndex >= 0) inspect(state.nodes[state.keyboardIndex]);
             else {
                 const direction = ["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1;
                 state.keyboardIndex = (state.keyboardIndex + direction + state.nodes.length) % state.nodes.length;
@@ -616,7 +982,7 @@
             if (event.key === "Escape") {
                 if (!$("systemPanel").hidden) closeDialog("systemPanel");
                 else if (!$("entityNavigator").hidden) closeDialog("entityNavigator");
-                else { $("inspector").classList.remove("open"); $("noticePopover").hidden = true; $("searchResults").hidden = true; state.selected = null; }
+                else { clearTrace(); $("noticePopover").hidden = true; $("searchResults").hidden = true; }
             }
         });
         document.addEventListener("visibilitychange", () => {
@@ -646,22 +1012,27 @@
         syncPlayButton();
         $("transportState").textContent = "FIXTURE WS · DISCONNECTED";
         $("streamToggle").textContent = "RECOVERING…";
-        showSystem("STREAM RECOVERY", `<div class="system-grid"><div class="system-card"><b>CONNECTION LOST</b>last cursor · gd-0007<br>queue · bounded / 0 dropped</div><div class="system-card"><b>RECOVERY POLICY</b>request replay from retained cursor<br>fallback · compact snapshot</div></div>`);
+        state.recoveryCount += 1;
+        const cursorExpired = state.recoveryCount % 2 === 0;
+        showSystem("STREAM RECOVERY", `<div class="system-grid"><div class="system-card"><b>CONNECTION LOST</b>last cursor · ${cursorExpired ? "gd-expired" : "gd-0007"}<br>queue · bounded / 0 dropped</div><div class="system-card"><b>RECOVERY POLICY</b>${cursorExpired ? "retained cursor expired" : "request replay from retained cursor"}<br>fallback · compact snapshot</div></div>`);
         setTimeout(() => {
-            $("transportState").textContent = "FIXTURE WS · REPLAYING gd-0007";
+            $("transportState").textContent = cursorExpired ? "FIXTURE WS · SNAPSHOT FALLBACK" : "FIXTURE WS · REPLAYING gd-0007";
             $("streamToggle").textContent = "RESYNC…";
         }, 700);
         setTimeout(() => {
             state.connected = true;
             $("transportState").textContent = "FIXTURE WS · CONNECTED";
             $("streamToggle").textContent = "DROP STREAM";
-            $("systemContent").innerHTML += `<div class="system-card"><b><strong>RESYNC COMPLETE</strong></b>cursor resumed without duplication · snapshot not required</div>`;
-            $("srStatus").textContent = "Fixture graph stream reconnected and replayed without duplication.";
+            $("systemContent").innerHTML += `<div class="system-card"><b><strong>RESYNC COMPLETE</strong></b>${cursorExpired ? `expired cursor rejected · restored ${state.data.transport.snapshot_cursor} · duplicate IDs discarded` : "cursor resumed without duplication · snapshot not required"}</div>`;
+            $("srStatus").textContent = cursorExpired ? "Expired fixture cursor recovered from compact snapshot without duplicate IDs." : "Fixture graph stream reconnected and replayed without duplication.";
         }, 1500);
     }
 
     function simulateReorg() {
         state.correctionInjected = !state.correctionInjected;
+        document.body.classList.remove("reorg-glitch");
+        requestAnimationFrame(() => document.body.classList.add("reorg-glitch"));
+        setTimeout(() => document.body.classList.remove("reorg-glitch"), 460);
         const correction = state.data.corrections[1];
         showSystem("UPSTREAM DISAGREEMENT / CORRECTION", `<div class="system-grid">${state.data.transport.nodes.map((node) => `<div class="system-card"><b>${node.id.toUpperCase()}</b>tip · #${node.tip} · ${node.age}<br>view · ${node.view_hash}<br>state · ${node.status}</div>`).join("")}</div><div class="system-card"><b>${state.correctionInjected ? "EXPLICIT REPLACEMENT APPLIED" : "CORRECTION REWOUND"}</b>${correction.entity} · ${correction.reason}<br>${correction.old_hash} → <strong>${correction.new_hash}</strong><br>No silent full-page reload.</div>`);
         state.data.graph_events = state.data.graph_events.filter((event) => event.cursor !== "gd-0008");
@@ -674,12 +1045,19 @@
         state.receiptMode = modes[(modes.indexOf(state.receiptMode) + 1) % modes.length];
         $("receiptMode").textContent = `RECEIPT · ${state.receiptMode.replace("-", " ").toUpperCase()}`;
         const receipt = state.data.receipts[0];
+        receipt.mode = state.receiptMode;
+        const receiptEntity = state.data.entities.find((item) => item.id === receipt.id);
+        if (receiptEntity) receiptEntity.disclosure = state.receiptMode;
+        const url = new URL(location.href);
+        url.searchParams.set("disclosure", state.receiptMode);
+        history.replaceState(null, "", url);
         const disclosure = {
             "hash-only": "Request/output payloads hidden; commitments remain verifiable.",
             selective: "Token usage and runtime disclosed; prompt/output remain private.",
             public: "Bounded demo prompt and output metadata disclosed. Hostile media viewer remains disabled."
         }[state.receiptMode];
         showSystem("RECEIPT DISCLOSURE", `<div class="system-card"><b>${state.receiptMode.toUpperCase()}</b>${disclosure}<br><br>request · ${receipt.request_hash}<br>output · ${receipt.output_hash}<br>usage · ${state.receiptMode === "hash-only" ? receipt.usage_hash : "12,480 input / 1,992 output tokens"}<br>identity · ${receipt.identity_binding}<br>signature · <strong>${receipt.signature}</strong></div>`);
+        if (state.selected?.id === receipt.id) inspect(state.nodes.find((node) => node.id === receipt.id) || state.selected);
     }
 
     function verifyFixtureProof() {
@@ -698,9 +1076,21 @@
         const levels = [1, 2000, 10000, 50000];
         state.stress = levels[(levels.indexOf(state.stress) + 1) % levels.length];
         $("stressToggle").textContent = state.stress === 1 ? "STRESS · NORMAL" : `STRESS · ${state.stress / 1000}K`;
-        const sorted = [...state.frameSamples].sort((a, b) => a - b);
-        const p95 = sorted[Math.floor(sorted.length * .95)] || 0;
-        showSystem("RENDER PROBE", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} NODES · ${(state.stress * 2).toLocaleString()} EDGES`}</b>Deterministic batched node/edge primitives and 50 labels enabled. Recent-frame sample p95 · ${p95.toFixed(1)} ms (${sorted.length} frames). This is a local Canvas rendering probe—not a certified device benchmark or full layout simulation.</div>`);
+        state.stressProbe = { level: state.stress, samples: [] };
+        showSystem("RENDER PROBE", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} NODES · ${(state.stress * 2).toLocaleString()} EDGES`}</b><strong>COLLECTING 90 NEW FRAMES…</strong><br>The measurement window starts after this load is enabled. Results are a local Canvas probe—not a certified device benchmark or full layout simulation.</div>`);
+    }
+
+    function reportStressProbe() {
+        const probe = state.stressProbe;
+        if (!probe) return;
+        const sorted = [...probe.samples].sort((a, b) => a - b);
+        const p95 = sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * .95) - 1)] || 0;
+        const budget = state.lowGpu || innerWidth < 700 ? 33.3 : 16.7;
+        const pass = p95 <= budget;
+        const content = `<div class="system-card"><b>${probe.level === 1 ? "NORMAL GRAPH" : `${probe.level.toLocaleString()} NODES · ${(probe.level * 2).toLocaleString()} EDGES`}</b><strong>${pass ? "LOCAL BUDGET PASS" : "LOCAL BUDGET MISS"}</strong><br>fresh-frame p95 · ${p95.toFixed(1)} ms / ${budget.toFixed(1)} ms budget · ${sorted.length} frames<br>Deterministic primitives with at most 50 labels. This is not a production WebGL benchmark.</div>`;
+        if (!$("systemPanel").hidden) $("systemContent").innerHTML = content;
+        $("srStatus").textContent = `Stress probe complete. P95 ${p95.toFixed(1)} milliseconds. ${pass ? "Budget passed." : "Budget missed."}`;
+        state.stressProbe = null;
     }
 
     function openEntityNavigator() {
@@ -738,7 +1128,6 @@
     }
 
     async function init() {
-        makeRain();
         resize();
         bind();
         syncPlayButton();
@@ -746,9 +1135,18 @@
             const response = await fetch("data/birdeye-demo.json");
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             state.data = await response.json();
+            const fixtureProblems = validateFixture(state.data);
+            if (fixtureProblems.length) throw new Error(`Fixture contract invalid: ${fixtureProblems.join(", ")}`);
+            $("bootSchema").textContent = "VALIDATE FIXTURE ..... CONTRACT OK";
+            makeRain(state.data);
             updateValidatorSummary();
             const params = new URLSearchParams(location.search);
             if (params.has("t")) state.elapsed = Math.max(0, Math.min(duration, Number(params.get("t")) || 0));
+            if (["hash-only", "selective", "public"].includes(params.get("disclosure"))) {
+                state.receiptMode = params.get("disclosure");
+                state.data.receipts[0].mode = state.receiptMode;
+                $("receiptMode").textContent = `RECEIPT · ${state.receiptMode.replace("-", " ").toUpperCase()}`;
+            }
             updateTour();
             if (["consensus", "chain", "ai"].includes(params.get("mode"))) setMode(params.get("mode"));
             if (params.get("entity")) search(params.get("entity"));
