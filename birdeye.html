@@ -90,6 +90,7 @@
 
             <div class="layer-controls" aria-label="Graph layers">
                 <span>LAYERS</span>
+                <select id="validatorScope" aria-label="Validator scope"><option value="network">NETWORK</option><option value="active">ACTIVE SET</option><option value="signers">SIGNERS</option></select>
                 <select id="validatorSet" aria-label="Validator set"><option value="current">CURRENT SET</option><option value="previous">PREVIOUS SET</option><option value="next">NEXT SET</option></select>
                 <label><input type="checkbox" data-layer="shards" checked> Shards</label>
                 <label><input type="checkbox" data-layer="particles" checked> Signals</label>
@@ -168,6 +169,7 @@
                 <button id="proofVerify" type="button">VERIFY FIXTURE</button>
                 <button id="stressToggle" type="button">STRESS · NORMAL</button>
                 <button id="entityNavToggle" type="button">DOM NAVIGATOR</button>
+                <button id="grammarToggle" type="button" aria-keyshortcuts="?">VISUAL GRAMMAR · ?</button>
             </div>
         </section>
 
@@ -187,7 +189,7 @@
         <section class="telemetry" aria-label="Network summary">
             <article><span>VALIDATOR SET</span><strong id="validatorCount">14</strong><small id="validatorSetMeta">current · 100% weight mapped</small></article>
             <article><span>SIGNED WEIGHT</span><strong id="signedWeight">90.6%</strong><small>proof-derived demo</small></article>
-            <article><span>CHAIN WINDOW</span><strong>10 BLOCKS</strong><small>15 sampled tx · 2 shard lanes</small></article>
+            <article><span>CHAIN WINDOW</span><strong>10 BLOCKS</strong><small>243 tx total · 15 sampled</small></article>
             <article><span>AI TERMINALS</span><strong>5</strong><small>2 available · 1 executing</small></article>
             <article><span>ACTIVE TASK</span><strong id="activeTaskValue">T-2048</strong><small id="activeTaskMeta">fixture queued</small></article>
         </section>

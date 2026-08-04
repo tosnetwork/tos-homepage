@@ -17,6 +17,7 @@
         selected: null,
         lowGpu: false,
         validatorSet: "current",
+        validatorScope: "network",
         connected: true,
         receiptMode: "hash-only",
         stress: 1,
@@ -41,7 +42,7 @@
     const $ = (id) => document.getElementById(id);
     const modeCopy = {
         consensus: ["01 / SKYVIEW", "Consensus Matrix", "Simulated proof-derived participation · curated fixture evidence"],
-        chain: ["02 / BLOCKSPACE", "Chain Matrix", "Blocks, transactions, accounts · one navigable causal graph"],
+        chain: ["02 / BLOCKSPACE", "Chain Matrix", "10-block fixture window · 243 tx total · 15 sampled transactions"],
         ai: ["03 / INTELLIGENCE", "AI Execution Matrix", "Task funding, remote compute, evidence receipt · end to end"]
     };
 
@@ -379,15 +380,54 @@
         $("srStatus").textContent = "Matrix camera reset.";
     }
 
+    function renderValidatorPopulation(w, h) {
+        const population = state.data.validator_population;
+        if (state.validatorScope !== "network" || !population) return [];
+        const cx = w * .5;
+        const cy = h * .5;
+        const rx = Math.min(w * .43, 520);
+        const ry = Math.min(h * .39, 270);
+        const renderBudget = state.lowGpu ? Math.min(64, population.population_rendered) : population.population_rendered;
+        let remaining = renderBudget;
+        const clusters = population.clusters.map((raw, clusterIndex) => {
+            const rendered = clusterIndex === population.clusters.length - 1 ? remaining : Math.floor(renderBudget * raw.count / population.population_total);
+            remaining -= rendered;
+            const node = { id: raw.id, x: cx + raw.x * rx, y: cy + raw.y * ry, type: "cluster", raw: { ...raw, kind: "validator_cluster", detail: `${raw.count} modeled validators · ${population.population_kind} population`, source: population.source, generated_at: population.generated_at } };
+            const spread = 18 + Math.sqrt(raw.count) * 1.45;
+            ctx.save();
+            ctx.fillStyle = raw.truth === "declared" ? "rgba(181,158,255,.32)" : "rgba(104,232,255,.28)";
+            for (let point = 0; point < rendered; point += 1) {
+                const angle = point * 2.399963 + clusterIndex * .71;
+                const distance = Math.sqrt((point + .5) / Math.max(rendered, 1)) * spread;
+                const x = node.x + Math.cos(angle) * distance;
+                const y = node.y + Math.sin(angle) * distance * .58;
+                ctx.fillRect(x, y, point % 7 === 0 ? 1.8 : 1, point % 7 === 0 ? 1.8 : 1);
+            }
+            ctx.restore();
+            glowDot(node, 7 + Math.sqrt(raw.count) * .28, raw.truth === "declared" ? "#b59eff" : "#68e8ff", raw.label, `${raw.count} · ${population.population_kind.toUpperCase()}`, "hex");
+            return node;
+        });
+        if (w >= 700) {
+            ctx.save();
+            ctx.fillStyle = "rgba(104,232,255,.5)";
+            ctx.font = "8px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`GLOBAL VALIDATOR POPULATION · ${population.population_total.toLocaleString()} FIXTURE · ${renderBudget} RENDERED`, cx, Math.max(104, cy - ry - 18));
+            ctx.restore();
+        }
+        return clusters;
+    }
+
     function renderConsensus(w, h) {
         const cx = w * .5;
         const cy = h * .5;
-        const rx = Math.min(w * .38, 410);
-        const ry = Math.min(h * .34, 225);
+        const populationNodes = renderValidatorPopulation(w, h);
+        const rx = Math.min(w * (state.validatorScope === "network" ? .24 : .38), state.validatorScope === "network" ? 300 : 410);
+        const ry = Math.min(h * (state.validatorScope === "network" ? .22 : .34), state.validatorScope === "network" ? 145 : 225);
         const core = { id: "block-4181741", x: cx, y: cy, type: "block", raw: state.data.blocks.at(-1) };
         const selectedSet = state.data.validator_sets[state.validatorSet];
         const validatorsById = new Map(state.data.validators.map((validator) => [validator.id, validator]));
-        const nodes = selectedSet.members.map((member, index) => {
+        const allNodes = selectedSet.members.map((member, index) => {
             const base = validatorsById.get(member.id) || member;
             const angle = Math.PI * 2 * index / selectedSet.members.length - Math.PI / 2;
             const positioned = base.x === undefined ? { x: Math.cos(angle), y: Math.sin(angle) } : base;
@@ -395,6 +435,7 @@
             id: member.id, x: cx + positioned.x * rx, y: cy + positioned.y * ry, type: "validator", raw: { ...base, ...member, set: state.validatorSet, set_id: selectedSet.id, valid_from: selectedSet.valid_from, valid_to: selectedSet.valid_to }
             };
         });
+        const nodes = state.validatorScope === "signers" ? (state.projection.signatures ? allNodes.filter((node) => node.raw.status === "signed") : []) : allNodes;
         nodes.forEach((n, i) => {
             const signed = state.projection.signatures && n.raw.status === "signed";
             line(n, core, signed ? "rgba(49,255,137,.22)" : "rgba(130,150,140,.12)", signed ? 1 : .6, signed ? [] : [4, 6]);
@@ -427,10 +468,10 @@
             ctx.fillText(`THRESHOLD FIELD · ${signedWeight.toFixed(1)}%`, cx, cy - ry * .58);
         }
         ctx.restore();
-        nodes.forEach((n) => glowDot(n, 5 + n.raw.weight * .32, n.raw.status === "signed" ? "#31ff89" : "#667a70", n.raw.label, `${n.raw.weight}% · ${n.raw.region}`));
-        const signedCount = state.projection.signatures ? nodes.filter((node) => node.raw.status === "signed").length : 0;
-        glowDot(core, 34, "#caff36", "MC 4,181,741", `${state.validatorSet.toUpperCase()} SET · ${signedCount} / ${nodes.length}`, "diamond");
-        state.nodes = [...nodes, core];
+        nodes.forEach((n) => glowDot(n, 5 + n.raw.weight * .32, n.raw.status === "signed" ? "#31ff89" : "#667a70", state.validatorScope === "network" ? "" : n.raw.label, state.validatorScope === "network" ? "" : `${n.raw.weight}% · ${n.raw.region}`));
+        const signedCount = state.projection.signatures ? allNodes.filter((node) => node.raw.status === "signed").length : 0;
+        glowDot(core, 34, "#caff36", "MC 4,181,741", `${state.validatorScope.toUpperCase()} · ${signedCount} / ${allNodes.length} SIGNERS`, "diamond");
+        state.nodes = [...populationNodes, ...nodes, core];
     }
 
     function renderChain(w, h) {
@@ -440,13 +481,20 @@
         const replayCount = state.projection.block_count;
         const blockData = state.data.blocks.slice(0, replayCount);
         const blocks = blockData.map((b, i) => ({ id: b.id, x: left + usable * i / Math.max(blockData.length - 1, 1), y, type: "block", raw: b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b }));
+        const totalTransactions = blockData.reduce((sum, block) => sum + block.tx_count, 0);
+        if (w >= 700) {
+            ctx.fillStyle = "rgba(104,232,255,.46)";
+            ctx.font = "8px 'IBM Plex Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`CHAIN WINDOW · ${blocks.length} BLOCKS · ${totalTransactions} TX TOTAL · ${state.data.transactions.length} FIXTURE SAMPLES`, w / 2, 104);
+        }
         blocks.slice(0, -1).forEach((b, i) => {
             line(b, blocks[i + 1], "rgba(49,255,137,.35)", 2);
             particle(b, blocks[i + 1], i * .19);
         });
         blocks.forEach((b, i) => {
             const important = w >= 760 || i % 3 === 0 || b === blocks.at(-1) || [state.selected?.id, state.pendingFocusId].includes(b.id);
-            glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", important ? `#${String(b.raw.seqno).slice(-4)}` : "", important ? `${b.raw.tx_count} TX` : "", "square");
+            glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", important ? `#${String(b.raw.seqno).slice(-4)}` : "", important ? `${b.raw.tx_count} TX TOTAL` : "", "square");
             ctx.fillStyle = "rgba(80,255,150,.18)";
             ctx.font = "7px 'IBM Plex Mono', monospace";
             ctx.textAlign = "center";
@@ -462,9 +510,10 @@
             return node;
         }).filter(Boolean) : [];
         shards.forEach((node) => glowDot(node, 8, "#ffcc6b", w < 700 ? "" : node.raw.label, w < 700 ? "" : node.raw.split_state, "diamond"));
+        const requestedEntityId = state.pendingFocusId || state.selected?.id || null;
         const transactionWindow = state.data.transactions.filter((tx) => blocks.some((block) => block.id === tx.block));
         const visibleTransactions = w < 700
-            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted"].includes(tx.state))
+            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted"].includes(tx.state) || [tx.id, tx.from, tx.to].includes(requestedEntityId))
             : transactionWindow;
         const txs = visibleTransactions.map((tx, i) => {
             const parent = blocks.find((b) => b.id === tx.block);
@@ -484,8 +533,7 @@
             ctx.textAlign = "center";
             ctx.fillText(`LOD · ${visibleTransactions.length} EXPANDED / ${transactionWindow.length} FIXTURE TX`, w / 2, h * .64 - 30);
         }
-        const requestedTx = state.pendingFocusId || (state.selected?.type === "transaction" ? state.selected.id : null);
-        const focusTx = txs.find((n) => n.id === requestedTx) || txs.find((n) => n.id === "tx-a81f") || txs[0];
+        const focusTx = txs.find((node) => node.id === requestedEntityId || [node.raw.from, node.raw.to].includes(requestedEntityId)) || txs.find((node) => node.id === "tx-a81f") || txs[0];
         const endpointData = focusTx ? state.data.entities.filter((e) => [focusTx.raw.from, focusTx.raw.to].includes(e.id)) : [];
         const endpoints = endpointData.map((entity, i) => ({ id: entity.id, x: focusTx.x + (i ? 105 : -105), y: focusTx.y, type: "entity", raw: entity }));
         endpoints.forEach((node) => { line(node, focusTx, "rgba(105,255,176,.28)", 1); glowDot(node, 11, "#78ffb2", node.raw.label, node.raw.kind, "circle"); });
@@ -639,6 +687,7 @@
         $("sceneIndex").textContent = copy[0];
         $("sceneTitle").textContent = copy[1];
         $("sceneSubtitle").textContent = copy[2];
+        if (mode === "consensus" && state.data) updateValidatorSummary();
         if (!fromTour) {
             state.playing = false;
             const url = new URL(location.href);
@@ -659,6 +708,7 @@
         $("timeline").value = Math.round(state.elapsed);
         const events = state.data.graph_events.filter((item) => item.at <= state.elapsed);
         state.projection = projectAt(state.elapsed);
+        if (state.validatorScope === "signers") updateValidatorSummary();
         const taskState = state.projection.ai_phase >= 8 ? ["T-2048 · SETTLED", "escrow release final"] : state.projection.ai_phase >= 6 ? ["T-2048 · RECEIPT", "evidence committed"] : state.projection.ai_phase >= 4 ? ["T-2048 · RUNNING", "remote execution"] : ["T-2048 · QUEUED", "fixture awaiting task event"];
         $("activeTaskValue").textContent = taskState[0];
         $("activeTaskMeta").textContent = taskState[1];
@@ -688,6 +738,7 @@
         if (data?.meta?.schema_version !== "birdeye.graph.v1") problems.push("schema_version");
         requiredArrays.forEach((key) => { if (!Array.isArray(data?.[key])) problems.push(key); });
         if (!data?.validator_sets?.current?.members?.length) problems.push("validator_sets.current");
+        if (!data?.validator_population?.population_total || !Array.isArray(data?.validator_population?.clusters)) problems.push("validator_population");
         if (Array.isArray(data?.blocks) && new Set(data.blocks.map((item) => item.id)).size !== data.blocks.length) problems.push("duplicate block id");
         if (Array.isArray(data?.graph_events) && data.graph_events.some((item, index, list) => index && item.at < list[index - 1].at)) problems.push("event ordering");
         return problems;
@@ -707,8 +758,21 @@
     function updateValidatorSummary() {
         const selectedSet = state.data.validator_sets[state.validatorSet];
         const signedWeight = selectedSet.members.filter((member) => member.status === "signed").reduce((sum, member) => sum + member.weight, 0);
-        $("validatorCount").textContent = String(selectedSet.members.length);
-        $("validatorSetMeta").textContent = `${state.validatorSet} · 100% weight mapped`;
+        const signedCount = selectedSet.members.filter((member) => member.status === "signed").length;
+        if (state.validatorScope === "network") {
+            const population = state.data.validator_population;
+            $("validatorCount").textContent = population.population_total.toLocaleString();
+            $("validatorSetMeta").textContent = `${population.population_kind} population · ${state.lowGpu ? Math.min(64, population.population_rendered) : population.population_rendered} rendered`;
+            if (state.mode === "consensus") $("sceneSubtitle").textContent = `${population.population_total.toLocaleString()}-validator fixture population · ${state.lowGpu ? Math.min(64, population.population_rendered) : population.population_rendered} rendered · not live`;
+        } else if (state.validatorScope === "signers") {
+            $("validatorCount").textContent = state.projection.signatures ? String(signedCount) : "0";
+            $("validatorSetMeta").textContent = `proof-joined signers · ${state.validatorSet} set`;
+            if (state.mode === "consensus") $("sceneSubtitle").textContent = `${state.projection.signatures ? signedCount : 0} proof-joined fixture signers · ${signedWeight.toFixed(1)}% selected-set weight`;
+        } else {
+            $("validatorCount").textContent = String(selectedSet.members.length);
+            $("validatorSetMeta").textContent = `${state.validatorSet} active set · 100% weight mapped`;
+            if (state.mode === "consensus") $("sceneSubtitle").textContent = `${selectedSet.members.length}-member ${state.validatorSet} active-set fixture · voting weight mapped`;
+        }
         $("signedWeight").textContent = `${signedWeight.toFixed(1)}%`;
     }
 
@@ -731,7 +795,7 @@
             selectInspectorTab("facts");
             return;
         }
-        let kind = node.type.toUpperCase();
+        let kind = (raw.kind || node.type).toUpperCase();
         let name = raw.label || `#${raw.seqno}`;
         let id = raw.id;
         let truth = raw.truth || raw.provenance || raw.evidence || (node.type === "validator" || node.type === "block" ? "node_validated" : "chain_reported");
@@ -744,9 +808,10 @@
         else if (node.type === "transaction") facts = [["Value", raw.value], ["Fee", raw.fee], ["State", raw.state], ["Compute", raw.exit_code === undefined ? "exit 0" : `exit ${raw.exit_code} · ${raw.gas_used} gas`], ["Block", raw.block.replace("block-", "#")]];
         else if (node.type === "shard") facts = [["Masterchain", raw.parent.replace("block-", "#")], ["Transactions", raw.tx_count], ["Split state", raw.split_state], ["Lane", raw.lane]];
         else if (node.type === "terminal") facts = [["Region", raw.region], ["Hardware claim", raw.hardware], ["Model", raw.model], ["Capabilities", raw.capabilities.join(", ")], ["Price", raw.price], ["Admission", raw.state], ["Latency", raw.latency], ["Manifest expires", raw.expires_at]];
-        else facts = [["Type", raw.kind], ["Detail", raw.detail], ...(raw.kind === "receipt" ? [["Disclosure", state.receiptMode]] : []), ["Balance", raw.balance || "—"], ["State", raw.state || "active"], ["Truth", truthLabel(truth)], ["Graph", "AI task T-2048"]];
-        $("entityMark").textContent = kind.slice(0, 2);
-        $("entityKind").textContent = kind.replace("ENTITY", raw.kind?.toUpperCase() || "ENTITY");
+        else facts = [["Type", raw.kind], ["Detail", raw.detail], ...(raw.kind === "receipt" ? [["Disclosure", state.receiptMode]] : []), ["Balance", raw.balance || "—"], ["State", raw.state || "active"], ["Truth", truthLabel(truth)], ["Graph", state.mode === "chain" ? "Chain account/contract neighborhood" : "AI task T-2048"]];
+        const marks = { account: "AC", contract: "CT", agent: "AG", service: "SV", terminal: "ET", receipt: "RC", verifier: "VR", settlement: "ST", dispute: "DP", refund: "RF", validator_cluster: "CL" };
+        $("entityMark").textContent = marks[raw.kind] || kind.slice(0, 2);
+        $("entityKind").textContent = kind;
         $("entityName").textContent = name;
         $("entityId").textContent = id;
         setTruthBadge(truth);
@@ -787,6 +852,7 @@
             ...state.data.blocks.map((raw) => ({ raw, type: "block" })),
             ...state.data.transactions.map((raw) => ({ raw, type: "transaction" })),
             ...state.data.shards.map((raw) => ({ raw, type: "shard" })),
+            ...state.data.validator_population.clusters.map((raw) => ({ raw: { ...raw, kind: "validator_cluster", detail: `${raw.count} modeled validators · fixture population` }, type: "cluster" })),
             ...state.data.entities.map((raw) => ({ raw, type: "entity" })),
             ...state.data.terminals.map((raw) => ({ raw, type: "terminal" }))
         ];
@@ -841,10 +907,19 @@
     }
 
     function openSearchResult(result) {
-        const mode = result.type === "validator" ? "consensus" : ["block", "transaction", "shard"].includes(result.type) ? "chain" : "ai";
+        const aiEntityIds = new Set(["contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "receipt-rejected", "verifier-3", "settlement-2048", "dispute-17", "refund-17"]);
+        const chainEntity = result.type === "entity" && (result.raw.kind === "account" || !aiEntityIds.has(result.raw.id));
+        const mode = ["validator", "cluster"].includes(result.type) ? "consensus" : ["block", "transaction", "shard"].includes(result.type) || chainEntity ? "chain" : "ai";
         if (result.type === "validator" && result.raw.set && state.data.validator_sets[result.raw.set]) {
+            state.validatorScope = "active";
+            $("validatorScope").value = "active";
             state.validatorSet = result.raw.set;
             $("validatorSet").value = result.raw.set;
+            updateValidatorSummary();
+        }
+        if (result.type === "cluster") {
+            state.validatorScope = "network";
+            $("validatorScope").value = "network";
             updateValidatorSummary();
         }
         if (mode === "ai" && state.elapsed < 28500) {
@@ -907,11 +982,22 @@
         });
         document.querySelectorAll("[data-layer]").forEach((input) => input.addEventListener("change", () => { state.layers[input.dataset.layer] = input.checked; }));
         $("validatorSet").addEventListener("change", (event) => { state.validatorSet = event.target.value; state.playing = false; updateValidatorSummary(); syncPlayButton(); });
+        $("validatorScope").addEventListener("change", (event) => {
+            state.validatorScope = event.target.value;
+            state.playing = false;
+            clearTrace();
+            const url = new URL(location.href);
+            url.searchParams.set("scope", state.validatorScope);
+            history.replaceState(null, "", url);
+            updateValidatorSummary();
+            syncPlayButton();
+        });
         $("gpuToggle").addEventListener("click", () => {
             state.lowGpu = !state.lowGpu;
             $("gpuToggle").textContent = state.lowGpu ? "GPU · LOW" : "GPU · HIGH";
             $("gpuToggle").setAttribute("aria-pressed", String(state.lowGpu));
             document.body.classList.toggle("low-gpu", state.lowGpu);
+            if (state.data) updateValidatorSummary();
         });
         $("streamToggle").addEventListener("click", simulateTransport);
         $("reorgButton").addEventListener("click", simulateReorg);
@@ -919,6 +1005,7 @@
         $("proofVerify").addEventListener("click", verifyFixtureProof);
         $("stressToggle").addEventListener("click", cycleStress);
         $("entityNavToggle").addEventListener("click", openEntityNavigator);
+        $("grammarToggle").addEventListener("click", showVisualGrammar);
         $("closeSystem").addEventListener("click", () => closeDialog("systemPanel"));
         $("closeEntityNav").addEventListener("click", () => closeDialog("entityNavigator"));
         document.querySelectorAll("[data-inspector-tab]").forEach((button) => button.addEventListener("click", () => selectInspectorTab(button.dataset.inspectorTab)));
@@ -997,6 +1084,7 @@
         });
         document.addEventListener("keydown", (event) => {
             if (event.key === "/" && document.activeElement !== $("entitySearch")) { event.preventDefault(); $("entitySearch").focus(); }
+            if (event.key === "?" && !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) { event.preventDefault(); showVisualGrammar(); }
             if (event.key === "Escape") {
                 if (!$("systemPanel").hidden) closeDialog("systemPanel");
                 else if (!$("entityNavigator").hidden) closeDialog("entityNavigator");
@@ -1021,6 +1109,38 @@
         $("systemContent").innerHTML = html;
         $("systemPanel").hidden = false;
         $("closeSystem").focus();
+    }
+
+    function showVisualGrammar() {
+        showSystem("MATRIX VISUAL GRAMMAR", `<div class="grammar-grid">
+            <section class="grammar-group"><h3>ENTITY SHAPES</h3>
+                <div class="grammar-row"><i class="grammar-glyph circle">V</i><span><b>VALIDATOR</b>Size maps selected-set voting weight.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph diamond"><span>MC</span></i><span><b>BLOCK / RECEIPT</b>Context label distinguishes chain anchor from evidence bridge.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph">□</i><span><b>ACCOUNT / CONTRACT</b>Persistent on-chain endpoint or execution state.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph hex">E</i><span><b>EDGE TERMINAL</b>Remote off-chain compute identity.</span></div>
+            </section>
+            <section class="grammar-group"><h3>EVIDENCE PATHS</h3>
+                <div class="grammar-row"><i class="grammar-edge"></i><span><b>NODE VALIDATED</b>Fixture result attributed to native-node validation.</span></div>
+                <div class="grammar-row"><i class="grammar-edge signed"></i><span><b>SIGNED / ATTESTED</b>Off-chain identity or named evidence policy.</span></div>
+                <div class="grammar-row"><i class="grammar-edge observed"></i><span><b>OBSERVED</b>Fixture measurement with observer and time.</span></div>
+                <div class="grammar-row"><i class="grammar-edge failure"></i><span><b>REJECT / REFUND</b>Interrupted or compensating causal branch.</span></div>
+            </section>
+            <section class="grammar-group"><h3>VALIDATOR DEPTH</h3>
+                <div class="grammar-row"><i class="grammar-glyph hex">N</i><span><b>NETWORK</b>Bounded fixture swarm communicates global scale; count is not liveness.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph circle">A</i><span><b>ACTIVE SET</b>Previous/current/next protocol members sized by voting weight.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph circle">S</i><span><b>SIGNERS</b>Proof-joined subset for the selected masterchain block.</span></div>
+            </section>
+            <section class="grammar-group"><h3>MOTION</h3>
+                <div class="grammar-row"><i class="grammar-glyph circle">·</i><span><b>PARTICLE</b>Directional transaction, message, signature or receipt event.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph circle">◎</i><span><b>WAVE</b>Current GraphDelta event window or selected entity.</span></div>
+            </section>
+            <section class="grammar-group"><h3>KEYBOARD / CAMERA</h3>
+                <div class="grammar-row"><kbd>/</kbd><span><b>SEARCH</b>Focus global fixture search.</span></div>
+                <div class="grammar-row"><kbd>←→</kbd><span><b>NAVIGATE</b>Cycle visible Canvas entities; Enter inspects.</span></div>
+                <div class="grammar-row"><kbd>0</kbd><span><b>RESET</b>Reset camera; wheel zooms and drag pans.</span></div>
+            </section>
+            <p class="grammar-warning"><b>STATIC DEMO CONTRACT</b><br>Every value comes from the bundled deterministic fixture. RPC, WebSocket, WASM proof, Aggregator and Edge Terminal outcomes are simulated and are not production connectivity claims.</p>
+        </div>`);
     }
 
     function simulateTransport() {
@@ -1160,6 +1280,11 @@
             updateValidatorSummary();
             const params = new URLSearchParams(location.search);
             if (params.has("t")) state.elapsed = Math.max(0, Math.min(duration, Number(params.get("t")) || 0));
+            if (["network", "active", "signers"].includes(params.get("scope"))) {
+                state.validatorScope = params.get("scope");
+                $("validatorScope").value = state.validatorScope;
+            }
+            updateValidatorSummary();
             if (["hash-only", "selective", "public"].includes(params.get("disclosure"))) {
                 state.receiptMode = params.get("disclosure");
                 state.data.receipts[0].mode = state.receiptMode;

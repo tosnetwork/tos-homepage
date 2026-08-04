@@ -23,6 +23,23 @@
     {"id":"val-13","label":"RIFT-11","weight":2.9,"region":"Asia South","status":"signed","x":-0.92,"y":0.28},
     {"id":"val-14","label":"ECHO-16","weight":2.0,"region":"US Central","status":"signed","x":-0.96,"y":-0.15}
   ],
+  "validator_population": {
+    "population_total": 2048,
+    "population_rendered": 192,
+    "population_kind": "fixture",
+    "source": "deterministic static scale model — not a live validator registry",
+    "generated_at": "2026-08-04T12:00:00Z",
+    "clusters": [
+      {"id":"cluster-asia-east","label":"ASIA EAST","count":430,"x":0.66,"y":-0.38,"truth":"inferred"},
+      {"id":"cluster-europe","label":"EUROPE","count":390,"x":-0.55,"y":-0.48,"truth":"inferred"},
+      {"id":"cluster-north-america","label":"NORTH AMERICA","count":360,"x":-0.74,"y":0.12,"truth":"inferred"},
+      {"id":"cluster-asia-south","label":"ASIA SOUTH","count":260,"x":0.58,"y":0.26,"truth":"inferred"},
+      {"id":"cluster-south-america","label":"SOUTH AMERICA","count":180,"x":-0.38,"y":0.58,"truth":"inferred"},
+      {"id":"cluster-oceania","label":"OCEANIA","count":150,"x":0.72,"y":0.62,"truth":"inferred"},
+      {"id":"cluster-africa","label":"AFRICA","count":128,"x":0.05,"y":0.72,"truth":"inferred"},
+      {"id":"cluster-unknown","label":"UNKNOWN REGION","count":150,"x":0.02,"y":-0.74,"truth":"declared"}
+    ]
+  },
   "validator_sets": {
     "previous": {
       "id":"set-4181730","valid_from":4181700,"valid_to":4181734,
