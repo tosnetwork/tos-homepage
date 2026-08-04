@@ -7,8 +7,9 @@
   'use strict';
 
   class MeshAnimation {
-    constructor() {
-      this.hostSection = document.querySelector('.mesh');
+    constructor(hostSelector, variantClass) {
+      this.hostSection = document.querySelector(hostSelector);
+      this.variantClass = variantClass;
       this.canvas = null;
       this.ctx = null;
       this.nodes = [];
@@ -54,6 +55,9 @@
       // Create canvas container
       this.container = document.createElement('div');
       this.container.className = 'mesh-animation-container';
+      if (this.variantClass) {
+        this.container.classList.add(this.variantClass);
+      }
 
       // Create canvas
       this.canvas = document.createElement('canvas');
@@ -536,13 +540,16 @@
     }
   }
 
+  function initMeshAnimations() {
+    new MeshAnimation('.hero', 'is-hero');
+    new MeshAnimation('.mesh', 'is-mesh');
+  }
+
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      new MeshAnimation();
-    });
+    document.addEventListener('DOMContentLoaded', initMeshAnimations);
   } else {
-    new MeshAnimation();
+    initMeshAnimations();
   }
 
 })();
