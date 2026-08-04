@@ -378,7 +378,7 @@
 
     function drawSignalLens() {
         if (!state.nodes.length) return;
-        const hovered = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < 34);
+        const hovered = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < (node.hitRadius || 34));
         const target = hovered || (state.selected && state.nodes.find((node) => node.id === state.selected.id));
         if (!target) return;
         const truth = target.raw.truth || target.raw.provenance || target.raw.evidence || "node_validated";
@@ -435,7 +435,8 @@
         ctx.globalAlpha = 1 - progress;
         ctx.strokeStyle = event.kind === "retract" ? "#ff6378" : event.kind === "snapshot" ? "#68e8ff" : "#78ffb2";
         ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(center.x, center.y, 18 + progress * Math.min(w, h) * .34, 0, Math.PI * 2); ctx.stroke();
+        const pulseReach = state.mode === "ai" ? .19 : .34;
+        ctx.beginPath(); ctx.arc(center.x, center.y, 18 + progress * Math.min(w, h) * pulseReach, 0, Math.PI * 2); ctx.stroke();
         ctx.font = "8px 'IBM Plex Mono', monospace";
         ctx.fillStyle = ctx.strokeStyle;
         const labelOnLeft = center.x > w * .72;
@@ -570,16 +571,16 @@
         const left = Math.max(55, w * .055);
         const usable = w - left * 2;
         const windowStart = 9000;
-        const commitInterval = 600;
+        const commitInterval = 1000;
         const inReplayWindow = state.elapsed >= windowStart && state.elapsed < 15000;
-        const replayPosition = inReplayWindow ? Math.max(0, (state.elapsed - windowStart) / commitInterval) : state.data.blocks.length - 1;
-        const committedCount = Math.min(state.data.blocks.length, Math.floor(replayPosition) + 1);
+        const replayPosition = inReplayWindow ? Math.max(0, (state.elapsed - windowStart) / commitInterval) : state.data.blocks.length - 4;
+        const committedCount = Math.min(state.data.blocks.length, Math.floor(replayPosition) + 4);
         const incomingProgress = committedCount < state.data.blocks.length ? replayPosition - Math.floor(replayPosition) : 0;
         const renderedCount = Math.min(state.data.blocks.length, committedCount + (committedCount < state.data.blocks.length ? 1 : 0));
-        const spacing = usable / Math.max(state.data.blocks.length - 1, 1);
+        const spacing = usable / Math.max(committedCount - 1, 4);
         const right = w - left;
         const blockData = state.data.blocks.slice(0, renderedCount);
-        const blocks = blockData.map((b, i) => {
+        let blocks = blockData.map((b, i) => {
             const incoming = i >= committedCount;
             const x = incoming
                 ? right + spacing * (1 - incomingProgress)
@@ -587,6 +588,14 @@
             const corrected = b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b;
             return { id: b.id, x, y, type: "block", pending: incoming, raw: incoming ? { ...corrected, status: "incoming fixture signal" } : corrected };
         });
+        if (w < 700 && blocks.length > 1) {
+            blocks = blocks.slice(-5);
+            const mobileLeft = 48;
+            const mobileRight = w - 48;
+            blocks.forEach((block, index) => {
+                block.x = mobileLeft + (mobileRight - mobileLeft) * index / Math.max(1, blocks.length - 1);
+            });
+        }
         const committedBlocks = blocks.filter((block) => !block.pending);
         const totalTransactions = committedBlocks.reduce((sum, block) => sum + block.raw.tx_count, 0);
         if (w >= 700) {
@@ -745,14 +754,15 @@
             ctx.beginPath(); ctx.arc(0, 0, Math.max(3, radius * .16), 0, Math.PI * 2); ctx.fill();
             ctx.restore();
             const raw = { ...cluster, kind: "ai_cluster", detail: `${cluster.tasks} modeled parallel tasks · ${cluster.agents} agents · ${cluster.terminals} terminals`, population_kind: population.population_kind, source: population.source };
-            galaxyNodes.push({ id: cluster.id, x: cx, y: cy, type: "cluster", raw });
+            galaxyNodes.push({ id: cluster.id, x: cx, y: cy, type: "cluster", hitRadius: radius * (w < 700 ? 2.2 : 2.8), raw });
             if (w >= 700 || index % 2 === 0) {
                 ctx.fillStyle = `rgba(${color},${w < 700 ? .38 : .68})`;
-                ctx.font = `${w < 700 ? 6 : 7}px 'IBM Plex Mono', monospace`;
+                ctx.font = `600 ${w < 700 ? 7 : 9}px 'IBM Plex Mono', monospace`;
                 ctx.textAlign = "center";
                 ctx.fillText(`${focused ? "FOCUS · " : ""}${cluster.label}`, cx, cy + radius + 13);
                 if (w >= 700) {
                     ctx.fillStyle = "rgba(145,185,164,.42)";
+                    ctx.font = "7px 'IBM Plex Mono', monospace";
                     ctx.fillText(`${cluster.tasks} TASKS · ${renderedByCluster[index]} SIGNALS · ${cluster.state.toUpperCase()} · ${cluster.truth.toUpperCase()}${focused ? ` · ${satellites} AGENT BUNDLES` : ""}`, cx, cy + radius + 23);
                 }
             }
@@ -808,6 +818,9 @@
         const galaxyNodes = renderAIGalaxies(w, h);
         const galaxyFocused = state.selected?.raw?.kind === "ai_cluster";
         if (!galaxyFocused) {
+            $("sceneSubtitle").textContent = `${state.data.ai_execution_population.concurrent_tasks} modeled parallel tasks across 6 execution galaxies · select a galaxy · not live`;
+            $("tourTitle").textContent = "EXECUTION GALAXIES";
+            $("tourCopy").textContent = "Six modeled AI contract populations rotate in parallel. Select any task cloud to enter its execution field.";
             ctx.save();
             ctx.fillStyle = "rgba(104,232,255,.5)";
             ctx.font = "8px 'IBM Plex Mono', monospace";
@@ -817,6 +830,9 @@
             state.nodes = galaxyNodes;
             return;
         }
+        $("sceneSubtitle").textContent = `${state.selected.raw.label} · ${state.selected.raw.tasks} modeled tasks · aggregate execution detail`;
+        $("tourTitle").textContent = `INSIDE ${state.selected.raw.label}`;
+        $("tourCopy").textContent = state.selected.raw.id === "ai-galaxy-reasoning" ? "Inspect the T-2048 fixture path inside this execution population." : "Inspect modeled aggregate Agent, Escrow, Service, Terminal, Receipt and Settlement stages.";
         renderGalaxyExecutionDetail(w, h, galaxyNodes);
         return;
         const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3", "settlement-2048"];
@@ -1392,7 +1408,7 @@
         }, { passive: false });
         canvas.addEventListener("click", () => {
             if (state.camera.moved) { state.camera.moved = false; return; }
-            const hit = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < 34);
+            const hit = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < (node.hitRadius || 34));
             const edge = state.edges.find((item) => pointToSegment(state.pointer, item.from, item.to) < 7);
             if (hit) inspect(hit);
             else if (edge) inspect(edge);

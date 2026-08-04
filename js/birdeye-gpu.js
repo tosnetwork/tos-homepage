@@ -47,7 +47,7 @@
             float portalDistance=abs(length((uv-vec2(.0,.03))*vec2(1.45,1.))-mix(.16,.48,.5+.5*sin(time*.18)));
             float aiPortal=1.-smoothstep(.0,.018,portalDistance);
             float modeField=mode<.5?consensusWave:(mode<1.5?chainGate:aiPortal);
-            float fieldStrength=mode>1.5?.018:.075;
+            float fieldStrength=mode>1.5?0.:.075;
             vec3 col=tint*(line*.095+star*.45+scan+modeField*fieldStrength);
             float vignette=1.-smoothstep(.22,1.05,length(uv*vec2(.8,1.)));
             color=vec4(vec3(.002,.018,.011)+col*vignette,1.);
