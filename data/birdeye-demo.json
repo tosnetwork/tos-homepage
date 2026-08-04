@@ -82,6 +82,7 @@
     {"id":"tx-91ac","label":"91AC…03BE","block":"block-4181740","from":"acct-13","to":"contract-dex","value":"21.08 TOS","fee":"0.0062 TOS","state":"success"},
     {"id":"tx-bounce","label":"62D0…BNC4","block":"block-4181739","from":"acct-2c","to":"contract-unknown","value":"4.00 TOS","fee":"0.0081 TOS","state":"bounced","exit_code":37,"gas_used":"18291"},
     {"id":"tx-abort","label":"7A11…FA1L","block":"block-4181738","from":"acct-13","to":"contract-task","value":"0.80 TOS","fee":"0.0120 TOS","state":"aborted","exit_code":13,"gas_used":"44012"},
+    {"id":"tx-compute","label":"C0DE…FA17","block":"block-4181737","from":"contract-service","to":"contract-unknown","value":"0.25 TOS","fee":"0.0094 TOS","state":"compute_failed","exit_code":32,"gas_used":"37110"},
     {"id":"tx-1737","label":"1737…A91C","block":"block-4181737","from":"acct-user","to":"acct-7f","value":"1.20 TOS","fee":"0.0012 TOS","state":"success"},
     {"id":"tx-1736","label":"1736…B02D","block":"block-4181736","from":"acct-7f","to":"acct-2c","value":"0.44 TOS","fee":"0.0011 TOS","state":"success"},
     {"id":"tx-1735","label":"1735…C13E","block":"block-4181735","from":"acct-2c","to":"acct-13","value":"2.08 TOS","fee":"0.0015 TOS","state":"success"},

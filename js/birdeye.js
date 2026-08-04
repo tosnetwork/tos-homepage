@@ -8,6 +8,7 @@
     const duration = 34000;
     const state = {
         data: null,
+        fixtureText: "",
         mode: "consensus",
         nodes: [],
         playing: !reducedMotion,
@@ -42,7 +43,7 @@
     const $ = (id) => document.getElementById(id);
     const modeCopy = {
         consensus: ["01 / SKYVIEW", "Consensus Matrix", "Simulated proof-derived participation · curated fixture evidence"],
-        chain: ["02 / BLOCKSPACE", "Chain Matrix", "10-block fixture window · 243 tx total · 15 sampled transactions"],
+        chain: ["02 / BLOCKSPACE", "Chain Matrix", "10-block fixture window · 243 tx total · 16 sampled transactions"],
         ai: ["03 / INTELLIGENCE", "AI Execution Matrix", "Task funding, remote compute, evidence receipt · end to end"]
     };
 
@@ -280,7 +281,7 @@
         ctx.font = `600 ${Math.max(7, radius * .48)}px 'IBM Plex Mono', monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(({ validator: "V", block: "▦", transaction: "↦", shard: "S", terminal: "E", entity: "◇" })[node.type] || "·", node.x, node.y + .5);
+        ctx.fillText(node.glyph || ({ validator: "V", block: "▦", transaction: "↦", shard: "S", terminal: "E", entity: "◇" })[node.type] || "·", node.x, node.y + .5);
         ctx.textBaseline = "alphabetic";
         if (state.selected?.id === node.id || (state.keyboardIndex >= 0 && state.nodes[state.keyboardIndex]?.id === node.id)) {
             ctx.save();
@@ -513,19 +514,24 @@
         const requestedEntityId = state.pendingFocusId || state.selected?.id || null;
         const transactionWindow = state.data.transactions.filter((tx) => blocks.some((block) => block.id === tx.block));
         const visibleTransactions = w < 700
-            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted"].includes(tx.state) || [tx.id, tx.from, tx.to].includes(requestedEntityId))
+            ? transactionWindow.filter((tx) => tx.block === blocks.at(-1)?.id || ["bounced", "aborted", "compute_failed"].includes(tx.state) || [tx.id, tx.from, tx.to].includes(requestedEntityId))
             : transactionWindow;
         const txs = visibleTransactions.map((tx, i) => {
             const parent = blocks.find((b) => b.id === tx.block);
             const above = i % 2 === 0;
-            const n = { id: tx.id, x: left + usable * (i + .5) / visibleTransactions.length, y: w < 700 ? h * .64 : y + (above ? -152 : 152), type: "transaction", raw: tx };
-            const color = tx.state === "success" ? "rgba(35,214,255,.25)" : "rgba(255,99,120,.55)";
-            line(parent, n, color, tx.state === "success" ? 1 : 2, [3, 5]);
+            const outcome = {
+                success: { color: "#23d6ff", line: "rgba(35,214,255,.25)", shape: "circle", glyph: "↦", dash: [3, 5] },
+                bounced: { color: "#ffcc6b", line: "rgba(255,204,107,.55)", shape: "diamond", glyph: "↶", dash: [3, 5] },
+                compute_failed: { color: "#b59eff", line: "rgba(181,158,255,.58)", shape: "hex", glyph: "!", dash: [2, 4] },
+                aborted: { color: "#ff6378", line: "rgba(255,99,120,.58)", shape: "square", glyph: "×", dash: [6, 4] }
+            }[tx.state] || { color: "#8da99b", line: "rgba(141,169,155,.4)", shape: "circle", glyph: "?", dash: [2, 5] };
+            const n = { id: tx.id, x: left + usable * (i + .5) / visibleTransactions.length, y: w < 700 ? h * .64 : y + (above ? -152 : 152), type: "transaction", raw: tx, outcome, glyph: outcome.glyph };
+            line(parent, n, outcome.line, tx.state === "success" ? 1 : 2, outcome.dash);
             return n;
         });
         txs.forEach((n, index) => {
             const showLabel = w >= 700 || index % 2 === 0 || [state.selected?.id, state.pendingFocusId].includes(n.id);
-            glowDot(n, 7, n.raw.state === "success" ? "#23d6ff" : "#ff6378", showLabel ? n.raw.label : "", showLabel ? `${n.raw.value} · ${n.raw.state}` : "");
+            glowDot(n, 7, n.outcome.color, showLabel ? n.raw.label : "", showLabel ? `${n.raw.value} · ${n.raw.state.replace("_", " ")}` : "", n.outcome.shape);
         });
         if (w < 700) {
             ctx.fillStyle = "rgba(104,232,255,.48)";
@@ -741,6 +747,28 @@
         if (!data?.validator_population?.population_total || !Array.isArray(data?.validator_population?.clusters)) problems.push("validator_population");
         if (Array.isArray(data?.blocks) && new Set(data.blocks.map((item) => item.id)).size !== data.blocks.length) problems.push("duplicate block id");
         if (Array.isArray(data?.graph_events) && data.graph_events.some((item, index, list) => index && item.at < list[index - 1].at)) problems.push("event ordering");
+        const duplicateIds = (items) => Array.isArray(items) && new Set(items.map((item) => item.id)).size !== items.length;
+        ["validators", "transactions", "entities", "shards", "edges", "receipts"].forEach((key) => { if (duplicateIds(data?.[key])) problems.push(`duplicate ${key} id`); });
+        const blockIds = new Set((data?.blocks || []).map((item) => item.id));
+        const transactionIds = new Set((data?.transactions || []).map((item) => item.id));
+        const entityIds = new Set((data?.entities || []).map((item) => item.id));
+        const validatorIds = new Set([...(data?.validators || []).map((item) => item.id), ...Object.values(data?.validator_sets || {}).flatMap((set) => set.members || []).map((item) => item.id)]);
+        const shardIds = new Set((data?.shards || []).map((item) => item.id));
+        const terminalIds = new Set((data?.terminals || []).map((item) => item.id));
+        const graphIds = new Set([...blockIds, ...transactionIds, ...entityIds, ...validatorIds, ...shardIds, ...terminalIds]);
+        (data?.transactions || []).forEach((transaction) => {
+            if (!blockIds.has(transaction.block)) problems.push(`transaction block ${transaction.id}`);
+            if (!entityIds.has(transaction.from) || !entityIds.has(transaction.to)) problems.push(`transaction endpoint ${transaction.id}`);
+        });
+        (data?.shards || []).forEach((shard) => { if (!blockIds.has(shard.parent)) problems.push(`shard parent ${shard.id}`); });
+        (data?.edges || []).forEach((edge) => { if (!graphIds.has(edge.from) || !graphIds.has(edge.to)) problems.push(`edge endpoint ${edge.id}`); });
+        Object.entries(data?.validator_sets || {}).forEach(([name, set]) => {
+            const weight = (set.members || []).reduce((sum, member) => sum + Number(member.weight || 0), 0);
+            if (Math.abs(weight - 100) > .01) problems.push(`validator weight ${name}`);
+        });
+        const population = data?.validator_population;
+        if (population && population.clusters.reduce((sum, cluster) => sum + cluster.count, 0) !== population.population_total) problems.push("validator population total");
+        if (Array.isArray(data?.graph_events) && new Set(data.graph_events.map((item) => item.cursor)).size !== data.graph_events.length) problems.push("duplicate event cursor");
         return problems;
     }
 
@@ -1130,6 +1158,12 @@
                 <div class="grammar-row"><i class="grammar-glyph circle">A</i><span><b>ACTIVE SET</b>Previous/current/next protocol members sized by voting weight.</span></div>
                 <div class="grammar-row"><i class="grammar-glyph circle">S</i><span><b>SIGNERS</b>Proof-joined subset for the selected masterchain block.</span></div>
             </section>
+            <section class="grammar-group"><h3>TRANSACTION OUTCOME</h3>
+                <div class="grammar-row"><i class="grammar-glyph circle">↦</i><span><b>SUCCESS</b>Cyan circle; execution completed.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph diamond"><span>↶</span></i><span><b>BOUNCED</b>Amber diamond; value/message returned.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph hex">!</i><span><b>COMPUTE FAILURE</b>Purple hexagon; VM compute phase failed.</span></div>
+                <div class="grammar-row"><i class="grammar-glyph">×</i><span><b>ABORTED</b>Red square; transaction/action aborted.</span></div>
+            </section>
             <section class="grammar-group"><h3>MOTION</h3>
                 <div class="grammar-row"><i class="grammar-glyph circle">·</i><span><b>PARTICLE</b>Directional transaction, message, signature or receipt event.</span></div>
                 <div class="grammar-row"><i class="grammar-glyph circle">◎</i><span><b>WAVE</b>Current GraphDelta event window or selected entity.</span></div>
@@ -1198,13 +1232,23 @@
         if (state.selected?.id === receipt.id) inspect(state.nodes.find((node) => node.id === receipt.id) || state.selected);
     }
 
-    function verifyFixtureProof() {
+    async function verifyFixtureProof() {
         $("proofVerify").textContent = "HASHING FIXTURE…";
+        let expected;
+        try {
+            const response = await fetch("data/birdeye-demo.sha256", { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            expected = (await response.text()).trim().split(/\s+/)[0];
+        } catch (error) {
+            $("proofVerify").textContent = "VERIFY FIXTURE";
+            showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-card"><b>PINNED DIGEST UNAVAILABLE</b>The bundled SHA-256 manifest could not be loaded. No verification state was changed.</div>`);
+            return;
+        }
         const worker = new Worker("js/birdeye-proof-worker.js");
-        worker.postMessage({ payload: "TOS Birdeye fixture proof package v1", expected: "fixture" });
+        worker.postMessage({ payload: state.fixtureText, expected });
         worker.onmessage = ({ data }) => {
             $("proofVerify").textContent = "VERIFY FIXTURE";
-            showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-grid"><div class="system-card"><b><strong>${data.ok ? "FIXTURE HASH PASS" : "FAIL"}</strong></b>worker · isolated<br>algorithm · ${data.algorithm}<br>digest · ${data.digest.slice(0, 24)}…</div><div class="system-card"><b>NOT A CHAIN PROOF</b>This checks only the bundled fixture payload. No BOC, validator signature, canonical chain, trust root, JSON-RPC response, or production WASM verifier was checked.</div></div>`);
+            showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-grid"><div class="system-card"><b><strong>${data.ok ? "FIXTURE HASH PASS" : "PINNED DIGEST MISMATCH"}</strong></b>worker · isolated<br>algorithm · ${data.algorithm}<br>bytes · ${data.bytes.toLocaleString()}<br>digest · ${data.digest.slice(0, 24)}…<br>pinned · ${expected.slice(0, 24)}…</div><div class="system-card"><b>CONTRACT VALIDATION</b>Schema version, unique IDs, graph references, validator weights, event ordering/cursors and population totals passed at load.</div><div class="system-card"><b>NOT A CHAIN PROOF</b>This checks bundled-file integrity and internal fixture consistency only. No BOC, validator signature, canonical chain, trust root, JSON-RPC response, or production WASM verifier was checked.</div></div>`);
             worker.terminate();
         };
         worker.onerror = () => { $("proofVerify").textContent = "VERIFY FIXTURE"; showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-card"><b>WORKER FAILED</b>The fixture hash worker could not complete. No verification state was changed.</div>`); worker.terminate(); };
@@ -1272,7 +1316,8 @@
         try {
             const response = await fetch("data/birdeye-demo.json");
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            state.data = await response.json();
+            state.fixtureText = await response.text();
+            state.data = JSON.parse(state.fixtureText);
             const fixtureProblems = validateFixture(state.data);
             if (fixtureProblems.length) throw new Error(`Fixture contract invalid: ${fixtureProblems.join(", ")}`);
             $("bootSchema").textContent = "VALIDATE FIXTURE ..... CONTRACT OK";
