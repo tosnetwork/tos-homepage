@@ -23,15 +23,35 @@
     {"id":"val-13","label":"RIFT-11","weight":2.9,"region":"Asia South","status":"signed","x":-0.92,"y":0.28},
     {"id":"val-14","label":"ECHO-16","weight":2.0,"region":"US Central","status":"signed","x":-0.96,"y":-0.15}
   ],
+  "validator_sets": {
+    "previous": {
+      "id":"set-4181730","valid_from":4181700,"valid_to":4181734,
+      "members":[
+        {"id":"val-01","weight":13.8,"status":"signed"},{"id":"val-02","weight":12.0,"status":"signed"},{"id":"val-03","weight":10.1,"status":"signed"},{"id":"val-04","weight":9.9,"status":"signed"},{"id":"val-05","weight":9.2,"status":"signed"},{"id":"val-06","weight":8.0,"status":"signed"},{"id":"val-07","weight":7.0,"status":"signed"},{"id":"val-08","weight":6.5,"status":"signed"},{"id":"val-09","weight":5.5,"status":"signed"},{"id":"val-10","weight":5.0,"status":"signed"},{"id":"val-11","weight":4.4,"status":"signed"},{"id":"val-12","weight":3.5,"status":"pending"},{"id":"val-13","weight":3.1,"status":"signed"},{"id":"val-15","weight":2.0,"status":"pending","label":"EMBER-02","region":"Unknown","x":-0.96,"y":-0.15}
+      ]
+    },
+    "current": {
+      "id":"set-4181741","valid_from":4181735,"valid_to":4181749,
+      "members":[
+        {"id":"val-01","weight":14.2,"status":"signed"},{"id":"val-02","weight":11.8,"status":"signed"},{"id":"val-03","weight":10.5,"status":"signed"},{"id":"val-04","weight":9.6,"status":"signed"},{"id":"val-05","weight":8.9,"status":"signed"},{"id":"val-06","weight":8.2,"status":"signed"},{"id":"val-07","weight":7.1,"status":"signed"},{"id":"val-08","weight":6.4,"status":"signed"},{"id":"val-09","weight":5.8,"status":"pending"},{"id":"val-10","weight":4.8,"status":"signed"},{"id":"val-11","weight":4.2,"status":"signed"},{"id":"val-12","weight":3.6,"status":"pending"},{"id":"val-13","weight":2.9,"status":"signed"},{"id":"val-14","weight":2.0,"status":"signed"}
+      ]
+    },
+    "next": {
+      "id":"set-4181750","valid_from":4181750,"valid_to":4181764,
+      "members":[
+        {"id":"val-01","weight":14.0,"status":"pending"},{"id":"val-02","weight":11.5,"status":"pending"},{"id":"val-03","weight":10.2,"status":"pending"},{"id":"val-04","weight":9.4,"status":"pending"},{"id":"val-05","weight":8.7,"status":"pending"},{"id":"val-06","weight":8.0,"status":"pending"},{"id":"val-07","weight":6.9,"status":"pending"},{"id":"val-08","weight":6.2,"status":"pending"},{"id":"val-09","weight":5.5,"status":"pending"},{"id":"val-10","weight":4.6,"status":"pending"},{"id":"val-11","weight":4.0,"status":"pending"},{"id":"val-12","weight":3.4,"status":"pending"},{"id":"val-13","weight":2.8,"status":"pending"},{"id":"val-14","weight":2.0,"status":"pending"},{"id":"val-16","weight":2.8,"status":"pending","label":"PRISM-24","region":"Unknown","x":-0.99,"y":0.05}
+      ]
+    }
+  },
   "blocks": [
-    {"id":"block-4181732","seqno":4181732,"tx_count":19,"age":"37s","status":"final","timestamp":"12:00:01","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181733","seqno":4181733,"tx_count":24,"age":"33s","status":"final","timestamp":"12:00:05","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181734","seqno":4181734,"tx_count":16,"age":"29s","status":"final","timestamp":"12:00:09","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181735","seqno":4181735,"tx_count":29,"age":"25s","status":"final","timestamp":"12:00:13","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181736","seqno":4181736,"tx_count":21,"age":"21s","status":"final","timestamp":"12:00:17","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181737","seqno":4181737,"tx_count":22,"age":"17s","status":"final","timestamp":"12:00:21","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181738","seqno":4181738,"tx_count":31,"age":"13s","status":"final","timestamp":"12:00:25","shards":2,"workchain":-1,"provenance":"chain_verified"},
-    {"id":"block-4181739","seqno":4181739,"tx_count":18,"age":"9s","status":"final","timestamp":"12:00:29","shards":2,"workchain":-1,"provenance":"chain_verified"},
+    {"id":"block-4181732","seqno":4181732,"tx_count":19,"age":"37s","status":"final","timestamp":"12:00:01","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181733","seqno":4181733,"tx_count":24,"age":"33s","status":"final","timestamp":"12:00:05","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181734","seqno":4181734,"tx_count":16,"age":"29s","status":"final","timestamp":"12:00:09","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181735","seqno":4181735,"tx_count":29,"age":"25s","status":"final","timestamp":"12:00:13","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181736","seqno":4181736,"tx_count":21,"age":"21s","status":"final","timestamp":"12:00:17","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181737","seqno":4181737,"tx_count":22,"age":"17s","status":"final","timestamp":"12:00:21","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181738","seqno":4181738,"tx_count":31,"age":"13s","status":"final","timestamp":"12:00:25","shards":2,"workchain":-1,"provenance":"fixture_verified"},
+    {"id":"block-4181739","seqno":4181739,"tx_count":18,"age":"9s","status":"final","timestamp":"12:00:29","shards":2,"workchain":-1,"provenance":"fixture_verified"},
     {"id":"block-4181740","seqno":4181740,"tx_count":27,"age":"5s","status":"final","timestamp":"12:00:33","shards":2,"workchain":-1,"provenance":"node_validated"},
     {"id":"block-4181741","seqno":4181741,"tx_count":36,"age":"1s","status":"observed","timestamp":"12:00:37","shards":2,"workchain":-1,"provenance":"node_validated"}
   ],
@@ -44,7 +64,13 @@
     {"id":"tx-f40d","label":"F40D…A712","block":"block-4181740","from":"acct-7f","to":"acct-2c","value":"3.42 TOS","fee":"0.0017 TOS","state":"success"},
     {"id":"tx-91ac","label":"91AC…03BE","block":"block-4181740","from":"acct-13","to":"contract-dex","value":"21.08 TOS","fee":"0.0062 TOS","state":"success"},
     {"id":"tx-bounce","label":"62D0…BNC4","block":"block-4181739","from":"acct-2c","to":"contract-unknown","value":"4.00 TOS","fee":"0.0081 TOS","state":"bounced","exit_code":37,"gas_used":"18291"},
-    {"id":"tx-abort","label":"7A11…FA1L","block":"block-4181738","from":"acct-13","to":"contract-task","value":"0.80 TOS","fee":"0.0120 TOS","state":"aborted","exit_code":13,"gas_used":"44012"}
+    {"id":"tx-abort","label":"7A11…FA1L","block":"block-4181738","from":"acct-13","to":"contract-task","value":"0.80 TOS","fee":"0.0120 TOS","state":"aborted","exit_code":13,"gas_used":"44012"},
+    {"id":"tx-1737","label":"1737…A91C","block":"block-4181737","from":"acct-user","to":"acct-7f","value":"1.20 TOS","fee":"0.0012 TOS","state":"success"},
+    {"id":"tx-1736","label":"1736…B02D","block":"block-4181736","from":"acct-7f","to":"acct-2c","value":"0.44 TOS","fee":"0.0011 TOS","state":"success"},
+    {"id":"tx-1735","label":"1735…C13E","block":"block-4181735","from":"acct-2c","to":"acct-13","value":"2.08 TOS","fee":"0.0015 TOS","state":"success"},
+    {"id":"tx-1734","label":"1734…D24F","block":"block-4181734","from":"acct-13","to":"contract-dex","value":"6.40 TOS","fee":"0.0021 TOS","state":"success"},
+    {"id":"tx-1733","label":"1733…E350","block":"block-4181733","from":"contract-dex","to":"acct-user","value":"3.15 TOS","fee":"0.0019 TOS","state":"success"},
+    {"id":"tx-1732","label":"1732…F461","block":"block-4181732","from":"acct-user","to":"contract-unknown","value":"0.10 TOS","fee":"0.0009 TOS","state":"success"}
   ],
   "entities": [
     {"id":"acct-user","label":"OPERATOR","kind":"account","detail":"Human principal · 0:81c…aa9","balance":"184.250000000 TOS","state":"active","recent_tx":5,"truth":"chain_reported"},
@@ -69,11 +95,11 @@
     {"id":"edge-syd","label":"SYD EDGE 02","region":"Sydney","hardware":"M4 Max","model":"Audio Local","capabilities":["audio"],"price":"0.10 TOS / min","state":"draining","latency":"67ms","evidence":"stale","expires_at":"11:58:00","recent_receipts":8}
   ],
   "shards": [
-    {"id":"shard-merge-1739","label":"SHARD 0:4000","parent":"block-4181739","lane":0,"tx_count":18,"split_state":"after_merge","provenance":"chain_verified"},
+    {"id":"shard-merge-1739","label":"SHARD 0:4000","parent":"block-4181739","lane":0,"tx_count":18,"split_state":"after_merge","provenance":"fixture_verified"},
     {"id":"shard-a-1741","label":"SHARD 0:8000","parent":"block-4181741","lane":-1,"tx_count":21,"split_state":"stable","provenance":"node_validated"},
     {"id":"shard-b-1741","label":"SHARD 0:C000","parent":"block-4181741","lane":1,"tx_count":15,"split_state":"after_split","provenance":"node_validated"},
-    {"id":"shard-a-1740","label":"SHARD 0:8000","parent":"block-4181740","lane":-1,"tx_count":16,"split_state":"before_split","provenance":"chain_verified"},
-    {"id":"shard-b-1740","label":"SHARD 0:C000","parent":"block-4181740","lane":1,"tx_count":11,"split_state":"stable","provenance":"chain_verified"}
+    {"id":"shard-a-1740","label":"SHARD 0:8000","parent":"block-4181740","lane":-1,"tx_count":16,"split_state":"before_split","provenance":"fixture_verified"},
+    {"id":"shard-b-1740","label":"SHARD 0:C000","parent":"block-4181740","lane":1,"tx_count":11,"split_state":"stable","provenance":"fixture_verified"}
   ],
   "receipts": [
     {"id":"receipt-91","request_hash":"req:4ef8…91a0","output_hash":"out:b19e…03c1","usage_hash":"use:021c…7ad2","signature":"ed25519:verified","identity_binding":"terminal:edge-sgp","mode":"hash-only","evidence_level":"attested","observed_at":"12:00:34","expires_at":"12:05:00"},
@@ -81,7 +107,7 @@
   ],
   "proofs": [
     {"entity":"block-4181741","class":"node_validated","source":"tos-node-alpha / getMasterchainBlockSignatures","observed_at":"12:00:38","trust_root":"MC #4,181,739","hash":"boc:91f7…aac0","result":"PASS (fixture)"},
-    {"entity":"block-4181739","class":"chain_verified","source":"birdeye-verify-wasm fixture","observed_at":"12:00:30","trust_root":"checkpoint:4181700","hash":"proof:77a1…c329","result":"PASS (fixture)"},
+    {"entity":"block-4181739","class":"fixture_verified","source":"static proof outcome fixture","observed_at":"12:00:30","trust_root":"simulated checkpoint:4181700","hash":"proof:77a1…c329","result":"SIMULATED PASS"},
     {"entity":"receipt-91","class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","trust_root":"terminal:edge-sgp","hash":"receipt:91c7…2fa1","result":"SIGNATURE PASS"}
   ],
   "graph_events": [
@@ -125,7 +151,7 @@
   ],
   "tour": [
     {"at":0,"mode":"consensus","title":"NETWORK AWAKENS","copy":"Current validator set materializes around the masterchain backbone."},
-    {"at":4200,"mode":"consensus","title":"CONSENSUS CONVERGES","copy":"Proof-derived signer participation converges on block 4,181,741."},
+    {"at":4200,"mode":"consensus","title":"CONSENSUS CONVERGES","copy":"Simulated proof-derived signer participation converges on fixture block 4,181,741."},
     {"at":9000,"mode":"chain","title":"FOLLOW THE BLOCK","copy":"The camera descends from consensus into transactions and persistent accounts."},
     {"at":15000,"mode":"ai","title":"INTELLIGENCE EXECUTES","copy":"An Agent Account funds a task and selects a remote inference service."},
     {"at":22000,"mode":"ai","title":"EDGE RECEIPT RETURNS","copy":"A signed receipt binds remote execution evidence to the on-chain task."},

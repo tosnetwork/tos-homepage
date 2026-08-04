@@ -25,8 +25,8 @@
             <img src="img/logo-navbar.svg" alt="" width="32" height="32">
             <span><b>TOS</b> BIRDEYE</span>
         </a>
-        <div class="network-health" aria-label="Demo network status">
-            <i></i><span>DETERMINISTIC REPLAY</span><em>UPSTREAM NODE · HEALTHY · 1s</em>
+        <div class="network-health" aria-label="Fixture replay status">
+            <i></i><span>DETERMINISTIC FIXTURE REPLAY</span><em>NO LIVE UPSTREAM</em>
         </div>
         <nav class="be-actions" aria-label="Birdeye links">
             <a href="https://github.com/tosnetwork/tos/blob/main/doc/web-explorer-design.md" target="_blank" rel="noopener">Design</a>
@@ -43,11 +43,11 @@
             <div class="scene-title">
                 <span id="sceneIndex">01 / SKYVIEW</span>
                 <h1 id="sceneTitle">Consensus Matrix</h1>
-                <p id="sceneSubtitle">Proof-derived participation · reconstructed from static evidence</p>
+                <p id="sceneSubtitle">Simulated proof-derived participation · curated fixture evidence</p>
             </div>
 
             <div class="truth-legend" aria-label="Data provenance legend">
-                <span><i class="chain"></i>Chain verified</span><span><i class="verified"></i>Node validated</span>
+                <span><i class="chain"></i>Simulated proof pass</span><span><i class="verified"></i>Node validated fixture</span>
                 <span><i class="signed"></i>Signed</span><span><i class="observed"></i>Observed</span>
                 <span><i class="declared"></i>Declared</span><span><i class="stale"></i>Stale</span>
             </div>
@@ -87,12 +87,12 @@
             <p class="entity-id" id="entityId">-1:8000000000000000:4181741</p>
             <div class="truth-badge" id="truthBadge"><i></i> NODE VALIDATED</div>
             <div class="inspector-tabs" role="tablist">
-                <button class="active" data-inspector-tab="facts">Facts</button>
-                <button data-inspector-tab="relations">Relations</button>
-                <button data-inspector-tab="proof">Proof</button>
-                <button data-inspector-tab="raw">Raw</button>
+                <button id="tabFacts" class="active" data-inspector-tab="facts" role="tab" aria-selected="true" aria-controls="entityFacts">Facts</button>
+                <button id="tabRelations" data-inspector-tab="relations" role="tab" aria-selected="false" aria-controls="relationsPanel">Relations</button>
+                <button id="tabProof" data-inspector-tab="proof" role="tab" aria-selected="false" aria-controls="proofPanel">Proof</button>
+                <button id="tabRaw" data-inspector-tab="raw" role="tab" aria-selected="false" aria-controls="rawPanel">Raw</button>
             </div>
-            <dl id="entityFacts">
+            <dl id="entityFacts" role="tabpanel" aria-labelledby="tabFacts">
                 <div><dt>Transactions</dt><dd>36</dd></div>
                 <div><dt>Signers</dt><dd>12 / 14</dd></div>
                 <div><dt>Signed weight</dt><dd>90.6%</dd></div>
@@ -102,9 +102,9 @@
                 <span>PROVENANCE PATH</span>
                 <p id="evidencePath">TOS node → validated header → Birdeye JSON projection</p>
             </div>
-            <div class="inspector-panel" id="relationsPanel" hidden></div>
-            <div class="inspector-panel" id="proofPanel" hidden></div>
-            <pre class="inspector-panel raw-panel" id="rawPanel" hidden></pre>
+            <div class="inspector-panel" id="relationsPanel" role="tabpanel" aria-labelledby="tabRelations" hidden></div>
+            <div class="inspector-panel" id="proofPanel" role="tabpanel" aria-labelledby="tabProof" hidden></div>
+            <pre class="inspector-panel raw-panel" id="rawPanel" role="tabpanel" aria-labelledby="tabRaw" hidden></pre>
         </aside>
 
         <section class="command-deck" aria-label="Birdeye controls">
@@ -117,9 +117,10 @@
             <label class="search-box">
                 <span class="visually-hidden">Search entities</span>
                 <i aria-hidden="true">⌕</i>
-                <input id="entitySearch" type="search" placeholder="Search validator, block, tx, agent, terminal…" autocomplete="off">
+                <input id="entitySearch" type="search" placeholder="Search validator, block, tx, agent, terminal…" autocomplete="off" aria-controls="searchResults" aria-expanded="false">
                 <kbd>/</kbd>
             </label>
+            <div class="search-results" id="searchResults" hidden role="listbox" aria-label="Search results"></div>
 
             <div class="playback">
                 <button id="playToggle" type="button" aria-label="Pause guided demo">Ⅱ</button>
@@ -141,19 +142,19 @@
                 <button id="streamToggle" type="button">DROP STREAM</button>
                 <button id="reorgButton" type="button">SIMULATE REORG</button>
                 <button id="receiptMode" type="button">RECEIPT · HASH ONLY</button>
-                <button id="proofVerify" type="button">VERIFY PROOF</button>
+                <button id="proofVerify" type="button">VERIFY FIXTURE</button>
                 <button id="stressToggle" type="button">STRESS · NORMAL</button>
                 <button id="entityNavToggle" type="button">DOM NAVIGATOR</button>
             </div>
         </section>
 
-        <section class="system-panel" id="systemPanel" hidden aria-live="polite">
-            <header><span id="systemTitle">TRANSPORT DIAGNOSTIC</span><button id="closeSystem" type="button">×</button></header>
+        <section class="system-panel" id="systemPanel" hidden role="dialog" aria-modal="true" aria-labelledby="systemTitle" aria-live="polite">
+            <header><span id="systemTitle">TRANSPORT DIAGNOSTIC</span><button id="closeSystem" type="button" aria-label="Close diagnostic">×</button></header>
             <div id="systemContent"></div>
         </section>
 
-        <section class="entity-navigator" id="entityNavigator" hidden aria-label="Accessible graph entity navigator">
-            <header><span>ACCESSIBLE ENTITY ROUTE</span><button id="closeEntityNav" type="button">×</button></header>
+        <section class="entity-navigator" id="entityNavigator" hidden role="dialog" aria-modal="true" aria-labelledby="entityNavigatorTitle">
+            <header><span id="entityNavigatorTitle">ACCESSIBLE ENTITY ROUTE</span><button id="closeEntityNav" type="button" aria-label="Close entity navigator">×</button></header>
             <p>Keyboard-accessible mirror of visible canvas entities.</p>
             <div id="entityNavList"></div>
         </section>
@@ -163,7 +164,7 @@
         <section class="telemetry" aria-label="Network summary">
             <article><span>VALIDATOR SET</span><strong>14</strong><small>100% weight mapped</small></article>
             <article><span>SIGNED WEIGHT</span><strong id="signedWeight">90.6%</strong><small>proof-derived demo</small></article>
-            <article><span>CHAIN WINDOW</span><strong>10 BLOCKS</strong><small>2 shard lanes</small></article>
+            <article><span>CHAIN WINDOW</span><strong>10 BLOCKS</strong><small>15 sampled tx · 2 shard lanes</small></article>
             <article><span>AI TERMINALS</span><strong>5</strong><small>2 available · 1 executing</small></article>
             <article><span>ACTIVE TASK</span><strong>T-2048</strong><small>receipt returned</small></article>
         </section>

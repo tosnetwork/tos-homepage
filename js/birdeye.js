@@ -24,15 +24,19 @@
         edges: [],
         correctionInjected: false,
         layers: { shards: true, particles: true, labels: true },
-        pointer: { x: -1000, y: -1000 }
+        pointer: { x: -1000, y: -1000 },
+        lastDialogTrigger: null,
+        frameSamples: []
     };
 
     const $ = (id) => document.getElementById(id);
     const modeCopy = {
-        consensus: ["01 / SKYVIEW", "Consensus Matrix", "Proof-derived participation · reconstructed from static evidence"],
-        chain: ["02 / BLOCKSPACE", "Chain Flow", "Blocks, transactions, accounts · one navigable causal graph"],
-        ai: ["03 / INTELLIGENCE", "AI Execution Trace", "Task funding, remote compute, evidence receipt · end to end"]
+        consensus: ["01 / SKYVIEW", "Consensus Matrix", "Simulated proof-derived participation · curated fixture evidence"],
+        chain: ["02 / BLOCKSPACE", "Chain Matrix", "Blocks, transactions, accounts · one navigable causal graph"],
+        ai: ["03 / INTELLIGENCE", "AI Execution Matrix", "Task funding, remote compute, evidence receipt · end to end"]
     };
+
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
 
     function makeRain() {
         const rain = $("rain");
@@ -40,10 +44,10 @@
         const columns = Math.min(44, Math.ceil(innerWidth / 34));
         for (let i = 0; i < columns; i += 1) {
             const column = document.createElement("span");
-            column.textContent = Array.from({ length: 20 }, () => glyphs[Math.floor(Math.random() * glyphs.length)]).join("\n");
+            column.textContent = Array.from({ length: 20 }, (_, row) => glyphs[(i * 7 + row * 3) % glyphs.length]).join("\n");
             column.style.left = `${(i / columns) * 100}%`;
-            column.style.animationDelay = `${-Math.random() * 14}s`;
-            column.style.animationDuration = `${10 + Math.random() * 12}s`;
+            column.style.animationDelay = `${-(i * 1.7) % 14}s`;
+            column.style.animationDuration = `${10 + (i * 5) % 12}s`;
             rain.appendChild(column);
         }
     }
@@ -147,10 +151,16 @@
         const rx = Math.min(w * .38, 410);
         const ry = Math.min(h * .34, 225);
         const core = { id: "block-4181741", x: cx, y: cy, type: "block", raw: state.data.blocks.at(-1) };
-        const setFactor = state.validatorSet === "previous" ? .94 : state.validatorSet === "next" ? 1.06 : 1;
-        const nodes = state.data.validators.map((v, index) => ({
-            id: v.id, x: cx + v.x * rx, y: cy + v.y * ry, type: "validator", raw: { ...v, set: state.validatorSet, weight: +(v.weight * setFactor * (index % 3 === 0 ? 1.02 : .99)).toFixed(2) }
-        }));
+        const selectedSet = state.data.validator_sets[state.validatorSet];
+        const validatorsById = new Map(state.data.validators.map((validator) => [validator.id, validator]));
+        const nodes = selectedSet.members.map((member, index) => {
+            const base = validatorsById.get(member.id) || member;
+            const angle = Math.PI * 2 * index / selectedSet.members.length - Math.PI / 2;
+            const positioned = base.x === undefined ? { x: Math.cos(angle), y: Math.sin(angle) } : base;
+            return {
+            id: member.id, x: cx + positioned.x * rx, y: cy + positioned.y * ry, type: "validator", raw: { ...base, ...member, set: state.validatorSet, set_id: selectedSet.id, valid_from: selectedSet.valid_from, valid_to: selectedSet.valid_to }
+            };
+        });
         nodes.forEach((n, i) => {
             const signed = n.raw.status === "signed";
             line(n, core, signed ? "rgba(49,255,137,.22)" : "rgba(130,150,140,.12)", signed ? 1 : .6, signed ? [] : [4, 6]);
@@ -164,7 +174,8 @@
         ctx.stroke();
         ctx.restore();
         nodes.forEach((n) => glowDot(n, 5 + n.raw.weight * .32, n.raw.status === "signed" ? "#31ff89" : "#667a70", n.raw.label, `${n.raw.weight}% · ${n.raw.region}`));
-        glowDot(core, 34, "#caff36", "MC 4,181,741", `${state.validatorSet.toUpperCase()} SET · 12 / 14`, "diamond");
+        const signedCount = nodes.filter((node) => node.raw.status === "signed").length;
+        glowDot(core, 34, "#caff36", "MC 4,181,741", `${state.validatorSet.toUpperCase()} SET · ${signedCount} / ${nodes.length}`, "diamond");
         state.nodes = [...nodes, core];
     }
 
@@ -172,9 +183,9 @@
         const y = h * .42;
         const left = Math.max(55, w * .055);
         const usable = w - left * 2;
-        const replayCount = Math.min(10, Math.max(3, 3 + Math.floor(state.elapsed / duration * 8)));
+        const replayCount = Math.min(10, Math.max(3, 3 + state.data.graph_events.filter((event) => event.at <= state.elapsed && event.kind !== "retract").length));
         const blockData = state.data.blocks.slice(0, replayCount);
-        const blocks = blockData.map((b, i) => ({ id: b.id, x: left + usable * i / Math.max(blockData.length - 1, 1), y, type: "block", raw: b }));
+        const blocks = blockData.map((b, i) => ({ id: b.id, x: left + usable * i / Math.max(blockData.length - 1, 1), y, type: "block", raw: b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b }));
         blocks.slice(0, -1).forEach((b, i) => {
             line(b, blocks[i + 1], "rgba(49,255,137,.35)", 2);
             particle(b, blocks[i + 1], i * .19);
@@ -208,7 +219,7 @@
 
     function renderAI(w, h) {
         const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3"];
-        const phaseCount = state.elapsed < 15000 ? 2 : state.elapsed < 19000 ? 4 : state.elapsed < 24000 ? 6 : 7;
+        const phaseCount = state.data.tour.filter((event) => event.at <= state.elapsed && event.mode === "ai").reduce((count, event) => Math.max(count, event.at >= 28500 ? 7 : event.at >= 22000 ? 6 : event.at >= 15000 ? 4 : 2), 2);
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
         const pad = Math.max(70, w * .07);
         const y = h * .43;
@@ -245,6 +256,8 @@
     function render(now) {
         const rect = canvas.getBoundingClientRect();
         const delta = Math.min(now - state.lastFrame, 50);
+        state.frameSamples.push(delta);
+        if (state.frameSamples.length > 180) state.frameSamples.shift();
         state.lastFrame = now;
         if (state.playing) {
             state.elapsed = (state.elapsed + delta * state.speed) % duration;
@@ -264,7 +277,7 @@
             semanticEdges();
             if (state.stress > 1) renderStress(rect.width, rect.height);
         }
-        requestAnimationFrame(render);
+        if (!document.hidden) requestAnimationFrame(render);
     }
 
     function renderStress(w, h) {
@@ -293,18 +306,20 @@
             state.playing = false;
             const url = new URL(location.href);
             url.searchParams.set("mode", mode);
+            url.searchParams.set("t", String(Math.round(state.elapsed)));
             history.replaceState(null, "", url);
         }
         syncPlayButton();
     }
 
-    function updateTour() {
+    function updateTour(changeMode = true) {
         if (!state.data) return;
         const event = [...state.data.tour].reverse().find((item) => state.elapsed >= item.at) || state.data.tour[0];
-        setMode(event.mode, true);
+        if (changeMode) setMode(event.mode, true);
         $("tourTitle").textContent = event.title;
         $("tourCopy").textContent = event.copy;
         $("timelineTime").textContent = `00:${String(Math.floor(state.elapsed / 1000)).padStart(2, "0")}`;
+        $("timeline").value = Math.round(state.elapsed);
         const events = state.data.graph_events.filter((item) => item.at <= state.elapsed);
         $("streamCursor").textContent = `cursor · ${(events.at(-1) || state.data.graph_events[0]).cursor}`;
         $("eventRail").innerHTML = events.slice(-5).reverse().map((item) => `<span class="event-pill ${item.kind === "retract" ? "retract" : ""}"><b>${item.kind.toUpperCase()}</b> ${item.label}</span>`).join("");
@@ -316,7 +331,7 @@
     }
 
     function truthLabel(value) {
-        return ({ chain_verified: "CHAIN VERIFIED", node_validated: "NODE VALIDATED", signed_offchain: "SIGNED OFF-CHAIN", attested: "ATTESTED", audited: "AUDITED", benchmarked: "BENCHMARKED", replicated: "REPLICATED", chain_reported: "CHAIN REPORTED", observed: "OBSERVED", declared: "DECLARED", inferred: "INFERRED", stale: "EXPIRED / STALE" })[value] || "OBSERVED";
+        return ({ fixture_verified: "SIMULATED PROOF PASS", node_validated: "NODE VALIDATED FIXTURE", signed_offchain: "SIGNED OFF-CHAIN FIXTURE", attested: "ATTESTED FIXTURE", audited: "AUDITED FIXTURE", benchmarked: "BENCHMARKED FIXTURE", replicated: "REPLICATED FIXTURE", chain_reported: "CHAIN-REPORTED FIXTURE", observed: "OBSERVED FIXTURE", declared: "DECLARED FIXTURE", inferred: "INFERRED FIXTURE", stale: "EXPIRED / STALE FIXTURE" })[value] || "FIXTURE DATA";
     }
 
     function inspect(node) {
@@ -342,8 +357,11 @@
         let id = raw.id;
         let truth = raw.truth || raw.provenance || raw.evidence || (node.type === "validator" || node.type === "block" ? "node_validated" : "chain_reported");
         let facts = [];
-        if (node.type === "validator") facts = [["Vote weight", `${raw.weight}%`], ["Region", raw.region], ["Participation", raw.status], ["Epoch", "current"]];
-        else if (node.type === "block") facts = [["Transactions", raw.tx_count], ["Sequence", raw.seqno], ["Finality", raw.status], ["Observed", raw.age]];
+        if (node.type === "validator") facts = [["Vote weight", `${raw.weight}%`], ["Region", raw.region], ["Participation", raw.status], ["Set", raw.set], ["Set ID", raw.set_id], ["Validity", `#${raw.valid_from}–#${raw.valid_to}`]];
+        else if (node.type === "block") {
+            const samples = state.data.transactions.filter((transaction) => transaction.block === raw.id).length;
+            facts = [["Transactions", `${raw.tx_count} total`], ["Fixture samples", samples], ["Sequence", raw.seqno], ["Finality", raw.status], ["Observed", raw.age], ["View hash", raw.view_hash || "fixture canonical view"]];
+        }
         else if (node.type === "transaction") facts = [["Value", raw.value], ["Fee", raw.fee], ["State", raw.state], ["Compute", raw.exit_code === undefined ? "exit 0" : `exit ${raw.exit_code} · ${raw.gas_used} gas`], ["Block", raw.block.replace("block-", "#")]];
         else if (node.type === "shard") facts = [["Masterchain", raw.parent.replace("block-", "#")], ["Transactions", raw.tx_count], ["Split state", raw.split_state], ["Lane", raw.lane]];
         else if (node.type === "terminal") facts = [["Region", raw.region], ["Hardware claim", raw.hardware], ["Model", raw.model], ["Capabilities", raw.capabilities.join(", ")], ["Price", raw.price], ["Admission", raw.state], ["Latency", raw.latency], ["Manifest expires", raw.expires_at]];
@@ -356,7 +374,9 @@
         $("entityFacts").innerHTML = facts.map(([key, value]) => {
             const field = String(key).toLowerCase().replace(/ claim$/, "");
             const provenance = state.data.field_provenance[`${raw.id}.${field}`];
-            const source = provenance ? `<span class="field-source"><b>${truthLabel(provenance.class)}</b> · ${provenance.source} · ${provenance.observed_at}</span>` : "";
+            const source = provenance
+                ? `<span class="field-source"><b>${truthLabel(provenance.class)}</b> · ${escapeHtml(provenance.source)} · ${escapeHtml(provenance.observed_at)}</span>`
+                : `<span class="field-source"><b>CURATED FIXTURE</b> · birdeye-demo.json · ${escapeHtml(state.data.meta.generated_at)}</span>`;
             return `<div><dt>${key}${source}</dt><dd>${value}</dd></div>`;
         }).join("");
         $("evidencePath").textContent = `${truthLabel(truth)} → deterministic JSON projection → Birdeye scene`;
@@ -385,10 +405,49 @@
     function search(value) {
         const query = value.trim().toLowerCase();
         if (!query || !state.data) return;
-        const result = allSearchables().find(({ raw }) => Object.values(raw).join(" ").toLowerCase().includes(query));
-        if (!result) return;
+        const candidates = allSearchables().map((item) => ({ ...item, haystack: Object.values(item.raw).flat().join(" ").toLowerCase() }));
+        const exact = candidates.find(({ raw }) => [raw.id, raw.label, String(raw.seqno || "")].some((value) => String(value || "").toLowerCase() === query));
+        const matches = candidates.filter((item) => item.haystack.includes(query)).slice(0, 8);
+        const result = exact || (matches.length === 1 ? matches[0] : null);
+        if (!result) {
+            renderSearchResults(matches, query);
+            return;
+        }
+        $("searchResults").hidden = true;
+        $("entitySearch").setAttribute("aria-expanded", "false");
+        openSearchResult(result);
+    }
+
+    function renderSearchResults(matches, query) {
+        const panel = $("searchResults");
+        panel.replaceChildren();
+        if (!matches.length) {
+            const message = document.createElement("p");
+            message.textContent = `No fixture entity matches “${query}”.`;
+            panel.append(message);
+            $("srStatus").textContent = message.textContent;
+        } else {
+            matches.forEach((result) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.setAttribute("role", "option");
+                button.textContent = `${result.type.toUpperCase()} · ${result.raw.label || result.raw.id || result.raw.seqno}`;
+                button.addEventListener("click", () => { panel.hidden = true; openSearchResult(result); });
+                panel.append(button);
+            });
+            $("srStatus").textContent = `${matches.length} fixture search results available.`;
+        }
+        panel.hidden = false;
+        $("entitySearch").setAttribute("aria-expanded", "true");
+    }
+
+    function openSearchResult(result) {
         const mode = result.type === "validator" ? "consensus" : ["block", "transaction", "shard"].includes(result.type) ? "chain" : "ai";
         setMode(mode);
+        const url = new URL(location.href);
+        url.searchParams.set("entity", result.raw.id);
+        url.searchParams.set("t", String(Math.round(state.elapsed)));
+        history.replaceState(null, "", url);
         requestAnimationFrame(() => {
             const visible = state.nodes.find((node) => node.id === result.raw.id);
             inspect(visible || { id: result.raw.id, raw: result.raw, type: result.type });
@@ -398,13 +457,31 @@
     function bind() {
         addEventListener("resize", resize);
         document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+        document.querySelector(".mode-switch").addEventListener("keydown", (event) => {
+            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+            event.preventDefault();
+            const tabs = [...document.querySelectorAll("[data-mode]")];
+            const current = tabs.indexOf(document.activeElement);
+            const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (current + (event.key === "ArrowLeft" ? -1 : 1) + tabs.length) % tabs.length;
+            tabs[next].focus();
+            setMode(tabs[next].dataset.mode);
+        });
         $("playToggle").addEventListener("click", () => { state.playing = !state.playing; syncPlayButton(); });
         $("restartTour").addEventListener("click", () => { state.elapsed = 0; state.playing = true; updateTour(); syncPlayButton(); });
         $("speedToggle").addEventListener("click", () => {
             state.speed = state.speed === 1 ? 2 : state.speed === 2 ? .5 : 1;
             $("speedToggle").textContent = `${state.speed}×`;
         });
-        $("timeline").addEventListener("input", (event) => { state.elapsed = Number(event.target.value); updateTour(); });
+        $("timeline").addEventListener("input", (event) => {
+            state.elapsed = Number(event.target.value);
+            state.playing = false;
+            updateTour();
+            const url = new URL(location.href);
+            url.searchParams.set("mode", state.mode);
+            url.searchParams.set("t", String(Math.round(state.elapsed)));
+            history.replaceState(null, "", url);
+            syncPlayButton();
+        });
         $("entitySearch").addEventListener("keydown", (event) => { if (event.key === "Enter") search(event.currentTarget.value); });
         $("closeInspector").addEventListener("click", () => { $("inspector").classList.remove("open"); state.selected = null; });
         $("demoNotice").addEventListener("click", () => {
@@ -425,9 +502,28 @@
         $("proofVerify").addEventListener("click", verifyFixtureProof);
         $("stressToggle").addEventListener("click", cycleStress);
         $("entityNavToggle").addEventListener("click", openEntityNavigator);
-        $("closeSystem").addEventListener("click", () => { $("systemPanel").hidden = true; });
-        $("closeEntityNav").addEventListener("click", () => { $("entityNavigator").hidden = true; });
+        $("closeSystem").addEventListener("click", () => closeDialog("systemPanel"));
+        $("closeEntityNav").addEventListener("click", () => closeDialog("entityNavigator"));
         document.querySelectorAll("[data-inspector-tab]").forEach((button) => button.addEventListener("click", () => selectInspectorTab(button.dataset.inspectorTab)));
+        document.querySelector(".inspector-tabs").addEventListener("keydown", (event) => {
+            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+            event.preventDefault();
+            const tabs = [...document.querySelectorAll("[data-inspector-tab]")];
+            const current = tabs.indexOf(document.activeElement);
+            const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (current + (event.key === "ArrowLeft" ? -1 : 1) + tabs.length) % tabs.length;
+            tabs[next].focus();
+            selectInspectorTab(tabs[next].dataset.inspectorTab);
+        });
+        document.addEventListener("keydown", (event) => {
+            const dialog = !$("systemPanel").hidden ? $("systemPanel") : !$("entityNavigator").hidden ? $("entityNavigator") : null;
+            if (!dialog || event.key !== "Tab") return;
+            const controls = [...dialog.querySelectorAll("button, [href], input, select, [tabindex]:not([tabindex='-1'])")].filter((element) => !element.disabled && !element.hidden);
+            if (!controls.length) return;
+            const first = controls[0];
+            const last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        });
         canvas.addEventListener("pointermove", (event) => {
             const rect = canvas.getBoundingClientRect();
             state.pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -453,17 +549,30 @@
         });
         document.addEventListener("keydown", (event) => {
             if (event.key === "/" && document.activeElement !== $("entitySearch")) { event.preventDefault(); $("entitySearch").focus(); }
-            if (event.key === "Escape") { $("inspector").classList.remove("open"); $("noticePopover").hidden = true; state.selected = null; }
+            if (event.key === "Escape") {
+                if (!$("systemPanel").hidden) closeDialog("systemPanel");
+                else if (!$("entityNavigator").hidden) closeDialog("entityNavigator");
+                else { $("inspector").classList.remove("open"); $("noticePopover").hidden = true; $("searchResults").hidden = true; state.selected = null; }
+            }
         });
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) { state.playing = false; syncPlayButton(); }
+            else { state.lastFrame = performance.now(); requestAnimationFrame(render); }
         });
     }
 
+    function closeDialog(id) {
+        $(id).hidden = true;
+        state.lastDialogTrigger?.focus();
+        state.lastDialogTrigger = null;
+    }
+
     function showSystem(title, html) {
+        state.lastDialogTrigger = document.activeElement;
         $("systemTitle").textContent = title;
         $("systemContent").innerHTML = html;
         $("systemPanel").hidden = false;
+        $("closeSystem").focus();
     }
 
     function simulateTransport() {
@@ -491,9 +600,9 @@
         state.correctionInjected = !state.correctionInjected;
         const correction = state.data.corrections[1];
         showSystem("UPSTREAM DISAGREEMENT / CORRECTION", `<div class="system-grid">${state.data.transport.nodes.map((node) => `<div class="system-card"><b>${node.id.toUpperCase()}</b>tip · #${node.tip} · ${node.age}<br>view · ${node.view_hash}<br>state · ${node.status}</div>`).join("")}</div><div class="system-card"><b>${state.correctionInjected ? "EXPLICIT REPLACEMENT APPLIED" : "CORRECTION REWOUND"}</b>${correction.entity} · ${correction.reason}<br>${correction.old_hash} → <strong>${correction.new_hash}</strong><br>No silent full-page reload.</div>`);
-        const event = { at: state.elapsed, cursor: "gd-0008", kind: state.correctionInjected ? "retract" : "snapshot", label: state.correctionInjected ? "fork view explicitly replaced" : "canonical fixture restored" };
-        state.data.graph_events.push(event);
-        updateTour();
+        state.data.graph_events = state.data.graph_events.filter((event) => event.cursor !== "gd-0008");
+        state.data.graph_events.push({ at: state.elapsed, cursor: "gd-0008", kind: state.correctionInjected ? "retract" : "snapshot", label: state.correctionInjected ? "block 4181740 fixture view replaced" : "canonical fixture restored" });
+        updateTour(false);
     }
 
     function cycleReceiptMode() {
@@ -510,24 +619,28 @@
     }
 
     function verifyFixtureProof() {
-        $("proofVerify").textContent = "VERIFYING…";
+        $("proofVerify").textContent = "HASHING FIXTURE…";
         const worker = new Worker("js/birdeye-proof-worker.js");
         worker.postMessage({ payload: "TOS Birdeye fixture proof package v1", expected: "fixture" });
         worker.onmessage = ({ data }) => {
-            $("proofVerify").textContent = "VERIFY PROOF";
-            showSystem("WEB WORKER PROOF GATE", `<div class="system-grid"><div class="system-card"><b><strong>${data.ok ? "INTEGRITY PASS" : "FAIL"}</strong></b>worker · isolated<br>algorithm · ${data.algorithm}<br>digest · ${data.digest.slice(0, 24)}…</div><div class="system-card"><b>TRUTH BOUNDARY</b>This verifies fixture package integrity only. It does not claim a live TOS trust root or production WASM verifier.</div></div>`);
+            $("proofVerify").textContent = "VERIFY FIXTURE";
+            showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-grid"><div class="system-card"><b><strong>${data.ok ? "FIXTURE HASH PASS" : "FAIL"}</strong></b>worker · isolated<br>algorithm · ${data.algorithm}<br>digest · ${data.digest.slice(0, 24)}…</div><div class="system-card"><b>NOT A CHAIN PROOF</b>This checks only the bundled fixture payload. No BOC, validator signature, canonical chain, trust root, JSON-RPC response, or production WASM verifier was checked.</div></div>`);
             worker.terminate();
         };
+        worker.onerror = () => { $("proofVerify").textContent = "VERIFY FIXTURE"; showSystem("FIXTURE INTEGRITY WORKER", `<div class="system-card"><b>WORKER FAILED</b>The fixture hash worker could not complete. No verification state was changed.</div>`); worker.terminate(); };
     }
 
     function cycleStress() {
         const levels = [1, 2000, 10000, 50000];
         state.stress = levels[(levels.indexOf(state.stress) + 1) % levels.length];
         $("stressToggle").textContent = state.stress === 1 ? "STRESS · NORMAL" : `STRESS · ${state.stress / 1000}K`;
-        showSystem("RENDER BUDGET", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} SYNTHETIC ENTITIES`}</b>Deterministic point-field load enabled for visual feedback. Particle count remains independently capped. This is a local rendering probe, not a certified p95 benchmark.</div>`);
+        const sorted = [...state.frameSamples].sort((a, b) => a - b);
+        const p95 = sorted[Math.floor(sorted.length * .95)] || 0;
+        showSystem("RENDER PROBE", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} SYNTHETIC POINTS`}</b>Deterministic point-field load enabled. Recent-frame sample p95 · ${p95.toFixed(1)} ms (${sorted.length} frames). This probes Canvas fill load only—not representative graph nodes, edges, labels, layout, or a certified device benchmark.</div>`);
     }
 
     function openEntityNavigator() {
+        state.lastDialogTrigger = document.activeElement;
         $("entityNavList").innerHTML = state.nodes.map((node, index) => `<button type="button" data-nav-index="${index}">${node.type.toUpperCase()}<br>${node.raw.label || `#${node.raw.seqno}` || node.id}</button>`).join("");
         $("entityNavigator").hidden = false;
         $("entityNavList").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { inspect(state.nodes[Number(button.dataset.navIndex)]); $("entityNavigator").hidden = true; }));
@@ -535,7 +648,12 @@
     }
 
     function selectInspectorTab(name) {
-        document.querySelectorAll("[data-inspector-tab]").forEach((button) => button.classList.toggle("active", button.dataset.inspectorTab === name));
+        document.querySelectorAll("[data-inspector-tab]").forEach((button) => {
+            const active = button.dataset.inspectorTab === name;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-selected", String(active));
+            button.tabIndex = active ? 0 : -1;
+        });
         $("entityFacts").hidden = name !== "facts";
         $("evidencePath").parentElement.hidden = name !== "facts";
         $("relationsPanel").hidden = name !== "relations";
