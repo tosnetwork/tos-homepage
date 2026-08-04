@@ -26,7 +26,8 @@
         layers: { shards: true, particles: true, labels: true },
         pointer: { x: -1000, y: -1000 },
         lastDialogTrigger: null,
-        frameSamples: []
+        frameSamples: [],
+        projection: { block_count: 3, signatures: false, shards: false, ai_phase: 2, expired: [] }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -79,6 +80,12 @@
         const length2 = dx * dx + dy * dy || 1;
         const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / length2));
         return Math.hypot(point.x - (a.x + t * dx), point.y - (a.y + t * dy));
+    }
+
+    function projectAt(elapsed) {
+        const events = state.data.graph_events.filter((event) => event.at <= elapsed && event.state);
+        const latest = events.at(-1) || state.data.graph_events.find((event) => event.state);
+        return latest ? { ...latest.state, expired: [...latest.state.expired] } : { block_count: 3, signatures: false, shards: false, ai_phase: 2, expired: [] };
     }
 
     function semanticEdges() {
@@ -162,7 +169,7 @@
             };
         });
         nodes.forEach((n, i) => {
-            const signed = n.raw.status === "signed";
+            const signed = state.projection.signatures && n.raw.status === "signed";
             line(n, core, signed ? "rgba(49,255,137,.22)" : "rgba(130,150,140,.12)", signed ? 1 : .6, signed ? [] : [4, 6]);
             if (signed) particle(n, core, i / nodes.length);
         });
@@ -174,7 +181,7 @@
         ctx.stroke();
         ctx.restore();
         nodes.forEach((n) => glowDot(n, 5 + n.raw.weight * .32, n.raw.status === "signed" ? "#31ff89" : "#667a70", n.raw.label, `${n.raw.weight}% · ${n.raw.region}`));
-        const signedCount = nodes.filter((node) => node.raw.status === "signed").length;
+        const signedCount = state.projection.signatures ? nodes.filter((node) => node.raw.status === "signed").length : 0;
         glowDot(core, 34, "#caff36", "MC 4,181,741", `${state.validatorSet.toUpperCase()} SET · ${signedCount} / ${nodes.length}`, "diamond");
         state.nodes = [...nodes, core];
     }
@@ -183,7 +190,7 @@
         const y = h * .42;
         const left = Math.max(55, w * .055);
         const usable = w - left * 2;
-        const replayCount = Math.min(10, Math.max(3, 3 + state.data.graph_events.filter((event) => event.at <= state.elapsed && event.kind !== "retract").length));
+        const replayCount = state.projection.block_count;
         const blockData = state.data.blocks.slice(0, replayCount);
         const blocks = blockData.map((b, i) => ({ id: b.id, x: left + usable * i / Math.max(blockData.length - 1, 1), y, type: "block", raw: b.id === "block-4181740" && state.correctionInjected ? { ...b, status: "replaced fixture view", view_hash: state.data.corrections[1].new_hash } : b }));
         blocks.slice(0, -1).forEach((b, i) => {
@@ -191,7 +198,7 @@
             particle(b, blocks[i + 1], i * .19);
         });
         blocks.forEach((b, i) => glowDot(b, b === blocks.at(-1) ? 20 : 10, b === blocks.at(-1) ? "#caff36" : "#31ff89", `#${String(b.raw.seqno).slice(-4)}`, `${b.raw.tx_count} TX`, "square"));
-        const shards = state.layers.shards ? state.data.shards.map((shard) => {
+        const shards = state.layers.shards && state.projection.shards ? state.data.shards.map((shard) => {
             const parent = blocks.find((b) => b.id === shard.parent);
             if (!parent) return null;
             const transition = shard.split_state.includes("split") ? Math.sin(state.elapsed / 900) * 6 : shard.split_state.includes("merge") ? Math.cos(state.elapsed / 900) * 5 : 0;
@@ -219,7 +226,7 @@
 
     function renderAI(w, h) {
         const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3"];
-        const phaseCount = state.data.tour.filter((event) => event.at <= state.elapsed && event.mode === "ai").reduce((count, event) => Math.max(count, event.at >= 28500 ? 7 : event.at >= 22000 ? 6 : event.at >= 15000 ? 4 : 2), 2);
+        const phaseCount = state.projection.ai_phase;
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
         const pad = Math.max(70, w * .07);
         const y = h * .43;
@@ -243,7 +250,7 @@
             glowDot(dispute, 12, "#ff6378", "DISPUTE / REFUND", state.elapsed > 28500 ? "resolved · refund" : "alternate path", "diamond");
         }
         const terminals = state.data.terminals.filter((t) => t.id !== "edge-sgp").map((t, i) => ({
-            id: t.id, x: w < 700 ? 40 + (w - 80) * i / 3 : pad + (w - pad * 2) * (i + .7) / 4.7, y: h * .74, type: "terminal", raw: t
+            id: t.id, x: w < 700 ? 40 + (w - 80) * i / 3 : pad + (w - pad * 2) * (i + .7) / 4.7, y: h * .74, type: "terminal", raw: state.projection.expired.includes(t.id) ? { ...t, evidence: "stale", state: "offline" } : { ...t, evidence: t.evidence === "stale" ? "declared" : t.evidence }
         }));
         terminals.forEach((n) => glowDot(n, 9, n.raw.evidence === "stale" ? "#ff6378" : n.raw.state === "available" ? "#31ff89" : "#768d81", n.raw.label, `${n.raw.latency} · ${n.raw.evidence}`));
         ctx.fillStyle = "rgba(156,196,174,.55)";
@@ -282,12 +289,29 @@
 
     function renderStress(w, h) {
         ctx.save();
+        ctx.beginPath();
+        for (let i = 1; i < state.stress; i += 1) {
+            const x = (i * 73) % w;
+            const y = (i * 137) % h;
+            const previousX = ((i - 1) * 73) % w;
+            const previousY = ((i - 1) * 137) % h;
+            ctx.moveTo(previousX, previousY);
+            ctx.lineTo(x, y);
+            ctx.moveTo(x, y);
+            ctx.lineTo((i * 191) % w, (i * 47) % h);
+        }
+        ctx.strokeStyle = "rgba(35,214,255,.025)";
+        ctx.lineWidth = .5;
+        ctx.stroke();
         ctx.fillStyle = "rgba(49,255,137,.18)";
         for (let i = 0; i < state.stress; i += 1) {
             const x = (i * 73) % w;
             const y = (i * 137) % h;
             ctx.fillRect(x, y, 1, 1);
         }
+        ctx.fillStyle = "rgba(185,255,213,.28)";
+        ctx.font = "7px 'IBM Plex Mono', monospace";
+        for (let i = 0; i < Math.min(50, state.stress); i += 1) ctx.fillText(`S${i}`, (i * 277) % w, (i * 89) % h);
         ctx.restore();
     }
 
@@ -321,17 +345,27 @@
         $("timelineTime").textContent = `00:${String(Math.floor(state.elapsed / 1000)).padStart(2, "0")}`;
         $("timeline").value = Math.round(state.elapsed);
         const events = state.data.graph_events.filter((item) => item.at <= state.elapsed);
+        state.projection = projectAt(state.elapsed);
         $("streamCursor").textContent = `cursor · ${(events.at(-1) || state.data.graph_events[0]).cursor}`;
-        $("eventRail").innerHTML = events.slice(-5).reverse().map((item) => `<span class="event-pill ${item.kind === "retract" ? "retract" : ""}"><b>${item.kind.toUpperCase()}</b> ${item.label}</span>`).join("");
+        $("eventRail").innerHTML = events.slice(-5).reverse().map((item) => `<span class="event-pill ${item.kind === "retract" ? "retract" : ""}"><b>${escapeHtml(item.kind.toUpperCase())}</b> ${escapeHtml(item.label)}</span>`).join("");
     }
 
     function syncPlayButton() {
         $("playToggle").textContent = state.playing ? "Ⅱ" : "▶";
         $("playToggle").setAttribute("aria-label", state.playing ? "Pause guided demo" : "Play guided demo");
+        document.body.classList.toggle("paused-motion", !state.playing);
     }
 
     function truthLabel(value) {
         return ({ fixture_verified: "SIMULATED PROOF PASS", node_validated: "NODE VALIDATED FIXTURE", signed_offchain: "SIGNED OFF-CHAIN FIXTURE", attested: "ATTESTED FIXTURE", audited: "AUDITED FIXTURE", benchmarked: "BENCHMARKED FIXTURE", replicated: "REPLICATED FIXTURE", chain_reported: "CHAIN-REPORTED FIXTURE", observed: "OBSERVED FIXTURE", declared: "DECLARED FIXTURE", inferred: "INFERRED FIXTURE", stale: "EXPIRED / STALE FIXTURE" })[value] || "FIXTURE DATA";
+    }
+
+    function updateValidatorSummary() {
+        const selectedSet = state.data.validator_sets[state.validatorSet];
+        const signedWeight = selectedSet.members.filter((member) => member.status === "signed").reduce((sum, member) => sum + member.weight, 0);
+        $("validatorCount").textContent = String(selectedSet.members.length);
+        $("validatorSetMeta").textContent = `${state.validatorSet} · 100% weight mapped`;
+        $("signedWeight").textContent = `${signedWeight.toFixed(1)}%`;
     }
 
     function inspect(node) {
@@ -343,11 +377,11 @@
             $("entityKind").textContent = `${raw.kind.toUpperCase()} EDGE`;
             $("entityName").textContent = `${raw.from} → ${raw.to}`;
             $("entityId").textContent = raw.id;
-            $("truthBadge").innerHTML = `<i></i> ${truthLabel(raw.truth)}`;
-            $("entityFacts").innerHTML = [["Relation", raw.kind], ["From", raw.from], ["To", raw.to], ["Value/event", raw.value]].map(([key, value]) => `<div><dt>${key}</dt><dd>${value}</dd></div>`).join("");
+            $("truthBadge").innerHTML = `<i></i> ${escapeHtml(truthLabel(raw.truth))}`;
+            $("entityFacts").innerHTML = [["Relation", raw.kind], ["From", raw.from], ["To", raw.to], ["Value/event", raw.value]].map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
             $("evidencePath").textContent = `${truthLabel(raw.truth)} edge → versioned graph projection`;
-            $("relationsPanel").innerHTML = `<div class="relation-row"><b>UPSTREAM</b>${raw.from}</div><div class="relation-row"><b>DOWNSTREAM</b>${raw.to}</div>`;
-            $("proofPanel").innerHTML = `<div class="proof-row"><b>EDGE PROVENANCE</b><span>${truthLabel(raw.truth)}</span><br>${raw.value}<br>fixture schema · birdeye.graph.v1</div>`;
+            $("relationsPanel").innerHTML = `<div class="relation-row"><b>UPSTREAM</b>${escapeHtml(raw.from)}</div><div class="relation-row"><b>DOWNSTREAM</b>${escapeHtml(raw.to)}</div>`;
+            $("proofPanel").innerHTML = `<div class="proof-row"><b>EDGE PROVENANCE</b><span>${escapeHtml(truthLabel(raw.truth))}</span><br>${escapeHtml(raw.value)}<br>fixture schema · birdeye.graph.v1</div>`;
             $("rawPanel").textContent = JSON.stringify(raw, null, 2);
             selectInspectorTab("facts");
             return;
@@ -370,30 +404,41 @@
         $("entityKind").textContent = kind.replace("ENTITY", raw.kind?.toUpperCase() || "ENTITY");
         $("entityName").textContent = name;
         $("entityId").textContent = id;
-        $("truthBadge").innerHTML = `<i></i> ${truthLabel(truth)}`;
+        $("truthBadge").innerHTML = `<i></i> ${escapeHtml(truthLabel(truth))}`;
         $("entityFacts").innerHTML = facts.map(([key, value]) => {
             const field = String(key).toLowerCase().replace(/ claim$/, "");
             const provenance = state.data.field_provenance[`${raw.id}.${field}`];
             const source = provenance
                 ? `<span class="field-source"><b>${truthLabel(provenance.class)}</b> · ${escapeHtml(provenance.source)} · ${escapeHtml(provenance.observed_at)}</span>`
                 : `<span class="field-source"><b>CURATED FIXTURE</b> · birdeye-demo.json · ${escapeHtml(state.data.meta.generated_at)}</span>`;
-            return `<div><dt>${key}${source}</dt><dd>${value}</dd></div>`;
+            return `<div><dt>${escapeHtml(key)}${source}</dt><dd>${escapeHtml(value)}</dd></div>`;
         }).join("");
         $("evidencePath").textContent = `${truthLabel(truth)} → deterministic JSON projection → Birdeye scene`;
         const relations = [];
         state.data.transactions.filter((tx) => [tx.from, tx.to, tx.id, tx.block].includes(raw.id)).forEach((tx) => relations.push(`${tx.from} → ${tx.to}`, `${tx.label} · ${tx.state}`));
         state.data.shards.filter((shard) => shard.parent === raw.id || shard.id === raw.id).forEach((shard) => relations.push(`${shard.parent} → ${shard.id}`, `${shard.tx_count} transactions`));
-        $("relationsPanel").innerHTML = (relations.length ? relations : ["Upstream · graph snapshot", "Downstream · no expanded neighbors"]).map((value, i) => `<div class="relation-row"><b>${i % 2 ? "RELATION" : "NEIGHBOR"}</b>${value}</div>`).join("");
+        $("relationsPanel").innerHTML = (relations.length ? relations : ["Upstream · graph snapshot", "Downstream · no expanded neighbors"]).map((value, i) => `<div class="relation-row"><b>${i % 2 ? "RELATION" : "NEIGHBOR"}</b>${escapeHtml(value)}</div>`).join("");
         const proofs = state.data.proofs.filter((proof) => proof.entity === raw.id);
         const receipt = state.data.receipts.find((item) => item.id === raw.id);
-        $("proofPanel").innerHTML = [...proofs.map((proof) => `<div class="proof-row"><b>${proof.result}</b><span>${truthLabel(proof.class)}</span><br>${proof.source}<br>root · ${proof.trust_root}<br>${proof.hash}</div>`), receipt ? `<div class="proof-row"><b>RECEIPT ENVELOPE</b><span>${receipt.signature}</span><br>${receipt.request_hash}<br>${receipt.output_hash}<br>disclosure · ${receipt.mode}</div>` : ""].join("") || `<div class="proof-row"><b>NO CLIENT PROOF PACKAGE</b>${truthLabel(truth)}. The browser has not independently verified this field.</div>`;
+        $("proofPanel").innerHTML = [...proofs.map((proof) => `<div class="proof-row"><b>${escapeHtml(proof.result)}</b><span>${escapeHtml(truthLabel(proof.class))}</span><br>${escapeHtml(proof.source)}<br>root · ${escapeHtml(proof.trust_root)}<br>${escapeHtml(proof.hash)}</div>`), receipt ? `<div class="proof-row"><b>RECEIPT ENVELOPE</b><span>${escapeHtml(receipt.signature)}</span><br>${escapeHtml(receipt.request_hash)}<br>${escapeHtml(receipt.output_hash)}<br>disclosure · ${escapeHtml(receipt.mode)}</div>` : ""].join("") || `<div class="proof-row"><b>NO CLIENT PROOF PACKAGE</b>${escapeHtml(truthLabel(truth))}. The browser has not independently verified this field.</div>`;
         $("rawPanel").textContent = JSON.stringify(raw, null, 2);
         selectInspectorTab("facts");
     }
 
     function allSearchables() {
+        const validatorBase = new Map(state.data.validators.map((validator) => [validator.id, validator]));
+        const validatorMap = new Map();
+        ["current", "previous", "next"].forEach((set) => {
+            const snapshot = state.data.validator_sets[set];
+            snapshot.members.forEach((member) => {
+                if (validatorMap.has(member.id)) return;
+                const raw = { ...(validatorBase.get(member.id) || {}), ...member, set, set_id: snapshot.id, valid_from: snapshot.valid_from, valid_to: snapshot.valid_to };
+                validatorMap.set(raw.id, { raw, type: "validator" });
+            });
+        });
+        const validators = [...validatorMap.values()];
         return [
-            ...state.data.validators.map((raw) => ({ raw, type: "validator" })),
+            ...validators,
             ...state.data.blocks.map((raw) => ({ raw, type: "block" })),
             ...state.data.transactions.map((raw) => ({ raw, type: "transaction" })),
             ...state.data.shards.map((raw) => ({ raw, type: "shard" })),
@@ -427,12 +472,21 @@
             panel.append(message);
             $("srStatus").textContent = message.textContent;
         } else {
-            matches.forEach((result) => {
+            matches.forEach((result, index) => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.setAttribute("role", "option");
+                button.id = `searchResult${index}`;
                 button.textContent = `${result.type.toUpperCase()} · ${result.raw.label || result.raw.id || result.raw.seqno}`;
                 button.addEventListener("click", () => { panel.hidden = true; openSearchResult(result); });
+                button.addEventListener("keydown", (event) => {
+                    if (!["ArrowDown", "ArrowUp", "Escape"].includes(event.key)) return;
+                    event.preventDefault();
+                    if (event.key === "Escape") { panel.hidden = true; $("entitySearch").setAttribute("aria-expanded", "false"); $("entitySearch").focus(); return; }
+                    const options = [...panel.querySelectorAll("button")];
+                    const current = options.indexOf(button);
+                    options[(current + (event.key === "ArrowUp" ? -1 : 1) + options.length) % options.length].focus();
+                });
                 panel.append(button);
             });
             $("srStatus").textContent = `${matches.length} fixture search results available.`;
@@ -443,6 +497,11 @@
 
     function openSearchResult(result) {
         const mode = result.type === "validator" ? "consensus" : ["block", "transaction", "shard"].includes(result.type) ? "chain" : "ai";
+        if (result.type === "validator" && result.raw.set && state.data.validator_sets[result.raw.set]) {
+            state.validatorSet = result.raw.set;
+            $("validatorSet").value = result.raw.set;
+            updateValidatorSummary();
+        }
         setMode(mode);
         const url = new URL(location.href);
         url.searchParams.set("entity", result.raw.id);
@@ -482,7 +541,11 @@
             history.replaceState(null, "", url);
             syncPlayButton();
         });
-        $("entitySearch").addEventListener("keydown", (event) => { if (event.key === "Enter") search(event.currentTarget.value); });
+        $("entitySearch").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") search(event.currentTarget.value);
+            if (event.key === "ArrowDown" && !$("searchResults").hidden) { event.preventDefault(); $("searchResults").querySelector("button")?.focus(); }
+            if (event.key === "Escape") { $("searchResults").hidden = true; event.currentTarget.setAttribute("aria-expanded", "false"); }
+        });
         $("closeInspector").addEventListener("click", () => { $("inspector").classList.remove("open"); state.selected = null; });
         $("demoNotice").addEventListener("click", () => {
             const popover = $("noticePopover");
@@ -490,10 +553,11 @@
             $("demoNotice").setAttribute("aria-expanded", String(!popover.hidden));
         });
         document.querySelectorAll("[data-layer]").forEach((input) => input.addEventListener("change", () => { state.layers[input.dataset.layer] = input.checked; }));
-        $("validatorSet").addEventListener("change", (event) => { state.validatorSet = event.target.value; state.playing = false; syncPlayButton(); });
+        $("validatorSet").addEventListener("change", (event) => { state.validatorSet = event.target.value; state.playing = false; updateValidatorSummary(); syncPlayButton(); });
         $("gpuToggle").addEventListener("click", () => {
             state.lowGpu = !state.lowGpu;
             $("gpuToggle").textContent = state.lowGpu ? "GPU · LOW" : "GPU · HIGH";
+            $("gpuToggle").setAttribute("aria-pressed", String(state.lowGpu));
             document.body.classList.toggle("low-gpu", state.lowGpu);
         });
         $("streamToggle").addEventListener("click", simulateTransport);
@@ -636,14 +700,26 @@
         $("stressToggle").textContent = state.stress === 1 ? "STRESS · NORMAL" : `STRESS · ${state.stress / 1000}K`;
         const sorted = [...state.frameSamples].sort((a, b) => a - b);
         const p95 = sorted[Math.floor(sorted.length * .95)] || 0;
-        showSystem("RENDER PROBE", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} SYNTHETIC POINTS`}</b>Deterministic point-field load enabled. Recent-frame sample p95 · ${p95.toFixed(1)} ms (${sorted.length} frames). This probes Canvas fill load only—not representative graph nodes, edges, labels, layout, or a certified device benchmark.</div>`);
+        showSystem("RENDER PROBE", `<div class="system-card"><b>${state.stress === 1 ? "NORMAL GRAPH" : `${state.stress.toLocaleString()} NODES · ${(state.stress * 2).toLocaleString()} EDGES`}</b>Deterministic batched node/edge primitives and 50 labels enabled. Recent-frame sample p95 · ${p95.toFixed(1)} ms (${sorted.length} frames). This is a local Canvas rendering probe—not a certified device benchmark or full layout simulation.</div>`);
     }
 
     function openEntityNavigator() {
         state.lastDialogTrigger = document.activeElement;
-        $("entityNavList").innerHTML = state.nodes.map((node, index) => `<button type="button" data-nav-index="${index}">${node.type.toUpperCase()}<br>${node.raw.label || `#${node.raw.seqno}` || node.id}</button>`).join("");
+        const list = $("entityNavList");
+        list.replaceChildren();
+        state.nodes.forEach((node, index) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.dataset.navIndex = String(index);
+            const kind = document.createElement("strong");
+            kind.textContent = node.type.toUpperCase();
+            const label = document.createElement("span");
+            label.textContent = node.raw.label || (node.raw.seqno ? `#${node.raw.seqno}` : node.id);
+            button.append(kind, document.createElement("br"), label);
+            list.append(button);
+        });
         $("entityNavigator").hidden = false;
-        $("entityNavList").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { inspect(state.nodes[Number(button.dataset.navIndex)]); $("entityNavigator").hidden = true; }));
+        list.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { inspect(state.nodes[Number(button.dataset.navIndex)]); closeDialog("entityNavigator"); }));
         $("entityNavList").querySelector("button")?.focus();
     }
 
@@ -670,8 +746,7 @@
             const response = await fetch("data/birdeye-demo.json");
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             state.data = await response.json();
-            const signed = state.data.validators.filter((v) => v.status === "signed").reduce((sum, v) => sum + v.weight, 0);
-            $("signedWeight").textContent = `${signed.toFixed(1)}%`;
+            updateValidatorSummary();
             const params = new URLSearchParams(location.search);
             if (params.has("t")) state.elapsed = Math.max(0, Math.min(duration, Number(params.get("t")) || 0));
             updateTour();

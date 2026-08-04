@@ -72,7 +72,7 @@
                 <label><input type="checkbox" data-layer="shards" checked> Shards</label>
                 <label><input type="checkbox" data-layer="particles" checked> Signals</label>
                 <label><input type="checkbox" data-layer="labels" checked> Labels</label>
-                <button id="gpuToggle" type="button">GPU · HIGH</button>
+                <button id="gpuToggle" type="button" aria-pressed="false">GPU · HIGH</button>
             </div>
         </section>
 
@@ -117,7 +117,7 @@
             <label class="search-box">
                 <span class="visually-hidden">Search entities</span>
                 <i aria-hidden="true">⌕</i>
-                <input id="entitySearch" type="search" placeholder="Search validator, block, tx, agent, terminal…" autocomplete="off" aria-controls="searchResults" aria-expanded="false">
+                <input id="entitySearch" type="search" role="combobox" aria-autocomplete="list" placeholder="Search validator, block, tx, agent, terminal…" autocomplete="off" aria-controls="searchResults" aria-expanded="false">
                 <kbd>/</kbd>
             </label>
             <div class="search-results" id="searchResults" hidden role="listbox" aria-label="Search results"></div>
@@ -162,7 +162,7 @@
         <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
         <section class="telemetry" aria-label="Network summary">
-            <article><span>VALIDATOR SET</span><strong>14</strong><small>100% weight mapped</small></article>
+            <article><span>VALIDATOR SET</span><strong id="validatorCount">14</strong><small id="validatorSetMeta">current · 100% weight mapped</small></article>
             <article><span>SIGNED WEIGHT</span><strong id="signedWeight">90.6%</strong><small>proof-derived demo</small></article>
             <article><span>CHAIN WINDOW</span><strong>10 BLOCKS</strong><small>15 sampled tx · 2 shard lanes</small></article>
             <article><span>AI TERMINALS</span><strong>5</strong><small>2 available · 1 executing</small></article>

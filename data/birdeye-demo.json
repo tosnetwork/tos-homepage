@@ -111,13 +111,13 @@
     {"entity":"receipt-91","class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","trust_root":"terminal:edge-sgp","hash":"receipt:91c7…2fa1","result":"SIGNATURE PASS"}
   ],
   "graph_events": [
-    {"at":0,"cursor":"gd-0001","kind":"snapshot","label":"10 blocks restored"},
-    {"at":4200,"cursor":"gd-0002","kind":"upsert","label":"12 signer proofs joined"},
-    {"at":9000,"cursor":"gd-0003","kind":"upsert","label":"shard split linked"},
-    {"at":15000,"cursor":"gd-0004","kind":"upsert","label":"task T-2048 accepted"},
-    {"at":22000,"cursor":"gd-0005","kind":"upsert","label":"receipt 91C7 committed"},
-    {"at":26000,"cursor":"gd-0006","kind":"retract","label":"stale terminal claim expired"},
-    {"at":28500,"cursor":"gd-0007","kind":"upsert","label":"escrow settlement final"}
+    {"at":0,"cursor":"gd-0001","kind":"snapshot","label":"3-block retained snapshot restored","state":{"block_count":3,"signatures":false,"shards":false,"ai_phase":2,"expired":[]}},
+    {"at":4200,"cursor":"gd-0002","kind":"upsert","label":"12 signer proofs joined","state":{"block_count":4,"signatures":true,"shards":false,"ai_phase":2,"expired":[]}},
+    {"at":9000,"cursor":"gd-0003","kind":"upsert","label":"shard split linked","state":{"block_count":5,"signatures":true,"shards":true,"ai_phase":2,"expired":[]}},
+    {"at":15000,"cursor":"gd-0004","kind":"upsert","label":"task T-2048 accepted","state":{"block_count":7,"signatures":true,"shards":true,"ai_phase":4,"expired":[]}},
+    {"at":22000,"cursor":"gd-0005","kind":"upsert","label":"receipt 91C7 committed","state":{"block_count":9,"signatures":true,"shards":true,"ai_phase":6,"expired":[]}},
+    {"at":26000,"cursor":"gd-0006","kind":"retract","label":"stale terminal claim expired","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":6,"expired":["edge-syd"]}},
+    {"at":28500,"cursor":"gd-0007","kind":"upsert","label":"escrow settlement final","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":7,"expired":["edge-syd"]}}
   ],
   "transport": {
     "mode":"fixture-websocket",
