@@ -1398,7 +1398,9 @@
                 const moveY = event.clientY - state.camera.dragY;
                 state.camera.targetX += moveX;
                 state.camera.targetY += moveY;
-                if (Math.abs(moveX) + Math.abs(moveY) > 2) state.camera.moved = true;
+                state.camera.dragDistance = (state.camera.dragDistance || 0) + Math.hypot(moveX, moveY);
+                const dragThreshold = state.camera.pointerType === "touch" ? 12 : 2;
+                if (state.camera.dragDistance > dragThreshold) state.camera.moved = true;
                 state.camera.dragX = event.clientX;
                 state.camera.dragY = event.clientY;
             }
@@ -1408,15 +1410,28 @@
         canvas.addEventListener("pointerdown", (event) => {
             state.camera.dragging = true;
             state.camera.moved = false;
+            state.camera.dragDistance = 0;
+            state.camera.pointerType = event.pointerType;
             state.camera.dragX = event.clientX;
             state.camera.dragY = event.clientY;
+            state.pointer = screenToWorld(event.clientX, event.clientY);
             canvas.setPointerCapture?.(event.pointerId);
             canvas.classList.add("dragging");
         });
+        const activateCanvasPoint = (clientX, clientY) => {
+            state.pointer = screenToWorld(clientX, clientY);
+            const hit = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < (node.hitRadius || 34));
+            const edge = state.edges.find((item) => pointToSegment(state.pointer, item.from, item.to) < 7);
+            if (hit) inspect(hit);
+            else if (edge) inspect(edge);
+        };
         const stopDragging = (event) => {
+            const wasTap = !state.camera.moved;
+            if (Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) state.pointer = screenToWorld(event.clientX, event.clientY);
             state.camera.dragging = false;
             canvas.releasePointerCapture?.(event.pointerId);
             canvas.classList.remove("dragging");
+            if (event.type === "pointerup" && event.pointerType === "touch" && wasTap) activateCanvasPoint(event.clientX, event.clientY);
         };
         canvas.addEventListener("pointerup", stopDragging);
         canvas.addEventListener("pointercancel", stopDragging);
@@ -1426,12 +1441,10 @@
             state.camera.targetZoom = Math.max(.65, Math.min(1.8, state.camera.targetZoom * (event.deltaY > 0 ? .9 : 1.1)));
             $("srStatus").textContent = `Matrix camera zoom ${state.camera.targetZoom.toFixed(2)} times. Double-click to reset.`;
         }, { passive: false });
-        canvas.addEventListener("click", () => {
+        canvas.addEventListener("click", (event) => {
+            if (event.pointerType === "touch") return;
             if (state.camera.moved) { state.camera.moved = false; return; }
-            const hit = [...state.nodes].reverse().find((node) => Math.hypot(state.pointer.x - node.x, state.pointer.y - node.y) < (node.hitRadius || 34));
-            const edge = state.edges.find((item) => pointToSegment(state.pointer, item.from, item.to) < 7);
-            if (hit) inspect(hit);
-            else if (edge) inspect(edge);
+            activateCanvasPoint(event.clientX, event.clientY);
         });
         canvas.addEventListener("keydown", (event) => {
             if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Enter", "0"].includes(event.key)) return;

@@ -63,7 +63,7 @@ a { color: inherit; text-decoration: none; }
 @keyframes boot-exit { 0%,65% { opacity: 1; } 88% { opacity: .15; filter: brightness(2); } 100% { opacity: 0; visibility: hidden; } }
 #matrixGpu, #matrixCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 #matrixGpu { z-index: 0; opacity: .88; }
-#matrixCanvas { z-index: 1; cursor: crosshair; }
+#matrixCanvas { z-index: 1; cursor: crosshair; touch-action: manipulation; }
 #matrixCanvas.dragging { cursor: grabbing; }
 .low-gpu #matrixGpu { display: none; }
 .mode-sigil { position: absolute; z-index: 2; right: clamp(18px,4vw,64px); top: 50%; display: grid; justify-items: end; pointer-events: none; transform: translateY(-50%); opacity: .075; color: var(--green); text-align: right; transition: color .5s, opacity .5s; }
