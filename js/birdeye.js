@@ -23,7 +23,7 @@
         keyboardIndex: -1,
         edges: [],
         correctionInjected: false,
-        layers: { shards: true, particles: true, labels: true },
+        layers: { shards: true, particles: true, labels: true, failures: true },
         pointer: { x: -1000, y: -1000 },
         lastDialogTrigger: null,
         frameSamples: [],
@@ -225,9 +225,11 @@
             const edge = { id: raw.id, type: "edge", raw, from, to };
             state.edges.push(edge);
             const related = !state.traceIds || [raw.from, raw.to, raw.id].some((id) => state.traceIds.has(id));
-            const color = raw.truth === "signed_offchain" ? `rgba(35,214,255,${related ? .62 : .16})` : `rgba(202,255,54,${related ? .46 : .12})`;
-            directedLine(from, to, color, related ? 1.7 : .8, raw.truth === "signed_offchain" ? [5, 4] : []);
-            if (related) particle(from, to, (state.edges.length * .173) % 1, raw.truth === "signed_offchain" ? "#23d6ff" : "#caff36");
+            const failure = ["rejects", "refunds"].includes(raw.kind);
+            const palette = failure ? ["255,99,120", "#ff6378"] : raw.truth === "signed_offchain" || raw.truth === "attested" ? ["35,214,255", "#23d6ff"] : raw.truth === "observed" ? ["255,204,107", "#ffcc6b"] : ["202,255,54", "#caff36"];
+            const dash = failure ? [3, 5] : raw.truth === "signed_offchain" ? [6, 4] : raw.truth === "observed" ? [2, 5] : [];
+            directedLine(from, to, `rgba(${palette[0]},${related ? .62 : .13})`, related ? 1.7 : .8, dash);
+            if (related) particle(from, to, (state.edges.length * .173) % 1, palette[1]);
         });
     }
 
@@ -491,7 +493,7 @@
     }
 
     function renderAI(w, h) {
-        const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3"];
+        const ids = ["acct-user", "contract-agent", "contract-task", "contract-service", "edge-sgp", "receipt-91", "verifier-3", "settlement-2048"];
         const phaseCount = state.projection.ai_phase;
         const labels = state.data.entities.filter((e) => ids.includes(e.id)).slice(0, phaseCount);
         const pad = Math.max(70, w * .07);
@@ -506,7 +508,9 @@
         ctx.restore();
         const nodes = labels.map((entity, i) => ({
             id: entity.id,
-            x: w < 700 ? 42 + (w - 84) * (i % 4) / 3 : pad + (w - pad * 2) * i / Math.max(labels.length - 1, 1),
+            x: w < 700
+                ? (Math.floor(i / 4) % 2 ? w - 42 - (w - 84) * (i % 4) / 3 : 42 + (w - 84) * (i % 4) / 3)
+                : pad + (w - pad * 2) * i / Math.max(labels.length - 1, 1),
             y: w < 700 ? h * .29 + Math.floor(i / 4) * 104 : y + (i % 2 ? 28 : -28),
             type: "entity",
             raw: entity
@@ -515,27 +519,38 @@
             line(n, nodes[i + 1], i >= 4 ? "rgba(35,214,255,.5)" : "rgba(49,255,137,.34)", 1.5);
             particle(n, nodes[i + 1], i * .13, i >= 4 ? "#23d6ff" : "#31ff89");
         });
+        const mobileNames = { "acct-user": "OPERATOR", "contract-agent": "AGENT", "contract-task": "ESCROW", "contract-service": "SERVICE", "edge-sgp": "EDGE 04", "receipt-91": "RECEIPT", "verifier-3": "VERIFY", "settlement-2048": "SETTLE" };
         nodes.forEach((n) => {
             const shape = n.raw.kind === "receipt" ? "diamond" : n.raw.kind === "terminal" ? "hex" : "square";
             const semanticNode = n.raw.kind === "terminal" ? { ...n, type: "terminal" } : n;
-            glowDot(semanticNode, n.raw.kind === "terminal" ? 19 : 14, n.raw.kind === "receipt" ? "#23d6ff" : "#31ff89", n.raw.label, n.raw.kind.toUpperCase(), shape);
+            glowDot(semanticNode, n.raw.kind === "terminal" ? 19 : 14, n.raw.kind === "receipt" ? "#23d6ff" : "#31ff89", w < 700 ? mobileNames[n.id] : n.raw.label, n.raw.kind.toUpperCase(), shape);
         });
-        const disputeRaw = state.data.entities.find((e) => e.id === "dispute-17");
-        const dispute = { id: disputeRaw.id, x: w * .69, y: h * .21, type: "entity", raw: disputeRaw };
-        if (nodes[4]) {
-            line(nodes[4], dispute, "rgba(255,99,120,.45)", 1.5, [5, 5]);
-            line(dispute, nodes[2], "rgba(255,99,120,.32)", 1, [5, 5]);
-            glowDot(dispute, 12, "#ff6378", "DISPUTE / REFUND", state.elapsed > 28500 ? "resolved · refund" : "alternate path", "diamond");
-        }
+        const forkIds = ["receipt-rejected", "dispute-17", "refund-17"];
+        const expandMobileFork = forkIds.some((id) => [state.selected?.id, state.pendingFocusId].includes(id));
+        const fullForkEntities = forkIds.map((id) => state.data.entities.find((entity) => entity.id === id)).filter(Boolean);
+        const collapsedFork = { id: "failure-fork", label: "FAILURE FORK ×3", kind: "dispute", detail: "Rejected receipt → dispute → refund", truth: "observed" };
+        const forkEntities = state.layers.failures && state.elapsed >= 26000 ? (w < 700 && !expandMobileFork ? [collapsedFork] : fullForkEntities) : [];
+        const forkNodes = forkEntities.map((entity, index) => ({
+            id: entity.id,
+            x: w < 700 ? (forkEntities.length === 1 ? w - 80 : 52 + index * (w - 104) / Math.max(forkEntities.length - 1, 1)) : w * .82,
+            y: w < 700 ? h * (forkEntities.length === 1 ? .57 : .62) : h * (.22 + index * .13),
+            type: "entity",
+            raw: entity
+        }));
+        forkNodes.slice(0, -1).forEach((node, index) => directedLine(node, forkNodes[index + 1], "rgba(255,99,120,.5)", 1.4, [4, 5]));
+        forkNodes.forEach((node) => {
+            const showLabel = w >= 700 || forkEntities.length === 1 || [state.selected?.id, state.pendingFocusId].includes(node.id);
+            glowDot(node, 10, "#ff6378", showLabel ? node.raw.label : "", showLabel ? node.raw.kind.toUpperCase() : "", node.raw.kind === "receipt" ? "diamond" : "square");
+        });
         const terminals = state.data.terminals.filter((t) => t.id !== "edge-sgp").map((t, i) => ({
-            id: t.id, x: w < 700 ? 40 + (w - 80) * i / 3 : pad + (w - pad * 2) * (i + .7) / 4.7, y: h * .74, type: "terminal", raw: state.projection.expired.includes(t.id) ? { ...t, evidence: "stale", state: "offline" } : { ...t, evidence: t.evidence === "stale" ? "declared" : t.evidence }
+            id: t.id, x: w < 700 ? 40 + (w - 80) * i / 3 : pad + (w - pad * 2) * (i + .7) / 4.7, y: w < 700 ? h * .79 : h * .74, type: "terminal", raw: state.projection.expired.includes(t.id) ? { ...t, evidence: "stale", state: "offline" } : { ...t, evidence: t.evidence === "stale" ? "declared" : t.evidence }
         }));
         terminals.forEach((n) => glowDot(n, 9, n.raw.evidence === "stale" ? "#ff6378" : n.raw.state === "available" ? "#31ff89" : "#768d81", n.raw.label, `${n.raw.latency} · ${n.raw.evidence}`, "hex"));
         ctx.fillStyle = "rgba(156,196,174,.55)";
         ctx.font = "10px 'IBM Plex Mono', monospace";
         ctx.textAlign = "left";
         ctx.fillText("REMOTE EDGE COMPUTE FIELD", pad, h * .67);
-        state.nodes = [...nodes, ...(nodes[4] ? [dispute] : []), ...terminals];
+        state.nodes = [...nodes, ...forkNodes, ...terminals];
     }
 
     function render(now) {
@@ -644,6 +659,9 @@
         $("timeline").value = Math.round(state.elapsed);
         const events = state.data.graph_events.filter((item) => item.at <= state.elapsed);
         state.projection = projectAt(state.elapsed);
+        const taskState = state.projection.ai_phase >= 8 ? ["T-2048 · SETTLED", "escrow release final"] : state.projection.ai_phase >= 6 ? ["T-2048 · RECEIPT", "evidence committed"] : state.projection.ai_phase >= 4 ? ["T-2048 · RUNNING", "remote execution"] : ["T-2048 · QUEUED", "fixture awaiting task event"];
+        $("activeTaskValue").textContent = taskState[0];
+        $("activeTaskMeta").textContent = taskState[1];
         $("streamCursor").textContent = `cursor · ${(events.at(-1) || state.data.graph_events[0]).cursor}`;
         $("eventRail").innerHTML = events.slice(-5).reverse().map((item) => `<span class="event-pill ${item.kind === "retract" ? "retract" : ""}"><b>${escapeHtml(item.kind.toUpperCase())}</b> ${escapeHtml(item.label)}</span>`).join("");
     }

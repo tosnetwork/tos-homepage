@@ -80,12 +80,15 @@
     {"id":"edge-sgp","label":"SGP EDGE 04","kind":"terminal","detail":"H100 80GB · Singapore · available","truth":"attested"},
     {"id":"receipt-91","label":"RECEIPT 91C7","kind":"receipt","detail":"Output + usage commitment","truth":"signed_offchain"},
     {"id":"verifier-3","label":"VERIFIER 03","kind":"verifier","detail":"Receipt signature accepted","truth":"chain_reported"},
+    {"id":"settlement-2048","label":"SETTLEMENT 2048","kind":"settlement","detail":"Escrow released · 5.25 TOS service payment","state":"final","truth":"node_validated"},
     {"id":"acct-7f","label":"0:7F…92","kind":"account","detail":"Active account","truth":"chain_reported"},
     {"id":"acct-2c","label":"0:2C…11","kind":"account","detail":"Active account","truth":"chain_reported"},
     {"id":"acct-13","label":"0:13…EF","kind":"account","detail":"Active account","truth":"chain_reported"},
     {"id":"contract-dex","label":"LIQUIDITY POOL","kind":"contract","detail":"Generic contract","code_hash":"03ab…871c","truth":"chain_reported"},
     {"id":"contract-unknown","label":"UNKNOWN CONTRACT","kind":"contract","detail":"Unsupported code hash · rendered safely","code_hash":"ffff…0021","truth":"chain_reported"},
-    {"id":"dispute-17","label":"DISPUTE 17","kind":"dispute","detail":"Rejected receipt branch · refund available","truth":"node_validated"}
+    {"id":"receipt-rejected","label":"REJECTED RECEIPT","kind":"receipt","detail":"Invalid terminal signature · commitment rejected","state":"rejected","truth":"observed"},
+    {"id":"dispute-17","label":"DISPUTE 17","kind":"dispute","detail":"Rejected receipt branch · refund authorized","state":"resolved","truth":"node_validated"},
+    {"id":"refund-17","label":"REFUND 17","kind":"refund","detail":"Escrow returned · 8.00 TOS","state":"final","truth":"node_validated"}
   ],
   "terminals": [
     {"id":"edge-sgp","label":"SGP EDGE 04","region":"Singapore","hardware":"H100 80GB","model":"TOS-Reason-32B","capabilities":["reasoning","tool-use"],"price":"0.42 TOS / 1M tok","state":"executing","latency":"28ms","evidence":"attested","expires_at":"12:05:00","recent_receipts":17},
@@ -108,7 +111,8 @@
   "proofs": [
     {"entity":"block-4181741","class":"node_validated","source":"tos-node-alpha / getMasterchainBlockSignatures","observed_at":"12:00:38","trust_root":"MC #4,181,739","hash":"boc:91f7…aac0","result":"PASS (fixture)"},
     {"entity":"block-4181739","class":"fixture_verified","source":"static proof outcome fixture","observed_at":"12:00:30","trust_root":"simulated checkpoint:4181700","hash":"proof:77a1…c329","result":"SIMULATED PASS"},
-    {"entity":"receipt-91","class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","trust_root":"terminal:edge-sgp","hash":"receipt:91c7…2fa1","result":"SIGNATURE PASS"}
+    {"entity":"receipt-91","class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","trust_root":"terminal:edge-sgp","hash":"receipt:91c7…2fa1","result":"SIGNATURE PASS"},
+    {"entity":"receipt-rejected","class":"observed","source":"receipt verifier fixture","observed_at":"11:59:43","trust_root":"terminal identity registry fixture","hash":"receipt:ffff…dead","result":"SIGNATURE REJECTED"}
   ],
   "graph_events": [
     {"at":0,"cursor":"gd-0001","kind":"snapshot","label":"10-block retained snapshot restored","state":{"block_count":10,"signatures":false,"shards":false,"ai_phase":2,"expired":[]}},
@@ -117,7 +121,7 @@
     {"at":15000,"cursor":"gd-0004","kind":"upsert","label":"task T-2048 accepted","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":4,"expired":[]}},
     {"at":22000,"cursor":"gd-0005","kind":"upsert","label":"receipt 91C7 committed","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":6,"expired":[]}},
     {"at":26000,"cursor":"gd-0006","kind":"retract","label":"stale terminal claim expired","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":6,"expired":["edge-syd"]}},
-    {"at":28500,"cursor":"gd-0007","kind":"upsert","label":"escrow settlement final","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":7,"expired":["edge-syd"]}}
+    {"at":28500,"cursor":"gd-0007","kind":"upsert","label":"escrow settlement final","state":{"block_count":10,"signatures":true,"shards":true,"ai_phase":8,"expired":["edge-syd"]}}
   ],
   "transport": {
     "mode":"fixture-websocket",
@@ -138,7 +142,14 @@
     "edge-sgp.latency":{"class":"observed","source":"birdeye probe fixture","observed_at":"12:00:32","expires_at":"12:01:32","evidence_hash":"probe:19c0…2f11"},
     "edge-sgp.evidence":{"class":"attested","source":"policy gpu-attestation-v1","observed_at":"12:00:04","expires_at":"12:05:00","evidence_hash":"att:87c1…02aa"},
     "acct-user.balance":{"class":"chain_reported","source":"node-alpha getAddressBalance","observed_at":"12:00:38","evidence_hash":"state:11a0…7c91"},
-    "receipt-91.signature":{"class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","evidence_hash":"sig:ee01…20c9"}
+    "receipt-91.signature":{"class":"signed_offchain","source":"terminal identity registry fixture","observed_at":"12:00:35","evidence_hash":"sig:ee01…20c9"},
+    "settlement-2048.detail":{"class":"node_validated","source":"task escrow state fixture","observed_at":"12:00:39","evidence_hash":"state:2048…settled"},
+    "settlement-2048.state":{"class":"node_validated","source":"task escrow state fixture","observed_at":"12:00:39","evidence_hash":"state:2048…final"},
+    "receipt-rejected.detail":{"class":"observed","source":"receipt verifier fixture","observed_at":"11:59:43","evidence_hash":"verify:ffff…reject"},
+    "receipt-rejected.state":{"class":"observed","source":"receipt verifier fixture","observed_at":"11:59:43","evidence_hash":"verify:ffff…reject"},
+    "dispute-17.state":{"class":"node_validated","source":"dispute contract state fixture","observed_at":"12:00:18","evidence_hash":"state:dispute17…resolved"},
+    "refund-17.detail":{"class":"node_validated","source":"task escrow refund fixture","observed_at":"12:00:20","evidence_hash":"state:refund17…8tos"},
+    "refund-17.state":{"class":"node_validated","source":"task escrow refund fixture","observed_at":"12:00:20","evidence_hash":"state:refund17…final"}
   },
   "edges": [
     {"id":"edge-sign-01","kind":"signed","from":"val-01","to":"block-4181741","truth":"node_validated","value":"14.2% signed weight"},
@@ -147,7 +158,11 @@
     {"id":"edge-message-task","kind":"workflow","from":"contract-agent","to":"contract-task","truth":"node_validated","value":"request · tx-b72e"},
     {"id":"edge-exec-sgp","kind":"executes_on","from":"contract-service","to":"edge-sgp","truth":"signed_offchain","value":"req:4ef8…91a0"},
     {"id":"edge-commit-91","kind":"commits","from":"edge-sgp","to":"receipt-91","truth":"attested","value":"receipt:91c7…2fa1"},
-    {"id":"edge-settle","kind":"workflow","from":"verifier-3","to":"contract-task","truth":"node_validated","value":"settle · tx-e55b"}
+    {"id":"edge-verify-91","kind":"verifies","from":"receipt-91","to":"verifier-3","truth":"signed_offchain","value":"signature accepted"},
+    {"id":"edge-settle","kind":"settles","from":"verifier-3","to":"settlement-2048","truth":"node_validated","value":"settle · tx-e55b"},
+    {"id":"edge-release","kind":"releases","from":"settlement-2048","to":"contract-task","truth":"node_validated","value":"5.25 TOS service payment"},
+    {"id":"edge-reject","kind":"rejects","from":"receipt-rejected","to":"dispute-17","truth":"observed","value":"invalid terminal signature"},
+    {"id":"edge-refund","kind":"refunds","from":"dispute-17","to":"refund-17","truth":"node_validated","value":"8.00 TOS returned"}
   ],
   "tour": [
     {"at":0,"mode":"consensus","title":"NETWORK AWAKENS","copy":"Current validator set materializes around the masterchain backbone."},
