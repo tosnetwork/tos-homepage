@@ -1,5 +1,5 @@
 /**
- * TOS Network - Agent Mesh Animation
+ * TOS Network - Hero Mesh Animation
  * Dynamic node-and-edge network visualization
  */
 
@@ -7,9 +7,8 @@
   'use strict';
 
   class MeshAnimation {
-    constructor(hostSelector, variantClass) {
+    constructor(hostSelector) {
       this.hostSection = document.querySelector(hostSelector);
-      this.variantClass = variantClass;
       this.canvas = null;
       this.ctx = null;
       this.nodes = [];
@@ -27,12 +26,13 @@
         scrollSpeed: 0.5,
         edgeOpacity: 0.4,
         nodeOpacity: 0.75,
+        // Big nodes read pink-purple against the cyan edges/particles for contrast.
         colors: {
-          blue: '#78cfe7',
-          blueLight: '#b2e7f3',
-          blueDark: '#4fb8d6',
-          red: '#72d2b2',
-          redLight: '#9de3cd',
+          blue: '#e05fd6',
+          blueLight: '#f5b3ef',
+          blueDark: '#b02fb0',
+          red: '#a855f7',
+          redLight: '#d8b4fe',
           edge: '#78cfe7',
           edgeGlow: '#b2e7f3'
         },
@@ -55,9 +55,6 @@
       // Create canvas container
       this.container = document.createElement('div');
       this.container.className = 'mesh-animation-container';
-      if (this.variantClass) {
-        this.container.classList.add(this.variantClass);
-      }
 
       // Create canvas
       this.canvas = document.createElement('canvas');
@@ -102,7 +99,7 @@
       this.edges = [];
       this.layers = []; // Track nodes by layer
 
-      const centerY = this.height / 2;
+      const centerY = this.height * 0.42;
       const startX = -this.config.layerSpacing;
 
       // Generate layers
@@ -429,7 +426,7 @@
       const lastNode = this.nodes[this.nodes.length - 1];
       const newLayer = lastNode ? lastNode.layer + 1 : 0;
       const x = lastNode ? lastNode.x + this.config.layerSpacing : this.width + this.config.layerSpacing;
-      const centerY = this.height / 2;
+      const centerY = this.height * 0.42;
 
       const newNodes = [];
 
@@ -540,16 +537,15 @@
     }
   }
 
-  function initMeshAnimations() {
-    new MeshAnimation('.hero', 'is-hero');
-    new MeshAnimation('.mesh', 'is-mesh');
+  function initMeshAnimation() {
+    new MeshAnimation('.hero');
   }
 
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMeshAnimations);
+    document.addEventListener('DOMContentLoaded', initMeshAnimation);
   } else {
-    initMeshAnimations();
+    initMeshAnimation();
   }
 
 })();

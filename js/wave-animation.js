@@ -119,5 +119,5 @@ class WaveAnimation {
 document.addEventListener('DOMContentLoaded', () => {
     // Respect reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    new WaveAnimation('wave-canvas');
+    new WaveAnimation('mesh-wave-canvas');
 });
