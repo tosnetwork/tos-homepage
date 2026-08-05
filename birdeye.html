@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TOS Birdeye — a spatial, evidence-native view of consensus, transactions, AI execution, and edge intelligence.">
+    <meta name="description" content="TOS BirdView — a spatial, evidence-native view of consensus, transactions, AI execution, and edge intelligence.">
     <meta name="theme-color" content="#020906">
-    <meta property="og:title" content="TOS Birdeye — See the network think">
+    <meta property="og:title" content="TOS BirdView — See the network think">
     <meta property="og:description" content="A static interactive preview of the TOS consensus and AI execution explorer.">
     <meta property="og:url" content="https://birdeye.tos.network">
-    <title>TOS Birdeye — See the network think</title>
+    <title>TOS BirdView — See the network think</title>
     <link rel="icon" href="favicon.ico">
     <link rel="canonical" href="https://birdeye.tos.network/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,18 +17,18 @@
     <link rel="stylesheet" href="css/birdeye.css?v=20260804-2">
 </head>
 <body>
-    <a class="skip-link" href="#birdeyeMain">Skip to Birdeye controls</a>
+    <a class="skip-link" href="#birdeyeMain">Skip to BirdView controls</a>
     <div class="rain" id="rain" aria-hidden="true"></div>
 
     <header class="be-header">
         <a class="be-brand" href="index.html" aria-label="Return to TOS Network home">
             <img src="img/logo-navbar.svg" alt="" width="32" height="32">
-            <span><b>TOS</b> BIRDEYE</span>
+            <span><b>TOS</b> BIRDVIEW</span>
         </a>
         <div class="network-health" aria-label="Fixture replay status">
             <i></i><span>DETERMINISTIC FIXTURE REPLAY</span><em>NO LIVE UPSTREAM</em>
         </div>
-        <nav class="be-actions" aria-label="Birdeye links">
+        <nav class="be-actions" aria-label="BirdView links">
             <a href="https://github.com/tosnetwork/tos/blob/main/doc/web-explorer-design.md" target="_blank" rel="noopener">Design</a>
             <a href="index.html">tos.network</a>
         </nav>
@@ -37,7 +37,7 @@
     <main class="be-main" id="birdeyeMain">
         <section class="viewport" aria-labelledby="sceneTitle">
             <div class="matrix-boot" id="matrixBoot" aria-hidden="true">
-                <span>TOS/BIRDEYE :: LOAD FIXTURE GRAPH</span>
+                <span>TOS/BIRDVIEW :: LOAD FIXTURE GRAPH</span>
                 <span id="bootSchema">VALIDATE FIXTURE ..... PENDING</span>
                 <span>RESTORE CURSOR ....... gd-0001</span>
                 <span>PROJECT SEMANTIC FIELD</span>
@@ -128,14 +128,14 @@
             </dl>
             <div class="evidence-box">
                 <span>PROVENANCE PATH</span>
-                <p id="evidencePath">TOS node → validated header → Birdeye JSON projection</p>
+                <p id="evidencePath">TOS node → validated header → BirdView JSON projection</p>
             </div>
             <div class="inspector-panel" id="relationsPanel" role="tabpanel" aria-labelledby="tabRelations" hidden></div>
             <div class="inspector-panel" id="proofPanel" role="tabpanel" aria-labelledby="tabProof" hidden></div>
             <pre class="inspector-panel raw-panel" id="rawPanel" role="tabpanel" aria-labelledby="tabRaw" hidden></pre>
         </aside>
 
-        <section class="command-deck" aria-label="Birdeye controls">
+        <section class="command-deck" aria-label="BirdView controls">
             <div class="mode-switch" role="tablist" aria-label="Matrix view">
                 <button class="active" data-mode="consensus" role="tab" aria-selected="true"><b>01</b> Consensus</button>
                 <button data-mode="chain" role="tab" aria-selected="false"><b>02</b> Chain</button>
@@ -200,8 +200,8 @@
         </section>
     </main>
 
-    <noscript><div class="noscript">TOS Birdeye requires JavaScript to render its interactive graph.</div></noscript>
-    <script src="js/birdeye-gpu.js?v=20260804-2" defer></script>
-    <script src="js/birdeye.js?v=20260804-2" defer></script>
+    <noscript><div class="noscript">TOS BirdView requires JavaScript to render its interactive graph.</div></noscript>
+    <script src="js/birdeye-gpu.js?v=20260805-1" defer></script>
+    <script src="js/birdeye.js?v=20260805-1" defer></script>
 </body>
 </html>

@@ -1171,7 +1171,7 @@
                 : `<span class="field-source"><b>CURATED FIXTURE</b> · birdeye-demo.json · ${escapeHtml(state.data.meta.generated_at)}</span>`;
             return `<div><dt>${escapeHtml(key)}${source}</dt><dd>${escapeHtml(value)}</dd></div>`;
         }).join("");
-        $("evidencePath").textContent = `${truthLabel(truth)} → deterministic JSON projection → Birdeye scene`;
+        $("evidencePath").textContent = `${truthLabel(truth)} → deterministic JSON projection → BirdView scene`;
         const relations = [];
         state.data.transactions.filter((tx) => [tx.from, tx.to, tx.id, tx.block].includes(raw.id)).forEach((tx) => relations.push(`${tx.from} → ${tx.to}`, `${tx.label} · ${tx.state}`));
         state.data.shards.filter((shard) => shard.parent === raw.id || shard.id === raw.id).forEach((shard) => relations.push(`${shard.parent} → ${shard.id}`, `${shard.tx_count} transactions`));
@@ -1766,7 +1766,7 @@
         } catch (error) {
             $("tourTitle").textContent = "DATA SIGNAL LOST";
             $("tourCopy").textContent = "Serve this page over HTTP so the static JSON dataset can be loaded.";
-            console.error("Birdeye data load failed", error);
+            console.error("BirdView data load failed", error);
         }
         requestAnimationFrame(render);
     }

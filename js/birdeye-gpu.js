@@ -110,6 +110,6 @@
     } catch (error) {
         canvas.hidden = true;
         if (rendererLabel) rendererLabel.textContent = "RENDER · SEMANTIC 2D FALLBACK";
-        console.warn("Birdeye WebGL2 layer unavailable", error);
+        console.warn("BirdView WebGL2 layer unavailable", error);
     }
 })();
