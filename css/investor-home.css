@@ -465,10 +465,10 @@ h3 {
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-lg);
     background:
-        linear-gradient(145deg, rgba(19, 47, 76, 0.22), rgba(6, 16, 30, 0.34));
+        linear-gradient(145deg, rgba(19, 47, 76, 0.1), rgba(6, 16, 30, 0.16));
     box-shadow: var(--shadow);
-    -webkit-backdrop-filter: blur(26px);
-    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
 
 .panel-label {
