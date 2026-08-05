@@ -180,7 +180,7 @@ h3 {
     align-items: center;
     gap: 30px;
     min-width: 0;
-    overflow-x: auto;
+    overflow: visible;
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
 }
@@ -2344,7 +2344,8 @@ body.music-player-open {
 .tos-music-btn {
     position: fixed;
     bottom: 22px;
-    right: 24px;
+    right: auto;
+    left: 24px;
     z-index: 120;
     display: inline-flex;
     width: 148px;
@@ -2785,10 +2786,10 @@ body.music-player-open {
     }
 
     .tos-music-btn {
-        top: 16px;
-        right: 70px;
-        bottom: auto;
-        left: auto;
+        top: auto;
+        right: auto;
+        bottom: 16px;
+        left: 16px;
         width: 44px;
         height: 44px;
         justify-content: center;
@@ -2800,7 +2801,7 @@ body.music-player-open {
     }
 
     .tos-music-btn.has-session {
-        bottom: auto;
+        bottom: 64px;
     }
 
     .hero {
@@ -3253,10 +3254,10 @@ body.music-player-open {
     }
 
     .tos-music-btn {
-        top: 16px;
-        right: 70px;
-        bottom: auto;
-        left: auto;
+        top: auto;
+        right: auto;
+        bottom: 16px;
+        left: 16px;
         width: 44px;
         height: 44px;
         justify-content: center;
@@ -3272,7 +3273,7 @@ body.music-player-open {
     }
 
     .tos-music-btn.has-session {
-        bottom: auto;
+        bottom: 64px;
     }
 
     .lyrics-bar {
@@ -3317,10 +3318,10 @@ body.music-player-open {
     }
 
     .tos-music-btn {
-        top: 14px;
-        right: 68px;
-        bottom: auto;
-        left: auto;
+        top: auto;
+        right: auto;
+        bottom: 14px;
+        left: 14px;
         width: 44px;
         height: 44px;
         justify-content: center;
@@ -3332,7 +3333,7 @@ body.music-player-open {
     }
 
     .tos-music-btn.has-session {
-        bottom: auto;
+        bottom: 62px;
     }
 
     .lyrics-bar {
@@ -3360,10 +3361,10 @@ body.music-player-open {
 
 @media (min-width: 821px) and (max-width: 900px) {
     .tos-music-btn {
-        top: 16px;
+        top: auto;
         right: auto;
-        bottom: auto;
-        left: 180px;
+        bottom: 16px;
+        left: 16px;
         width: 44px;
         height: 44px;
         justify-content: center;
@@ -3375,7 +3376,7 @@ body.music-player-open {
     }
 
     .tos-music-btn.has-session {
-        bottom: auto;
+        bottom: 72px;
     }
 }
 
