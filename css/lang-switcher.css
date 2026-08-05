@@ -136,7 +136,10 @@
     }
 
     .lang-dropdown {
-        position: static;
+        /* Must stay a positioned element (not static) so its z-index still
+           wins against the fixed full-screen backdrop; relative keeps the
+           same in-flow placement static would have given it. */
+        position: relative;
         top: auto;
         right: auto;
         margin-top: 6px;
