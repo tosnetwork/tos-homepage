@@ -1,24 +1,24 @@
 :root {
-    --ink: #f5f8fc;
-    --muted: #9dadc1;
-    --muted-strong: #c9d5e3;
-    --navy-950: #03070d;
-    --navy-900: #07101b;
-    --navy-850: #0a1724;
-    --navy-800: #0d1f30;
-    --line: rgba(154, 181, 211, 0.16);
-    --line-strong: rgba(105, 221, 255, 0.34);
-    --cyan: #78cfe7;
-    --cyan-bright: #b2e7f3;
-    --blue: #4d88df;
-    --mint: #72d2b2;
+    --ink: #ffffff;
+    --muted: #9fa7ad;
+    --muted-strong: #d2d7da;
+    --navy-950: #06121b;
+    --navy-900: #081721;
+    --navy-850: #0b1923;
+    --navy-800: #102431;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-strong: rgba(3, 202, 155, 0.34);
+    --cyan: #03ca9b;
+    --cyan-bright: #74e5c9;
+    --blue: #299a99;
+    --mint: #03ca9b;
     --gold: #d8b76b;
     --danger: #ff8f8f;
-    --font-display: "Manrope", "Inter", sans-serif;
+    --font-display: "Roboto Condensed", "Inter", sans-serif;
     --font-body: "Inter", sans-serif;
     --shell: min(1240px, calc(100vw - 48px));
-    --radius-sm: 12px;
-    --radius-md: 16px;
+    --radius-sm: 14px;
+    --radius-md: 20px;
     --radius-lg: 24px;
     --shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
 }
@@ -38,8 +38,8 @@ body {
     margin: 0;
     color: var(--ink);
     background:
-        radial-gradient(circle at 85% 6%, rgba(55, 121, 213, 0.13), transparent 28rem),
-        radial-gradient(circle at 0% 16%, rgba(216, 183, 107, 0.055), transparent 30rem),
+        radial-gradient(circle at 85% 6%, rgba(3, 202, 155, 0.085), transparent 28rem),
+        radial-gradient(circle at 0% 16%, rgba(41, 154, 153, 0.055), transparent 30rem),
         var(--navy-950);
     font-family: var(--font-body);
     font-size: 16px;
@@ -1360,6 +1360,327 @@ h3 {
         -webkit-mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 70%);
         mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 70%);
     }
+}
+
+/* Network metrics: independently layered cards on one continuous proof rail. */
+.network-metrics {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(88px, 9vw, 140px) 0 clamp(72px, 8vw, 120px);
+    border-bottom: 1px solid var(--line);
+    background:
+        radial-gradient(circle at 16% 45%, rgba(3, 202, 155, 0.06), transparent 28%),
+        #06121b;
+}
+
+.network-metrics::before {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    content: "";
+    pointer-events: none;
+}
+
+/* Shared card language: softer Bitfinex-style surfaces across the homepage. */
+.hero-thesis,
+.shift-card,
+.edge-card,
+.leverage-card,
+.status-panel,
+.token-metric,
+.economics-card {
+    border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
+}
+
+.network-metrics-intro {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.65fr);
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 52px;
+}
+
+.network-metrics-intro h2 {
+    max-width: 780px;
+    margin: 12px 0 0;
+    color: #f4f7fb;
+    font: 700 clamp(42px, 5vw, 64px)/0.98 var(--font-display);
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+}
+
+.network-metrics-intro > p {
+    max-width: 520px;
+    margin: 0 0 4px;
+    color: #93a5b9;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.metrics-marquee {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 16px 0 30px;
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.metrics-track {
+    display: flex;
+    width: max-content;
+    animation: metrics-drift 52s linear infinite;
+    will-change: transform;
+}
+
+.metrics-group {
+    display: flex;
+    flex: none;
+    gap: 16px;
+    align-items: stretch;
+    height: 300px;
+    padding-right: 16px;
+}
+
+.metric-module {
+    flex: 0 0 300px;
+    height: 300px;
+}
+
+.metric-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: 26px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background: linear-gradient(#0b1923, #0b1923) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.08), rgba(3, 202, 155, 0.36), rgba(255, 255, 255, 0.08)) border-box;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+    text-align: center;
+}
+
+.metric-card::before {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.11'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    opacity: 0.45;
+    content: "";
+    pointer-events: none;
+}
+
+.metric-stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+}
+
+.metric-stack .metric-card {
+    min-height: 0;
+    padding: 18px 22px;
+}
+
+.metric-card > span,
+.metric-card > p,
+.metric-card > strong,
+.metric-card > em {
+    position: relative;
+    z-index: 1;
+}
+
+.metric-card > span {
+    color: #9aa9ba;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.metric-card > strong {
+    color: #f4f7fa;
+    font: 700 54px/0.95 var(--font-display);
+    letter-spacing: -0.035em;
+}
+
+.metric-card > p {
+    max-width: 250px;
+    margin: 0;
+    color: #8fa0b2;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.metric-card > em {
+    align-self: flex-end;
+    color: #62d5a7;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.metric-stack .metric-card > strong {
+    margin: 9px 0 0;
+    font-size: 40px;
+}
+
+.metric-stack .metric-card > em {
+    position: absolute;
+    right: 22px;
+    bottom: 20px;
+}
+
+.metric-card-volume {
+    flex-basis: 365px;
+    justify-content: flex-start;
+    background: linear-gradient(rgba(19, 69, 76, 0.2), rgba(19, 69, 76, 0.2)) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.08), rgba(3, 202, 155, 0.42), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.metric-card-volume > strong {
+    margin-top: 16px;
+    color: #effff8;
+    font-size: 64px;
+}
+
+.metric-card-volume > span { margin-top: 10px; color: #a9cabe; }
+
+.metric-curves {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 142px;
+    overflow: visible;
+}
+
+.metric-curves .curve {
+    fill: none;
+    stroke-linecap: round;
+    stroke-width: 2.2;
+    vector-effect: non-scaling-stroke;
+}
+
+.metric-curves .curve-one { stroke: rgba(3, 202, 155, 0.95); filter: drop-shadow(0 0 7px rgba(3, 202, 155, 0.34)); }
+.metric-curves .curve-two { stroke: rgba(93, 213, 191, 0.62); }
+.metric-curves .curve-three { stroke: rgba(255, 255, 255, 0.27); }
+
+.metric-card-statement {
+    flex-basis: 320px;
+    background: linear-gradient(rgba(19, 69, 76, 0.2), rgba(19, 69, 76, 0.2)) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.06), rgba(3, 202, 155, 0.35), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.metric-card-statement > strong { color: #fff; font-size: 68px; }
+.metric-card-statement > span { margin-top: 16px; color: #9fa7ad; font-size: 16px; }
+
+.metric-card-accent {
+    flex-basis: 320px;
+    gap: 18px;
+    background: linear-gradient(rgba(19, 69, 76, 0.2), rgba(19, 69, 76, 0.2)) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.06), rgba(3, 202, 155, 0.42), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.metric-card-accent > span { color: #9fa7ad; font-size: 16px; }
+
+.metric-ring {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 166px;
+    height: 166px;
+    border-radius: 50%;
+    background: conic-gradient(#03ca9b var(--ring-value), rgba(255, 255, 255, 0.08) 0);
+    box-shadow: 0 0 34px rgba(3, 202, 155, 0.12);
+    place-items: center;
+}
+
+.metric-ring::before {
+    position: absolute;
+    width: 136px;
+    height: 136px;
+    border-radius: inherit;
+    background: #0d2029;
+    content: "";
+}
+
+.metric-ring span {
+    position: relative;
+    color: #fff;
+    font: 700 39px/1 var(--font-display);
+}
+
+.metric-card-mix,
+.metric-card-latency {
+    flex-basis: 340px;
+}
+
+.metric-card-mix { display: grid; grid-template-columns: 142px 1fr; grid-template-rows: 1fr auto; gap: 14px 18px; text-align: left; }
+.metric-pie { position: relative; z-index: 1; display: grid; width: 142px; height: 142px; border-radius: 50%; background: conic-gradient(#03ca9b 0 46%, #2e8e89 46% 78%, #96aaa9 78% 100%); place-items: center; }
+.metric-pie::before { position: absolute; width: 94px; height: 94px; border-radius: 50%; background: #0b1923; content: ""; }
+.metric-pie span { position: relative; color: #fff; font: 700 33px/1 var(--font-display); }
+.metric-mix-copy { position: relative; z-index: 1; align-self: center; }
+.metric-mix-copy strong { display: block; color: #fff; font: 700 42px/1 var(--font-display); }
+.metric-mix-copy span { display: block; margin-top: 8px; color: #9fa7ad; font-size: 13px; }
+.metric-card-mix ul { position: relative; z-index: 1; display: flex; grid-column: 1 / -1; gap: 12px; margin: 0; padding: 0; color: #9fa7ad; font-size: 11px; list-style: none; }
+.metric-card-mix li::before { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: #03ca9b; content: ""; }
+.metric-card-mix li:nth-child(2)::before { background: #2e8e89; }
+.metric-card-mix li:nth-child(3)::before { background: #96aaa9; }
+
+.metric-card-latency { justify-content: flex-start; background: linear-gradient(#0b1923, #0b1923) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.04), rgba(3, 202, 155, 0.28), rgba(255, 255, 255, 0.08)) border-box; }
+.metric-card-latency > strong { margin-top: 14px; font-size: 60px; }
+.metric-card-latency > p { margin-top: auto; }
+.metric-latency-chart { position: absolute; right: 0; bottom: 48px; left: 0; width: 100%; height: 96px; }
+.metric-latency-chart path { fill: none; stroke: rgba(3, 202, 155, 0.86); stroke-linecap: round; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.metric-latency-chart path + path { stroke: rgba(255, 255, 255, 0.22); }
+
+.metrics-footnote {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+    color: #5f7287;
+    font-size: 12px;
+    text-align: right;
+}
+
+@keyframes metrics-drift {
+    to { transform: translateX(-50%); }
+}
+
+@media (max-width: 820px) {
+    .network-metrics-intro {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .network-metrics-intro h2 { font-size: clamp(36px, 11vw, 52px); }
+    .metrics-marquee { mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); }
+    .metrics-track { animation-duration: 44s; }
+    .metrics-group { height: 280px; gap: 12px; padding-right: 12px; }
+    .metric-module { flex-basis: 270px; height: 280px; }
+    .metric-stack { gap: 12px; }
+    .metric-card { padding: 22px; }
+    .metric-stack .metric-card { padding: 18px; }
+    .metric-stack .metric-card > strong { font-size: 32px; }
+    .metric-stack .metric-card > em { right: 18px; bottom: 19px; }
+    .metric-card-volume { flex-basis: 330px; }
+    .metric-card-volume > strong { font-size: 57px; }
+    .metric-card-statement,
+    .metric-card-mix,
+    .metric-card-latency { flex-basis: 285px; }
+    .metric-card-accent { flex-basis: 295px; }
+    .metric-card-statement > strong,
+    .metric-card-latency > strong { font-size: 55px; }
+    .metric-card-mix { grid-template-columns: 112px 1fr; gap: 12px; }
+    .metric-pie { width: 112px; height: 112px; }
+    .metric-pie::before { width: 74px; height: 74px; }
+    .metric-pie span { font-size: 27px; }
+    .metric-mix-copy strong { font-size: 35px; }
+    .metric-card-mix ul { gap: 8px; font-size: 9px; }
+    .metrics-footnote { text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3407,6 +3728,127 @@ body.music-player-open {
         transition: none;
         will-change: auto;
     }
+
+    .metrics-marquee {
+        overflow-x: auto;
+        mask-image: none;
+    }
+
+    .metrics-track {
+        animation: none;
+        will-change: auto;
+    }
+
+    .metrics-group[aria-hidden="true"] {
+        display: none;
+    }
+}
+
+/* Unified elevated surfaces across the full investor homepage. */
+:is(
+    .hero-thesis,
+    .shift-card,
+    .principle,
+    .token-metric,
+    .leverage-card,
+    .openfox-identity,
+    .openfox-equation article,
+    .openfox-boundary,
+    .ard-layer,
+    .ard-value,
+    .mesh-flow-before,
+    .mesh-flow-after,
+    .mesh-tier,
+    .edge-card,
+    .status-panel,
+    .economics-card,
+    .economics-disclosure,
+    .roadmap-list li,
+    .diligence-links a,
+    .diligence-disclosure,
+    .faq-item
+) {
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background:
+        linear-gradient(rgba(11, 25, 35, 0.96), rgba(11, 25, 35, 0.96)) padding-box,
+        linear-gradient(126deg, rgba(3, 202, 155, 0.05), rgba(3, 202, 155, 0.26), rgba(255, 255, 255, 0.09)) border-box;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.16);
+}
+
+:is(
+    .shift-card,
+    .principle,
+    .token-metric,
+    .leverage-card,
+    .ard-value,
+    .mesh-tier,
+    .edge-card,
+    .economics-card,
+    .roadmap-list li,
+    .diligence-links a,
+    .faq-item
+) {
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+:is(
+    .shift-card,
+    .principle,
+    .token-metric,
+    .leverage-card,
+    .ard-value,
+    .mesh-tier,
+    .edge-card,
+    .economics-card,
+    .roadmap-list li,
+    .diligence-links a,
+    .faq-item
+):hover {
+    border-color: rgba(3, 202, 155, 0.34);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22), 0 0 34px rgba(3, 202, 155, 0.055);
+}
+
+:is(
+    .shift-card,
+    .principle,
+    .leverage-card,
+    .ard-value,
+    .mesh-tier,
+    .edge-card,
+    .economics-card
+) h3 {
+    color: #fff;
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+:is(
+    .shift-card,
+    .principle,
+    .leverage-card,
+    .ard-value,
+    .mesh-tier,
+    .edge-card,
+    .economics-card
+) p {
+    color: var(--muted);
+}
+
+.status-panel.implemented,
+.ard-layer-tos,
+.mesh-flow-after {
+    background:
+        linear-gradient(rgba(19, 69, 76, 0.18), rgba(11, 25, 35, 0.96)) padding-box,
+        linear-gradient(126deg, rgba(3, 202, 155, 0.12), rgba(3, 202, 155, 0.4), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.token-metric strong,
+.roadmap-phase,
+.roadmap-state,
+.economics-label,
+.openfox-state {
+    color: var(--mint);
 }
 
 @media print {
