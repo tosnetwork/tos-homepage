@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/investor-home.css?v=20260806e">
+    <link rel="stylesheet" href="css/investor-home.css?v=20260806g">
     <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
     <script type="application/ld+json">
@@ -173,8 +173,8 @@
 
         <section class="proof-strip" aria-label="TOS design principles">
             <div class="shell proof-grid">
-                <div><span data-i18n="proof.label1">Open</span><strong data-i18n="proof.text1">ARD-compatible, not a walled cloud</strong></div>
-                <div><span data-i18n="proof.label2">Owner-operated</span><strong data-i18n="proof.text2">Supply without platform custody</strong></div>
+                <div><span data-i18n="proof.label1">Open</span><strong data-i18n="proof.text1">ARD-compatible; no single-company chokepoint</strong></div>
+                <div><span data-i18n="proof.label2">Customer-controlled</span><strong data-i18n="proof.text2">Models and core data stay under owner policy</strong></div>
                 <div><span data-i18n="proof.label3">Policy-bound</span><strong data-i18n="proof.text3">Authority before execution</strong></div>
                 <div><span data-i18n="proof.label4">Verifiable</span><strong data-i18n="proof.text4">Receipts, evidence, settlement</strong></div>
             </div>
@@ -650,6 +650,40 @@
                         <h3 data-i18n="mesh.tier4Title">Cloud Frontier AI</h3>
                         <p data-i18n="mesh.tier4Desc">Data-center deployments. Frontier research, large-scale training.</p>
                     </article>
+                </div>
+
+                <div class="data-security reveal">
+                    <div class="data-security-intro">
+                        <p class="kicker" data-i18n="security.kicker">Decentralized intelligence. Customer-controlled data.</p>
+                        <h3 data-i18n="security.title">Distributed model capacity without surrendering core data.</h3>
+                        <p data-i18n="security.desc">TOS coordinates independently operated model services while sensitive workloads can remain on customer-controlled local, private, or on-premise nodes. The network settles evidence and value; it does not require central custody of proprietary datasets.</p>
+                    </div>
+                    <div class="data-security-grid">
+                        <article>
+                            <span>01</span>
+                            <h4 data-i18n="security.card1Title">Local-first execution</h4>
+                            <p data-i18n="security.card1Desc">Sensitive tasks can be restricted to approved local, private, or edge nodes. Routing moves outward only when customer policy permits it.</p>
+                        </article>
+                        <article>
+                            <span>02</span>
+                            <h4 data-i18n="security.card2Title">Minimum necessary disclosure</h4>
+                            <p data-i18n="security.card2Desc">Service descriptors expose capabilities and terms—not unrestricted access. Task policy limits payloads, tools, endpoints, budgets, and retention.</p>
+                        </article>
+                        <article>
+                            <span>03</span>
+                            <h4 data-i18n="security.card3Title">Proof without publishing secrets</h4>
+                            <p data-i18n="security.card3Desc">Private prompts, datasets, and outputs stay off-chain. Signed receipts, hashes, and evidence references provide accountability without publishing the underlying content.</p>
+                        </article>
+                        <article>
+                            <span>04</span>
+                            <h4 data-i18n="security.card4Title">No single-company chokepoint</h4>
+                            <p data-i18n="security.card4Desc">Plural providers, registries, and owner-operated nodes reduce dependence on one company, region, or platform policy. If one route fails or refuses service, agents can discover policy-compatible alternatives.</p>
+                        </article>
+                    </div>
+                    <div class="data-security-boundary">
+                        <strong data-i18n="security.boundaryTitle">Designed to reduce data exposure—not to make an impossible absolute guarantee.</strong>
+                        <p data-i18n="security.boundaryDesc">Security still depends on node hardening, encryption, access control, trusted runtimes, and operator practice. Highly sensitive workloads should remain on explicitly approved customer-controlled nodes.</p>
+                    </div>
                 </div>
 
                 <div class="openfox-boundary reveal">
@@ -1161,6 +1195,24 @@
                             <p data-i18n="faq.a8">No. Service transaction volume, validator fees, protocol revenue, and token value accrual are distinct. The project publishes architecture and delivery objectives, not investment-return promises.</p>
                         </div>
                     </details>
+                    <details class="faq-item reveal">
+                        <summary>
+                            <span data-i18n="faq.q9">How does TOS protect sensitive customer data?</span>
+                            <i aria-hidden="true">+</i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-i18n="faq.a9">TOS is designed so sensitive work can stay on approved customer-controlled nodes, task payloads are limited by explicit policy, and private prompts, datasets, and outputs are not published on-chain. The network coordinates identity, authorization, evidence, and settlement rather than taking central custody of customer data. Actual protection still depends on encryption, node security, access control, runtime trust, and operator practice.</p>
+                        </div>
+                    </details>
+                    <details class="faq-item reveal">
+                        <summary>
+                            <span data-i18n="faq.q10">How does decentralization improve resilience and censorship resistance?</span>
+                            <i aria-hidden="true">+</i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-i18n="faq.a10">TOS is designed around plural service providers, federated discovery, and owner-operated nodes rather than one company's infrastructure or approval policy. If a provider, registry, region, or route becomes unavailable or refuses a request, agents can search for another policy-compatible service. This reduces single-company failure and control risk; it does not guarantee uninterrupted availability, universal access, or exemption from applicable law.</p>
+                        </div>
+                    </details>
                 </div>
             </div>
         </section>
@@ -1223,7 +1275,7 @@
         </div>
     </footer>
 
-    <script src="js/i18n.js?v=20260806f"></script>
+    <script src="js/i18n.js?v=20260806h"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
     <script src="js/investor-home.js?v=20260802"></script>
     <script src="js/mesh-animation.js?v=20260805e"></script>
