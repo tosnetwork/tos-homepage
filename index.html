@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/investor-home.css?v=20260806c">
+    <link rel="stylesheet" href="css/investor-home.css?v=20260806d">
     <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
     <script type="application/ld+json">
@@ -201,6 +201,24 @@
                                 <path class="curve curve-three" d="M-5 77 C42 41 71 78 116 65 S178 9 224 39 S275 92 321 62 S359 22 394 28"/>
                             </svg>
                         </article>
+                        <article class="metric-module metric-card metric-card-capacity metric-card-compute">
+                            <strong data-metric="totalAiCompute">186.4</strong>
+                            <span><b>PFLOPS</b> <span data-i18n="metrics.computeTotalLabel">AI Compute</span></span>
+                            <svg class="metric-capacity-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true">
+                                <path class="capacity-line capacity-line-one" d="M-8 111 C30 90 44 112 76 85 S126 38 157 69 S207 113 241 67 S289 21 321 53 S359 82 392 45"/>
+                                <path class="capacity-line capacity-line-two" d="M-5 128 C40 119 53 81 92 96 S149 129 184 91 S235 42 270 72 S324 116 391 68"/>
+                                <path class="capacity-line capacity-line-three" d="M-2 71 C37 58 63 77 99 51 S155 18 190 42 S250 82 286 48 S340 13 392 28"/>
+                            </svg>
+                        </article>
+                        <article class="metric-module metric-card metric-card-capacity metric-card-storage">
+                            <strong data-metric="totalStorage">42.8</strong>
+                            <span><b>PB</b> <span data-i18n="metrics.storageTotalLabel">Storage</span></span>
+                            <svg class="metric-storage-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true">
+                                <path class="storage-area storage-area-back" d="M0 94 C42 68 74 80 113 57 S178 68 216 44 S279 59 315 31 S355 37 380 20 L380 150 L0 150 Z"/>
+                                <path class="storage-area storage-area-mid" d="M0 116 C45 93 79 105 119 82 S177 93 219 70 S282 83 320 59 S360 61 380 50 L380 150 L0 150 Z"/>
+                                <path class="storage-area storage-area-front" d="M0 137 C47 122 84 132 128 110 S190 119 231 98 S287 108 329 85 S361 91 380 76 L380 150 L0 150 Z"/>
+                            </svg>
+                        </article>
                         <div class="metric-module metric-stack">
                             <article class="metric-card metric-card-market"><span data-i18n="metrics.tasksLabel">Agent tasks</span><strong data-metric="tasks24h">128.4K</strong><em data-metric="tasksChange">+18.6%</em></article>
                             <article class="metric-card metric-card-market"><span data-i18n="metrics.callsLabel">AI service calls</span><strong data-metric="calls24h">2.8M</strong><em data-metric="callsChange">+24.1%</em></article>
@@ -221,6 +239,8 @@
 
                     <div class="metrics-group" aria-hidden="true">
                         <article class="metric-module metric-card metric-card-volume"><strong data-metric="volume24h">$18.7M</strong><span data-i18n="metrics.volumeLabel">24h service volume</span><svg class="metric-curves" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="curve curve-one" d="M-12 108 C38 102 40 35 91 54 S154 121 197 73 S266 14 306 47 S350 104 395 67"/><path class="curve curve-two" d="M-8 127 C43 95 67 120 109 91 S159 29 205 58 S267 120 313 87 S350 34 395 48"/><path class="curve curve-three" d="M-5 77 C42 41 71 78 116 65 S178 9 224 39 S275 92 321 62 S359 22 394 28"/></svg></article>
+                        <article class="metric-module metric-card metric-card-capacity metric-card-compute"><strong data-metric="totalAiCompute">186.4</strong><span><b>PFLOPS</b> <span data-i18n="metrics.computeTotalLabel">AI Compute</span></span><svg class="metric-capacity-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="capacity-line capacity-line-one" d="M-8 111 C30 90 44 112 76 85 S126 38 157 69 S207 113 241 67 S289 21 321 53 S359 82 392 45"/><path class="capacity-line capacity-line-two" d="M-5 128 C40 119 53 81 92 96 S149 129 184 91 S235 42 270 72 S324 116 391 68"/><path class="capacity-line capacity-line-three" d="M-2 71 C37 58 63 77 99 51 S155 18 190 42 S250 82 286 48 S340 13 392 28"/></svg></article>
+                        <article class="metric-module metric-card metric-card-capacity metric-card-storage"><strong data-metric="totalStorage">42.8</strong><span><b>PB</b> <span data-i18n="metrics.storageTotalLabel">Storage</span></span><svg class="metric-storage-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="storage-area storage-area-back" d="M0 94 C42 68 74 80 113 57 S178 68 216 44 S279 59 315 31 S355 37 380 20 L380 150 L0 150 Z"/><path class="storage-area storage-area-mid" d="M0 116 C45 93 79 105 119 82 S177 93 219 70 S282 83 320 59 S360 61 380 50 L380 150 L0 150 Z"/><path class="storage-area storage-area-front" d="M0 137 C47 122 84 132 128 110 S190 119 231 98 S287 108 329 85 S361 91 380 76 L380 150 L0 150 Z"/></svg></article>
                         <div class="metric-module metric-stack"><article class="metric-card metric-card-market"><span data-i18n="metrics.tasksLabel">Agent tasks</span><strong data-metric="tasks24h">128.4K</strong><em data-metric="tasksChange">+18.6%</em></article><article class="metric-card metric-card-market"><span data-i18n="metrics.callsLabel">AI service calls</span><strong data-metric="calls24h">2.8M</strong><em data-metric="callsChange">+24.1%</em></article></div>
                         <article class="metric-module metric-card metric-card-statement"><strong data-metric="insiderAllocation">0 TOS</strong><span data-i18n="metrics.insidersLabel">Insider allocation</span></article>
                         <div class="metric-module metric-stack"><article class="metric-card metric-card-market"><span data-i18n="metrics.agentsLabel">Active agents</span><strong data-metric="activeAgents">14,268</strong><em data-i18n="metrics.onlineLabel">online</em></article><article class="metric-card metric-card-market"><span data-i18n="metrics.servicesLabel">Published services</span><strong data-metric="publishedServices">3,842</strong><em data-i18n="metrics.discoverableLabel">discoverable</em></article></div>
@@ -1203,7 +1223,7 @@
         </div>
     </footer>
 
-    <script src="js/i18n.js?v=20260806c"></script>
+    <script src="js/i18n.js?v=20260806e"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
     <script src="js/investor-home.js?v=20260802"></script>
     <script src="js/mesh-animation.js?v=20260805e"></script>

@@ -1569,6 +1569,63 @@ h3 {
 .metric-curves .curve-two { stroke: rgba(93, 213, 191, 0.62); }
 .metric-curves .curve-three { stroke: rgba(255, 255, 255, 0.27); }
 
+.metric-card-capacity {
+    flex-basis: 365px;
+    justify-content: flex-start;
+    background: linear-gradient(rgba(19, 69, 76, 0.14), rgba(11, 25, 35, 0.98)) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.06), rgba(3, 202, 155, 0.36), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.metric-card-capacity > strong {
+    margin-top: 16px;
+    color: #effff8;
+    font-size: 64px;
+}
+
+.metric-card-capacity > span {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-top: 10px;
+    color: #a9cabe;
+}
+
+.metric-card-capacity > span b {
+    color: #03ca9b;
+    font: 700 18px/1 var(--font-display);
+    letter-spacing: 0.04em;
+}
+
+.metric-capacity-chart,
+.metric-storage-chart {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 142px;
+    overflow: visible;
+}
+
+.capacity-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-width: 2.1;
+    vector-effect: non-scaling-stroke;
+}
+
+.capacity-line-one { stroke: rgba(3, 202, 155, 0.95); filter: drop-shadow(0 0 7px rgba(3, 202, 155, 0.3)); }
+.capacity-line-two { stroke: rgba(51, 167, 159, 0.68); }
+.capacity-line-three { stroke: rgba(173, 231, 219, 0.32); }
+
+.metric-card-storage {
+    background: linear-gradient(rgba(14, 51, 61, 0.18), rgba(11, 25, 35, 0.98)) padding-box, linear-gradient(126deg, rgba(41, 154, 153, 0.08), rgba(3, 202, 155, 0.32), rgba(255, 255, 255, 0.08)) border-box;
+}
+
+.storage-area { vector-effect: non-scaling-stroke; }
+.storage-area-back { fill: rgba(112, 206, 188, 0.12); stroke: rgba(151, 224, 210, 0.42); stroke-width: 1.4; }
+.storage-area-mid { fill: rgba(3, 202, 155, 0.14); stroke: rgba(3, 202, 155, 0.62); stroke-width: 1.5; }
+.storage-area-front { fill: rgba(10, 103, 101, 0.26); stroke: rgba(48, 168, 159, 0.8); stroke-width: 1.6; }
+
 .metric-card-statement {
     flex-basis: 320px;
     background: linear-gradient(rgba(19, 69, 76, 0.2), rgba(19, 69, 76, 0.2)) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.06), rgba(3, 202, 155, 0.35), rgba(255, 255, 255, 0.08)) border-box;
@@ -1668,6 +1725,8 @@ h3 {
     .metric-stack .metric-card > em { right: 18px; bottom: 19px; }
     .metric-card-volume { flex-basis: 330px; }
     .metric-card-volume > strong { font-size: 57px; }
+    .metric-card-capacity { flex-basis: 330px; }
+    .metric-card-capacity > strong { font-size: 57px; }
     .metric-card-statement,
     .metric-card-mix,
     .metric-card-latency { flex-basis: 285px; }
