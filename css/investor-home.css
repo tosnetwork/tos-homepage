@@ -1329,36 +1329,51 @@ h3 {
     z-index: 2;
 }
 
-.mesh-wave-bg-wrap {
+.mesh-grid-bg-wrap {
     position: absolute;
-    top: 0;
-    right: 0;
-    left: auto;
-    width: 60%;
-    height: 560px;
+    inset: 0;
     overflow: hidden;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.45;
-    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 62% 40%, black 35%, transparent 78%);
-    mask-image: radial-gradient(ellipse 70% 65% at 62% 40%, black 35%, transparent 78%);
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 32%, black 30%, transparent 82%);
+    mask-image: radial-gradient(ellipse 85% 75% at 50% 32%, black 30%, transparent 82%);
 }
 
-.mesh-wave-bg-wrap canvas {
+.mesh-grid-bg-wrap canvas {
     display: block;
     width: 100%;
     height: 100%;
 }
 
 @media (max-width: 820px) {
-    .mesh-wave-bg-wrap {
-        right: auto;
-        left: 0;
-        width: 100%;
-        height: 420px;
-        opacity: 0.16;
-        -webkit-mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 70%);
-        mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 70%);
+    .mesh-grid-bg-wrap {
+        opacity: 0.24;
+        -webkit-mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 72%);
+        mask-image: linear-gradient(180deg, black 0%, black 30%, transparent 72%);
+    }
+}
+
+.closing-wave-bg-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+    -webkit-mask-image: radial-gradient(ellipse 65% 60% at 50% 45%, black 30%, transparent 78%);
+    mask-image: radial-gradient(ellipse 65% 60% at 50% 45%, black 30%, transparent 78%);
+}
+
+.closing-wave-bg-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 820px) {
+    .closing-wave-bg-wrap {
+        opacity: 0.2;
     }
 }
 
@@ -1754,7 +1769,8 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .mesh-wave-bg-wrap {
+    .mesh-grid-bg-wrap,
+    .closing-wave-bg-wrap {
         display: none;
     }
 }
