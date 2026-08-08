@@ -21,20 +21,22 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p img/agents
-          curl -fL --retry 3 'https://openai.com/favicon.svg' -o img/agents/openai.svg
-          curl -fL --retry 3 'https://claude.ai/images/claude_app_icon.png' -o img/agents/claude.png
-          curl -fL --retry 3 'https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg' -o img/agents/cursor.svg
-          curl -fL --retry 3 'https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png' -o img/agents/devin.png
-          curl -fL --retry 3 'https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/vscode-ide-companion/assets/icon.png' -o img/agents/gemini-cli.png
-          curl -fL --retry 3 'https://cdn1.genspark.ai/user-upload-image/admin/brand/genspark/logos/icon-square-inverted.svg' -o img/agents/genspark.svg
-          curl -fL --retry 3 'https://raw.githubusercontent.com/github/CopilotForXcode/main/Copilot%20for%20Xcode/Assets.xcassets/CopilotLogo.imageset/copilot.svg' -o img/agents/github-copilot.svg
-          curl -fL --retry 3 'https://raw.githubusercontent.com/NousResearch/hermes-agent/main/apps/desktop/assets/icon.png' -o img/agents/hermes-agent.png
-          curl -fL --retry 3 'https://raw.githubusercontent.com/netease-youdao/LobsterAI/main/resources/tray/tray-icon.png' -o img/agents/lobsterai.png
-          curl -fL --retry 3 'https://files.manuscdn.com/assets/image/brand/image/Manus-Icon.svg' -o img/agents/manus.svg
-          curl -fL --retry 3 'https://developer.qcloudimg.com/http-save/yehe-10954684/fa2ee803a3b96501a31053c7c1bfd2d6.png' -o img/agents/marvis.png
-          curl -fL --retry 3 'https://raw.githubusercontent.com/openclaw/openclaw/main/ui/public/favicon.svg' -o img/agents/openclaw.svg
-          curl -fL --retry 3 'https://exafunction.github.io/public/brand/windsurf-white-symbol.svg' -o img/agents/windsurf.svg
-          curl -fL --retry 3 'https://dscache.tencent-cloud.cn/upload/nodir/WorkBuddy-c2692db2eb1ff11bf05def7b723c2007769255d4.png' -o img/agents/workbuddy.png
+          UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/150 Safari/537.36'
+          fetch() { curl -fL --retry 3 -A "$UA" "$1" -o "$2"; }
+          fetch 'https://openai.com/favicon.svg' img/agents/openai.svg
+          fetch 'https://claude.ai/images/claude_app_icon.png' img/agents/claude.png
+          fetch 'https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg' img/agents/cursor.svg
+          fetch 'https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png' img/agents/devin.png
+          fetch 'https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/vscode-ide-companion/assets/icon.png' img/agents/gemini-cli.png
+          fetch 'https://cdn1.genspark.ai/user-upload-image/admin/brand/genspark/logos/icon-square-inverted.svg' img/agents/genspark.svg
+          fetch 'https://raw.githubusercontent.com/github/CopilotForXcode/main/Copilot%20for%20Xcode/Assets.xcassets/CopilotLogo.imageset/copilot.svg' img/agents/github-copilot.svg
+          fetch 'https://raw.githubusercontent.com/NousResearch/hermes-agent/main/apps/desktop/assets/icon.png' img/agents/hermes-agent.png
+          fetch 'https://raw.githubusercontent.com/netease-youdao/LobsterAI/main/resources/tray/tray-icon.png' img/agents/lobsterai.png
+          fetch 'https://files.manuscdn.com/assets/image/brand/image/Manus-Icon.svg' img/agents/manus.svg
+          fetch 'https://developer.qcloudimg.com/http-save/yehe-10954684/fa2ee803a3b96501a31053c7c1bfd2d6.png' img/agents/marvis.png
+          fetch 'https://raw.githubusercontent.com/openclaw/openclaw/main/ui/public/favicon.svg' img/agents/openclaw.svg
+          fetch 'https://exafunction.github.io/public/brand/windsurf-white-symbol.svg' img/agents/windsurf.svg
+          fetch 'https://dscache.tencent-cloud.cn/upload/nodir/WorkBuddy-c2692db2eb1ff11bf05def7b723c2007769255d4.png' img/agents/workbuddy.png
       - name: Switch homepage to local assets
         shell: python
         run: |
