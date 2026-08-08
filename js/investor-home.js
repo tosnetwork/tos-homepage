@@ -12,21 +12,21 @@
 
     const initializeOfficialAgentIcons = () => {
         const officialAssets = {
-            "ChatGPT Agent": "https://openai.com/favicon.svg",
-            "Claude": "https://claude.ai/images/claude_app_icon.png",
-            "Codex": "https://openai.com/favicon.svg",
-            "Cursor": "https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg",
-            "Devin": "https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png",
-            "Gemini CLI": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/vscode-ide-companion/assets/icon.png",
-            "GenSpark": "https://cdn1.genspark.ai/user-upload-image/admin/brand/genspark/logos/icon-square-inverted.svg",
-            "GitHub Copilot": "https://raw.githubusercontent.com/github/CopilotForXcode/main/Copilot%20for%20Xcode/Assets.xcassets/CopilotLogo.imageset/copilot.svg",
-            "Hermes Agent": "https://raw.githubusercontent.com/NousResearch/hermes-agent/main/apps/desktop/assets/icon.png",
-            "LobsterAI": "https://raw.githubusercontent.com/netease-youdao/LobsterAI/main/resources/tray/tray-icon.png",
-            "Manus": "https://files.manuscdn.com/assets/image/brand/image/Manus-Icon.svg",
-            "Marvis": "https://developer.qcloudimg.com/http-save/yehe-10954684/fa2ee803a3b96501a31053c7c1bfd2d6.png",
-            "OpenClaw": "https://raw.githubusercontent.com/openclaw/openclaw/main/ui/public/favicon.svg",
-            "Windsurf": "https://exafunction.github.io/public/brand/windsurf-white-symbol.svg",
-            "WorkBuddy": "https://dscache.tencent-cloud.cn/upload/nodir/WorkBuddy-c2692db2eb1ff11bf05def7b723c2007769255d4.png"
+            "ChatGPT Agent": "img/agents/openai.png",
+            "Claude": "img/agents/claude.png",
+            "Codex": "img/agents/openai.png",
+            "Cursor": "img/agents/cursor.svg",
+            "Devin": "img/agents/devin.png",
+            "Gemini CLI": "img/agents/gemini-cli.png",
+            "GenSpark": "img/agents/genspark.svg",
+            "GitHub Copilot": "img/agents/github-copilot.svg",
+            "Hermes Agent": "img/agents/hermes-agent.png",
+            "LobsterAI": "img/agents/lobsterai.png",
+            "Manus": "img/agents/manus.svg",
+            "Marvis": "img/agents/marvis.png",
+            "OpenClaw": "img/agents/openclaw.svg",
+            "Windsurf": "img/agents/windsurf.svg",
+            "WorkBuddy": "img/agents/workbuddy.png"
         };
 
         document.querySelectorAll("#agent-ecosystem .agent-chip").forEach((chip) => {
