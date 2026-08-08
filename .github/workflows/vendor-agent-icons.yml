@@ -23,7 +23,7 @@ jobs:
           mkdir -p img/agents
           UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/150 Safari/537.36'
           fetch() { curl -fL --retry 3 -A "$UA" "$1" -o "$2"; }
-          fetch 'https://openai.com/favicon.svg' img/agents/openai.svg
+          fetch 'https://avatars.githubusercontent.com/u/14957082?s=256&v=4' img/agents/openai.png
           fetch 'https://claude.ai/images/claude_app_icon.png' img/agents/claude.png
           fetch 'https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg' img/agents/cursor.svg
           fetch 'https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png' img/agents/devin.png
@@ -44,7 +44,7 @@ jobs:
           p = Path('js/investor-home.js')
           s = p.read_text()
           replacements = {
-              'https://openai.com/favicon.svg': 'img/agents/openai.svg',
+              'https://openai.com/favicon.svg': 'img/agents/openai.png',
               'https://claude.ai/images/claude_app_icon.png': 'img/agents/claude.png',
               'https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg': 'img/agents/cursor.svg',
               'https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png': 'img/agents/devin.png',
@@ -68,9 +68,9 @@ jobs:
           cat > img/agents/SOURCES.md <<'EOF'
           # Agent icon sources
 
-          All files in this directory are vendored copies of first-party product assets. They are served locally by tos.network; no runtime hotlink is required.
+          All files in this directory are vendored copies of first-party product assets or official vendor-controlled brand assets. They are served locally by tos.network; no runtime hotlink is required.
 
-          - `openai.svg` — OpenAI: `https://openai.com/favicon.svg` (used for ChatGPT Agent and Codex pending distinct product-specific marks)
+          - `openai.png` — OpenAI official GitHub organization avatar (used for ChatGPT Agent and Codex pending distinct product-specific marks)
           - `claude.png` — Anthropic Claude: `https://claude.ai/images/claude_app_icon.png`
           - `cursor.svg` — Cursor official brand asset CDN
           - `devin.png` — CognitionAI official `devin-extension` repository, `assets/devin-full-color.png`
