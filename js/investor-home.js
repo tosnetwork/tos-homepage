@@ -10,6 +10,48 @@
 
     root.classList.add("js");
 
+    const initializeOfficialAgentIcons = () => {
+        const officialAssets = {
+            "ChatGPT Agent": "https://openai.com/favicon.svg",
+            "Claude": "https://claude.ai/favicon.ico",
+            "Codex": "https://openai.com/favicon.svg",
+            "Cursor": "https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg",
+            "Devin": "https://devin.ai/favicon.ico",
+            "Gemini CLI": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/vscode-ide-companion/assets/icon.png",
+            "GenSpark": "https://cdn1.genspark.ai/user-upload-image/admin/brand/genspark/logos/icon-square-inverted.svg",
+            "GitHub Copilot": "https://github.com/favicon.ico",
+            "Hermes Agent": "https://hermes-agent.nousresearch.com/favicon.ico",
+            "LobsterAI": "https://raw.githubusercontent.com/netease-youdao/LobsterAI/main/resources/tray/tray-icon.png",
+            "Manus": "https://files.manuscdn.com/assets/image/brand/image/Manus-Icon.svg",
+            "Marvis": "https://marvis-ai.com/favicon.ico",
+            "OpenClaw": "https://raw.githubusercontent.com/openclaw/openclaw/main/ui/public/favicon.svg",
+            "Windsurf": "https://exafunction.github.io/public/brand/windsurf-white-symbol.svg",
+            "WorkBuddy": "https://cloud.tencent.com/favicon.ico"
+        };
+
+        document.querySelectorAll("#agent-ecosystem .agent-chip").forEach((chip) => {
+            const name = chip.querySelector(".agent-name")?.textContent?.trim();
+            const icon = chip.querySelector(".agent-icon");
+            const source = name ? officialAssets[name] : null;
+
+            // OpenFox already uses the project's own first-party image asset.
+            if (!source || !icon || name === "OpenFox") {
+                return;
+            }
+
+            const image = document.createElement("img");
+            image.src = source;
+            image.alt = "";
+            image.width = 40;
+            image.height = 40;
+            image.loading = "lazy";
+            image.decoding = "async";
+            icon.replaceChildren(image);
+        });
+    };
+
+    initializeOfficialAgentIcons();
+
     const initializeReveal = () => {
         const revealItems = [...document.querySelectorAll(".reveal")];
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
