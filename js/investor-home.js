@@ -16,7 +16,7 @@
             "Claude": "https://claude.ai/favicon.ico",
             "Codex": "https://openai.com/favicon.svg",
             "Cursor": "https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/brand-logo-1.svg",
-            "Devin": "https://devin.ai/favicon.ico",
+            "Devin": "https://raw.githubusercontent.com/CognitionAI/devin-extension/main/assets/devin-full-color.png",
             "Gemini CLI": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/vscode-ide-companion/assets/icon.png",
             "GenSpark": "https://cdn1.genspark.ai/user-upload-image/admin/brand/genspark/logos/icon-square-inverted.svg",
             "GitHub Copilot": "https://github.com/favicon.ico",
