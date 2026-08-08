@@ -561,6 +561,159 @@ h3 {
     font-weight: 600;
 }
 
+.agent-ecosystem {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(88px, 9vw, 140px) 0 clamp(72px, 8vw, 120px);
+    border-bottom: 1px solid var(--line);
+    background:
+        radial-gradient(circle at 84% 25%, rgba(216, 183, 107, 0.06), transparent 30%),
+        #06121b;
+}
+
+.agent-ecosystem::before {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    content: "";
+    pointer-events: none;
+}
+
+.agent-ecosystem-intro {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.65fr);
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 52px;
+}
+
+.agent-ecosystem-intro h2 {
+    max-width: 780px;
+    margin: 12px 0 0;
+    color: #f4f7fb;
+    font: 700 clamp(34px, 4vw, 48px)/1.05 var(--font-display);
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+}
+
+.agent-ecosystem-intro > p {
+    max-width: 520px;
+    margin: 0 0 4px;
+    color: #93a5b9;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.agent-ecosystem-grid {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (max-width: 820px) {
+    .agent-ecosystem-intro {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+}
+
+.agent-chip {
+    display: flex;
+    width: 128px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.agent-chip:hover {
+    border-color: var(--line-strong);
+    background: rgba(255, 255, 255, 0.045);
+    transform: translateY(-2px);
+}
+
+.agent-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--cyan);
+}
+
+.agent-chip:nth-child(3n+2) .agent-icon {
+    color: var(--gold);
+}
+
+.agent-chip:nth-child(3n+3) .agent-icon {
+    color: var(--cyan-bright);
+}
+
+.agent-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.agent-chip-brand {
+    border-color: rgba(216, 183, 107, 0.28);
+    background: rgba(216, 183, 107, 0.05);
+}
+
+.agent-chip-brand:hover {
+    border-color: rgba(216, 183, 107, 0.5);
+    background: rgba(216, 183, 107, 0.08);
+}
+
+.agent-chip-brand .agent-icon {
+    width: 44px;
+    height: 44px;
+}
+
+.agent-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.agent-chip-brand .agent-name {
+    color: var(--muted-strong);
+}
+
+.agent-name {
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .agent-chip {
+        width: 104px;
+        padding: 16px 8px 12px;
+    }
+
+    .agent-icon {
+        width: 32px;
+        height: 32px;
+    }
+}
+
 .section {
     position: relative;
     padding: 128px 0;
