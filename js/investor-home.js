@@ -10,6 +10,48 @@
 
     root.classList.add("js");
 
+    const initializeOfficialAgentIcons = () => {
+        const officialAssets = {
+            "ChatGPT Agent": "img/agents/openai.png",
+            "Claude": "img/agents/claude.png",
+            "Codex": "img/agents/openai.png",
+            "Cursor": "img/agents/cursor.svg",
+            "Devin": "img/agents/devin.png",
+            "Gemini CLI": "img/agents/gemini-cli.png",
+            "GenSpark": "img/agents/genspark.svg",
+            "GitHub Copilot": "img/agents/github-copilot.svg",
+            "Hermes Agent": "img/agents/hermes-agent.png",
+            "LobsterAI": "img/agents/lobsterai.png",
+            "Manus": "img/agents/manus.svg",
+            "Marvis": "img/agents/marvis.png",
+            "OpenClaw": "img/agents/openclaw.svg",
+            "Windsurf": "img/agents/windsurf.svg",
+            "WorkBuddy": "img/agents/workbuddy.png"
+        };
+
+        document.querySelectorAll("#agent-ecosystem .agent-chip").forEach((chip) => {
+            const name = chip.querySelector(".agent-name")?.textContent?.trim();
+            const icon = chip.querySelector(".agent-icon");
+            const source = name ? officialAssets[name] : null;
+
+            // OpenFox already uses the project's own first-party image asset.
+            if (!source || !icon || name === "OpenFox") {
+                return;
+            }
+
+            const image = document.createElement("img");
+            image.src = source;
+            image.alt = "";
+            image.width = 40;
+            image.height = 40;
+            image.loading = "lazy";
+            image.decoding = "async";
+            icon.replaceChildren(image);
+        });
+    };
+
+    initializeOfficialAgentIcons();
+
     const initializeReveal = () => {
         const revealItems = [...document.querySelectorAll(".reveal")];
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
