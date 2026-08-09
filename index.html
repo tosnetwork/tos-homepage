@@ -441,7 +441,7 @@
                     <article class="principle reveal">
                         <div class="principle-icon">PR</div>
                         <h3 data-i18n="platform.principle5Title">Multiple payment rails</h3>
-                        <p data-i18n="platform.principle5Desc">Settlement is not locked to one asset or one wire format. The atos.im managed-mode gateway is designed to quote and settle in native TOS or approved stablecoins, and to accept request-time payment protocols such as x402 alongside TOS's own quote-authorize-evidence-settle flow — a gateway-level choice, not a change to TOS Core consensus.</p>
+                        <p data-i18n="platform.principle5Desc">Settlement is not locked to one asset or one wire format. The atos.im managed-mode gateway is designed to quote and settle in native TOS or approved stablecoins, and to accept live, already-deployed request-time payment protocols such as x402 alongside TOS's own quote-authorize-evidence-settle flow — a gateway-level choice, not a change to TOS Core consensus.</p>
                     </article>
                 </div>
             </div>
@@ -1328,6 +1328,81 @@
             </div>
         </section>
 
+        <section class="section user-assets" id="user-assets">
+            <div class="shell">
+                <div class="section-intro narrow reveal">
+                    <p class="kicker" data-i18n="assets.kicker">The next market underneath the network</p>
+                    <h2 data-i18n="assets.title">AI has a wallet now. AI spends money.</h2>
+                    <p data-i18n="assets.desc">
+                        That single fact opens a new track and a new revenue
+                        line at once. Agents don't wait for a human to check
+                        out—they pay per call, from their own funded Agent
+                        Account, inside limits their owner set in advance.
+                        Anything an owner can describe, price, and meter
+                        turns into something an AI buyer can find and pay
+                        for.
+                    </p>
+                </div>
+
+                <div class="leverage-grid">
+                    <article class="leverage-card reveal">
+                        <p data-i18n="assets.card1Label">The new track</p>
+                        <h3 data-i18n="assets.card1Title">AI has a wallet. AI spends money.</h3>
+                        <span data-i18n="assets.card1Desc">Agent Wallets hold their own owner/controller keys, balance, and spending policy—so an agent completes a headless checkout, transacting on its own bounded authority instead of routing every payment back through a human.</span>
+                    </article>
+                    <article class="leverage-card reveal">
+                        <p data-i18n="assets.card2Label">The new revenue line</p>
+                        <h3 data-i18n="assets.card2Title">Billed per call, not per license</h3>
+                        <span data-i18n="assets.card2Desc">Pay-per-call and metered pricing—quoted and settled in TOS or approved stablecoins, and compatible with live request-time protocols like x402—let a dataset, model, or device earn from every agent request instead of sitting behind a one-time license or an ad-supported page built for humans.</span>
+                    </article>
+                    <article class="leverage-card reveal">
+                        <p data-i18n="assets.card3Label">The new responsibility</p>
+                        <h3 data-i18n="assets.card3Title">Owners sort their own resources first</h3>
+                        <span data-i18n="assets.card3Desc">None of this is safe to turn on blindly. Before a resource is agent-reachable, its owner has to decide which tier it belongs to—and TOS is designed to make that decision enforceable, not just advisory.</span>
+                    </article>
+                </div>
+
+                <div class="data-security reveal">
+                    <div class="data-security-intro">
+                        <p class="kicker" data-i18n="assets.tiersKicker">Where a traditional asset becomes an AI asset</p>
+                        <h3 data-i18n="assets.tiersTitle">Sort the resource before you open it to agents.</h3>
+                        <p data-i18n="assets.tiersDesc">Standardizing these four levels is what turns a folder, a model, or a device into something controllable, discoverable, callable, and monetizable at agent scale—not just something a model happens to be able to read.</p>
+                    </div>
+                    <div class="data-security-grid">
+                        <article>
+                            <span>01</span>
+                            <h4 data-i18n="assets.tier1Title">Open to agents by default</h4>
+                            <p data-i18n="assets.tier1Desc">Approved capabilities and data an agent may call without asking each time.</p>
+                        </article>
+                        <article>
+                            <span>02</span>
+                            <h4 data-i18n="assets.tier2Title">Human confirmation required</h4>
+                            <p data-i18n="assets.tier2Desc">Owner-key actions and policy changes that must wait for an explicit human decision.</p>
+                        </article>
+                        <article>
+                            <span>03</span>
+                            <h4 data-i18n="assets.tier3Title">Capped by enforced policy</h4>
+                            <p data-i18n="assets.tier3Desc">An allowance, an allow-list, and a maximum size per call, enforced by the Agent Account itself. Limits like these can look like friction, but they're what let an owner stop watching every call.</p>
+                        </article>
+                        <article>
+                            <span>04</span>
+                            <h4 data-i18n="assets.tier4Title">Logged regardless of outcome</h4>
+                            <p data-i18n="assets.tier4Desc">Signed evidence and receipts recorded for every settled call, whether it succeeds, fails, or is disputed.</p>
+                        </article>
+                    </div>
+                    <div class="data-security-boundary">
+                        <strong data-i18n="assets.boundaryTitle">The asset that pays in the AI era isn't the raw content—it's the standardized access wrapped around it.</strong>
+                        <p data-i18n="assets.boundaryDesc">Controllable by owner policy, retrievable through an interface, callable by an agent, tied to a verifiable identity, and priced to settle automatically: that combination, not the underlying file or device alone, is what an AI economy can actually pay for.</p>
+                    </div>
+                </div>
+
+                <div class="openfox-boundary reveal">
+                    <strong data-i18n="assets.maturityBoundaryTitle">Describing the target model—not a claim that TOS wallets are autonomously spending today.</strong>
+                    <p data-i18n="assets.maturityBoundaryDesc">Agent Account is implemented as a foundation in TOS Core and verifiable in the repository, but acceptance so far has run on throwaway localnets—a persistent public-testnet deployment has not happened yet. Autonomous spending specifically through OpenFox remains a proposed, undeployed capability, gated behind adversarial review of its task-discovery, delegation, execution, and settlement interfaces.</p>
+                </div>
+            </div>
+        </section>
+
         <section class="closing">
             <div class="closing-wave-bg-wrap" aria-hidden="true">
                 <canvas id="closing-wave-canvas"></canvas>
@@ -1364,6 +1439,7 @@
                     <a href="#mesh" data-i18n="footer.exploreL6">Agent mesh</a>
                     <a href="#economics" data-i18n="footer.exploreL7">Token economics</a>
                     <a href="#roadmap" data-i18n="footer.exploreL8">Roadmap</a>
+                    <a href="#user-assets" data-i18n="footer.exploreL9">AI-era user assets</a>
                 </div>
                 <div>
                     <strong data-i18n="footer.verifyLabel">Verify</strong>

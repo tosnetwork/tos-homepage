@@ -43,6 +43,11 @@ or token appreciation.
 8. Validator-led token economics and concentration-risk disclosures
 9. Focused delivery roadmap
 10. Due-diligence links and investor FAQ
+11. AI-era user asset thesis: agent wallets as a new spending track,
+    pay-per-call as a new revenue line, and the four owner-controlled access
+    tiers (open by default, human-confirmed, policy-capped, always logged)
+    that make a resource controllable, discoverable, callable, and
+    monetizable at agent scale
 
 The visual system uses a restrained institutional navy foundation, TOS
 champagne-gold brand accents, operational mint, and desaturated network blue.
