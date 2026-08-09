@@ -69,8 +69,31 @@ this order:
    60 seconds — that's when it's worth digging into DNS/Cloudflare routing
    config.
 
-## Checklist (before deploying any CSS change or new static asset)
+## Root cause 4 (2026-08-09 addendum): the same cache-busting bug, but for JS
+
+Root cause 1 above only calls out `css/*.css`, but the underlying mechanism
+applies to every asset referenced with a manually maintained `?v=` token —
+`js/*.js` included. On 2026-08-09, `js/i18n.js` was edited across several
+commits (new section translations, tightened copy, a rewritten grid) without
+bumping the `<script src="js/i18n.js?v=...">` tag in `index.html`. Production
+serves `js/*.js` with `cache-control: public, max-age=14400`, so browsers and
+CDN edge nodes kept serving the stale dictionary for up to 4 hours after each
+deploy — visitors who switched to a non-English language saw the newly added
+sections fall back to untranslated English text, because the cached JS had no
+entries for the new `data-i18n` keys. This was not a full outage like the
+2026-08-08 incident above, but the same class of bug: HTML shipped ahead of
+an unversioned dependency that browsers had already cached.
+
+**Preventive measure**: any change to `js/*.js` content in this project must
+bump the corresponding `?v=` parameter on the `<script>` tag that references
+it, in the same commit — same format as CSS (today's date plus a letter
+suffix). This applies per file: bumping `investor-home.js`'s version does not
+cover an edit to `i18n.js`, and vice versa. Before committing, check every
+`css/*.css` and `js/*.js` file touched in the diff against its own `?v=` tag.
+
+## Checklist (before deploying any CSS/JS change or new static asset)
 
 - [ ] Changed `css/*.css`? Did you bump the `?v=` version on the `<link>` that references it?
+- [ ] Changed `js/*.js`? Did you bump the `?v=` version on the `<script>` tag that references it?
 - [ ] Added a new `<img>`? Does it have explicit `width`/`height`?
 - [ ] After `wrangler pages deploy`, did you verify against the returned hash URL first, instead of jumping straight to `tos.network`?
