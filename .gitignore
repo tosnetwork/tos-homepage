@@ -25,3 +25,8 @@ package-lock.json
 dist/
 build/
 .wrangler/
+
+# Private material that must never reach a public repository or a deploy.
+# Note that wrangler does not read this file: `wrangler pages deploy .` would
+# still upload it. Deploy from `git archive HEAD` instead.
+*.pptx
