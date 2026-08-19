@@ -729,6 +729,38 @@ h2 em {
     }
 }
 
+/* The ecosystem block moved to the landing page, where it is now one of six
+   top-level sections. It carried the same split header the rest of the site
+   dropped in section 13: a large headline on the left with a small explainer
+   floating in a right-hand column. Stacked here for the same reason, and the
+   gold radial wash goes because the page has one accent. */
+.agent-ecosystem-intro {
+    display: block;
+    margin-bottom: clamp(36px, 4vw, 52px);
+}
+
+.agent-ecosystem-intro > div {
+    margin-bottom: 20px;
+}
+
+.agent-ecosystem-intro h2 {
+    max-width: 20ch;
+    margin: 0;
+}
+
+.agent-ecosystem-intro > p {
+    max-width: 66ch;
+    margin-right: auto;
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: var(--step-0);
+    line-height: 1.6;
+}
+
+.agent-ecosystem {
+    background: var(--navy-950);
+}
+
 /* --------------------------------------------------------------------------
    15. Responsive, last
 

@@ -14,7 +14,6 @@
         "#platform": "platform.html",
         "#a2a": "platform.html#a2a",
         "#ard": "platform.html#ard",
-        "#agent-ecosystem": "platform.html#agent-ecosystem",
         "#user-assets": "platform.html#user-assets",
         "#foundation": "foundation.html",
         "#mesh": "foundation.html#mesh",
