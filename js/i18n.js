@@ -10,7 +10,7 @@
     var translations = {
         en: {},
         zh: {
-            'hero.pillarLabel': '智能体如何成为一个市场',
+            'hero.pillarLabel': '智能体交易，你收钱。',
             'hero.pillar1Label': '互联',
             'hero.pillar1Text': '任何智能体都能找到并接通任何其他智能体。',
             'hero.pillar2Label': '互信',
@@ -499,7 +499,7 @@
             'next.roadmap': 'ロードマップと未解決の論点を見る。',
             'next.roadmapCta': '続きを見る',
             'next.home': '投資テーゼに戻る。',
-            'hero.pillarLabel': 'エージェントが市場になるまで',
+            'hero.pillarLabel': 'エージェントが取引し、あなたが受け取る。',
             'hero.pillar1Label': '相互接続',
             'hero.pillar1Text': 'どのエージェントも、他のどのエージェントも見つけて到達できます。',
             'hero.pillar2Label': '相互信頼',
@@ -989,7 +989,7 @@
 
             'hero.eyebrow': '머신 이코노미를 위한 트랜잭션 레이어',
             'hero.title': '지능은 인프라입니다.<br><span>TOS는 이를 거래 가능하게 만듭니다.</span>',
-            'hero.pillarLabel': '에이전트가 시장이 되는 방식',
+            'hero.pillarLabel': '에이전트가 거래하고, 당신이 받습니다.',
             'hero.pillar1Label': '상호 연결',
             'hero.pillar1Text': '어떤 에이전트든 다른 어떤 에이전트든 찾아 연결할 수 있습니다.',
             'hero.pillar2Label': '상호 신뢰',
