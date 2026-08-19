@@ -676,6 +676,59 @@ h2 em {
     grid-template-columns: 1fr;
 }
 
+/* The vision heading was the last split-header on the site: a large left
+   headline with a small explainer floating in a right-hand column. Same
+   pattern, same fix as section 13. The frame also carried padding sized
+   for a raster image that no longer sits inside it. */
+.vision-heading {
+    display: block;
+    max-width: 68ch;
+    padding: clamp(20px, 2.4vw, 30px) clamp(20px, 2.4vw, 30px) 0;
+}
+
+.vision-heading > div {
+    margin-bottom: 16px;
+}
+
+.vision-heading h2 {
+    max-width: 22ch;
+    margin-bottom: 0;
+}
+
+.vision-heading > p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: var(--step-0);
+    line-height: 1.6;
+}
+
+.vision-frame {
+    padding: 0 0 clamp(20px, 2.4vw, 30px);
+}
+
+.stack-diagram {
+    padding: 0 clamp(12px, 2vw, 26px);
+}
+
+/* The diagram is wider than a phone, so it scrolls inside its own frame
+   rather than pushing the page sideways. That needs an affordance, shown
+   only at the widths where the overflow actually happens. */
+.vision-mobile-hint {
+    display: none;
+}
+
+@media (max-width: 780px) {
+    .vision-mobile-hint {
+        display: block;
+        padding: 0 clamp(12px, 2vw, 26px) 12px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        letter-spacing: 0.06em;
+    }
+}
+
 /* --------------------------------------------------------------------------
    15. Responsive, last
 
@@ -724,3 +777,106 @@ h2 em {
         max-width: 100%;
     }
 }
+
+/* --------------------------------------------------------------------------
+   16. Authority stack diagram
+
+   Replaces a raster diagram that asserted an architecture the project has
+   since abandoned. Drawn inline so it stays legible at any width, carries
+   its own accessible description, and can be corrected in a diff rather
+   than re-exported.
+
+   The bands are weighted by authority on purpose: the gateway is dashed
+   because it holds none, execution is quiet, and the chain is the only
+   filled band.
+   -------------------------------------------------------------------------- */
+
+.stack-diagram {
+    margin-top: clamp(28px, 3.4vw, 44px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.stack-svg {
+    display: block;
+    width: 100%;
+    min-width: 720px;
+    height: auto;
+}
+
+.stack-svg text {
+    font-family: var(--font-body);
+    text-anchor: middle;
+}
+
+.stack-svg .sd-lab {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    fill: var(--muted);
+}
+
+.stack-svg .sd-lab-on {
+    fill: var(--cyan);
+}
+
+.stack-svg .sd-item {
+    font-size: 17px;
+    fill: var(--ink);
+}
+
+.stack-svg .sd-note {
+    font-size: 14px;
+    fill: var(--muted);
+}
+
+.stack-svg .sd-left {
+    text-anchor: start;
+}
+
+.stack-svg rect {
+    fill: rgba(255, 255, 255, 0.02);
+    stroke: var(--line);
+    stroke-width: 1;
+}
+
+/* No authority, so no solid outline. */
+.stack-svg .sd-relay rect {
+    fill: none;
+    stroke-dasharray: 5 5;
+}
+
+.stack-svg .sd-exec rect {
+    fill: rgba(255, 255, 255, 0.015);
+}
+
+/* The one band that is normative gets the accent and the only real fill. */
+.stack-svg .sd-core rect {
+    fill: rgba(3, 202, 155, 0.06);
+    stroke: var(--line-strong);
+}
+
+.stack-svg .sd-flow {
+    color: var(--muted);
+    stroke: var(--muted);
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.stack-svg .sd-anchor {
+    color: var(--cyan);
+    stroke: var(--cyan);
+}
+
+@media (max-width: 760px) {
+    .stack-svg .sd-item {
+        font-size: 19px;
+    }
+
+    .stack-svg .sd-note,
+    .stack-svg .sd-lab {
+        font-size: 16px;
+    }
+}
+
