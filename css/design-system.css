@@ -297,25 +297,23 @@ h2 em {
 }
 
 /* --------------------------------------------------------------------------
-   9. Maturity ladder
+   9. Pillar panel
 
-   The signature element. Most projects in this category bury how much of
-   the stack actually exists; leading with it is the one risk this design
-   takes, and it is the claim the rest of the site is built to support.
-
-   Rendered as a ladder rather than a card grid so the descent from shipped
-   to proposed is legible at a glance.
+   The hero's right column. Four claims that read as one chain: agents can
+   reach each other, prove each other, pay each other, and the assets behind
+   them get title. Each rung depends on the one above it, so the panel is a
+   stacked list with hairlines rather than a grid of peers.
    -------------------------------------------------------------------------- */
 
-.maturity-ladder {
+.pillar-panel {
     padding: 28px;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: rgba(255, 255, 255, 0.02);
 }
 
-.maturity-ladder .panel-label {
-    margin-bottom: 22px;
+.pillar-panel .panel-label {
+    margin-bottom: 20px;
     color: var(--muted);
     font-family: var(--font-mono);
     font-size: var(--step--1);
@@ -323,74 +321,49 @@ h2 em {
     letter-spacing: 0.1em;
 }
 
-.ladder {
+.pillars {
     margin: 0;
     padding: 0;
-    list-style: none;
-    counter-reset: none;
 }
 
-.ladder-step {
-    display: grid;
-    grid-template-columns: 8.5ch 1fr;
-    gap: 16px;
-    align-items: baseline;
-    padding: 14px 0;
+.pillar {
+    padding: 15px 0;
     border-top: 1px solid var(--line);
 }
 
-.ladder-step:first-child {
-    border-top: 0;
+.pillar:first-child {
     padding-top: 0;
+    border-top: 0;
 }
 
-.ladder-step:last-child {
+.pillar:last-child {
     padding-bottom: 0;
 }
 
-.ladder-state {
+.pillars dt {
+    margin-bottom: 5px;
+    color: var(--cyan);
     font-family: var(--font-mono);
     font-size: var(--step--1);
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
-.ladder-item {
+.pillars dd {
+    margin: 0;
+    max-width: 42ch;
     color: var(--ink);
     font-size: var(--step-0);
-    line-height: 1.35;
+    line-height: 1.45;
 }
 
-/* The rungs fade as the claim weakens. Colour carries the meaning, so the
-   state word is always present in text for anyone who cannot see it. */
-.ladder-step[data-state="implemented"] .ladder-state {
-    color: var(--cyan);
-}
-
-.ladder-step[data-state="designed"] .ladder-state {
+/* The chain is the point, so the accent stays on the first rung and the
+   others sit a step back. One accent, four weights. */
+.pillar[data-pillar="trust"] dt,
+.pillar[data-pillar="transact"] dt,
+.pillar[data-pillar="own"] dt {
     color: var(--cyan-bright);
-}
-
-.ladder-step[data-state="planned"] .ladder-state {
-    color: var(--muted-strong);
-}
-
-.ladder-step[data-state="proposed"] .ladder-state {
-    color: var(--muted);
-}
-
-.ladder-step[data-state="planned"] .ladder-item,
-.ladder-step[data-state="proposed"] .ladder-item {
-    color: var(--muted-strong);
-}
-
-
-@media (max-width: 420px) {
-    .ladder-step {
-        grid-template-columns: 1fr;
-        gap: 4px;
-    }
 }
 
 /* --------------------------------------------------------------------------
@@ -783,7 +756,7 @@ h2 em {
         gap: 40px;
     }
 
-    .maturity-ladder {
+    .pillar-panel {
         max-width: 520px;
     }
 
@@ -794,13 +767,12 @@ h2 em {
 }
 
 @media (max-width: 640px) {
-    .maturity-ladder {
+    .pillar-panel {
         padding: 22px;
     }
 
-    .ladder-step {
-        grid-template-columns: 1fr;
-        gap: 4px;
+    .pillar {
+        padding: 14px 0;
     }
 
     .section-intro h1,
