@@ -499,7 +499,7 @@
             'next.roadmap': 'ロードマップと未解決の論点を見る。',
             'next.roadmapCta': '続きを見る',
             'next.home': '投資テーゼに戻る。',
-            'hero.pillarLabel': 'エージェントが取引し、あなたが受け取る。',
+            'hero.pillarLabel': 'エージェントが取引し、あなたが稼ぐ。',
             'hero.pillar1Label': '相互接続',
             'hero.pillar1Text': 'どのエージェントも、他のどのエージェントも見つけて到達できます。',
             'hero.pillar2Label': '相互信頼',

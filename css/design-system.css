@@ -312,13 +312,18 @@ h2 em {
     background: rgba(255, 255, 255, 0.02);
 }
 
+/* The label is a single line by contract: it is the panel's headline, and a
+   two-line eyebrow reads as a sentence that ran out of room. Tracking is kept
+   low and the column below reserves enough width that even the longest
+   translation clears it with room to spare, so nowrap cannot overflow. */
 .pillar-panel .panel-label {
     margin-bottom: 20px;
     color: var(--muted);
     font-family: var(--font-mono);
     font-size: var(--step--1);
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
 }
 
 .pillars {
@@ -745,7 +750,7 @@ h2 em {
 
 .hero-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.62fr) minmax(328px, 0.66fr);
+    grid-template-columns: minmax(0, 1.55fr) minmax(372px, 0.72fr);
     gap: clamp(40px, 4.2vw, 60px);
     align-items: start;
 }
