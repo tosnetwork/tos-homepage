@@ -12,7 +12,6 @@
 
     const initializeOfficialAgentIcons = () => {
         const officialAssets = {
-            "ChatGPT Agent": "img/agents/openai.png",
             "Claude": "img/agents/claude.png",
             "Codex": "img/agents/openai.png",
             "Cursor": "img/agents/cursor.svg",
@@ -25,6 +24,7 @@
             "Manus": "img/agents/manus.svg",
             "Marvis": "img/agents/marvis.png",
             "OpenClaw": "img/agents/openclaw.svg",
+            "Pi Agent": "img/agents/pi.svg",
             "Windsurf": "img/agents/windsurf.svg",
             "WorkBuddy": "img/agents/workbuddy.png"
         };
