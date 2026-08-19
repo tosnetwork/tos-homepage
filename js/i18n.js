@@ -989,7 +989,7 @@
 
             'hero.eyebrow': '머신 이코노미를 위한 트랜잭션 레이어',
             'hero.title': '지능은 인프라입니다.<br><span>TOS는 이를 거래 가능하게 만듭니다.</span>',
-            'hero.pillarLabel': '에이전트가 거래하고, 당신이 받습니다.',
+            'hero.pillarLabel': '에이전트가&nbsp;거래하고,&nbsp;당신이&nbsp;받습니다.',
             'hero.pillar1Label': '상호 연결',
             'hero.pillar1Text': '어떤 에이전트든 다른 어떤 에이전트든 찾아 연결할 수 있습니다.',
             'hero.pillar2Label': '상호 신뢰',
