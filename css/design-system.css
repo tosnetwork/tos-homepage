@@ -1,0 +1,726 @@
+/* ==========================================================================
+   Design system layer
+
+   Loads after investor-home.css and owns three things the base sheet does
+   not: the type scale, the vertical rhythm, and the corrections that keep
+   the pages free of the generated-design signatures listed in the review
+   notes (glow, gradient headlines, decorative dots, numbered eyebrows,
+   three-equal-card rows).
+
+   Dial reading for this site: variance 5, motion 3, density 4. The audience
+   is institutional, so restraint is the point. Anything here that loosens
+   the base sheet is deliberate.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Typography
+   -------------------------------------------------------------------------- */
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: var(--step-4);
+    line-height: 1.04;
+}
+
+h2 {
+    font-size: var(--step-3);
+    line-height: 1.1;
+}
+
+h3 {
+    font-size: var(--step-2);
+    line-height: 1.2;
+}
+
+p {
+    max-width: 68ch;
+}
+
+/* Numerals, hashes, ticker symbols and anything that reads as machine
+   output. Tabular figures keep metric rows from shifting. */
+.metric-value,
+.mono,
+code {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   2. Vertical rhythm
+
+   Two heights, alternating, so the page has cadence. A single repeated gap
+   is what makes a long page feel like a list instead of an argument.
+   -------------------------------------------------------------------------- */
+
+.section {
+    padding: var(--space-section) 0;
+}
+
+.section-lg {
+    padding: var(--space-section-lg) 0;
+}
+
+.section > .shell > h2,
+.section-head h2 {
+    margin-bottom: 20px;
+}
+
+/* Section intros stack. The base sheet floats an explainer paragraph in a
+   right-hand column on several sections, which reads as a layout accident
+   at desktop widths. */
+.section-head {
+    max-width: 62ch;
+    margin-bottom: clamp(36px, 4vw, 56px);
+}
+
+.section-head p {
+    margin-bottom: 0;
+    color: var(--muted-strong);
+    font-size: var(--step-1);
+    line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   3. Corrections
+
+   Each rule below removes a signature that makes a page read as generated.
+   -------------------------------------------------------------------------- */
+
+/* Eyebrows lose the pill, the border, the tinted fill and the glowing dot.
+   What is left is a quiet label. Budget is one per three sections; the
+   markup enforces the count, this rule enforces the treatment. */
+.eyebrow {
+    display: block;
+    margin-bottom: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.eyebrow-dot {
+    display: none;
+}
+
+/* Headline gradient fills read as decoration, not hierarchy. Emphasis
+   inside a headline comes from the same family at a different weight. */
+.hero h1 span,
+h1 span,
+h2 span {
+    color: inherit;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+}
+
+.hero h1 em,
+h2 em {
+    font-style: normal;
+    color: var(--cyan-bright);
+}
+
+/* Hero sizing. A seven-word headline does not belong at 91px; the base
+   sheet's ceiling forced four lines at laptop widths. */
+.hero h1 {
+    max-width: 20ch;
+    margin-bottom: 24px;
+    font-size: var(--step-4);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+}
+
+.hero-lede {
+    max-width: 56ch;
+    margin-bottom: 32px;
+    color: var(--muted-strong);
+    font-size: var(--step-1);
+    line-height: 1.5;
+}
+
+/* Top padding cap. More than this and the hero content floats halfway down
+   the viewport and reads as a bug. */
+.hero {
+    padding-top: clamp(96px, 11vw, 136px);
+    padding-bottom: var(--space-section);
+}
+
+/* Outer glows go. Depth comes from tinted inner borders instead. */
+.eyebrow-dot,
+.metric-card::after,
+.status-dot {
+    box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   4. Controls
+
+   One shape, one accent, one label per intent.
+   -------------------------------------------------------------------------- */
+
+.button {
+    border-radius: var(--radius-control);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 500;
+    letter-spacing: 0;
+    white-space: nowrap;
+    transition: transform 0.12s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.button:active {
+    transform: translateY(1px);
+}
+
+/* --------------------------------------------------------------------------
+   5. Page shell for the sub-pages
+   -------------------------------------------------------------------------- */
+
+/* Active page in the primary nav. */
+.site-nav > a[aria-current="page"] {
+    color: var(--ink);
+}
+
+.site-nav > a[aria-current="page"]::after {
+    content: "";
+    display: block;
+    height: 1px;
+    margin-top: 4px;
+    background: var(--cyan);
+}
+
+/* Cross-page continuation link at the foot of each sub-page. */
+.page-next {
+    padding: var(--space-section) 0;
+    border-top: 1px solid var(--line);
+}
+
+.page-next .shell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.page-next h2 {
+    max-width: 22ch;
+    margin: 0;
+    font-size: var(--step-2);
+}
+
+/* --------------------------------------------------------------------------
+   6. Grids
+
+   Three equal columns repeated down a page is the single most templated
+   layout there is. These grids size to their content instead.
+   -------------------------------------------------------------------------- */
+
+.grid-pair {
+    display: grid;
+    gap: clamp(20px, 2.4vw, 32px);
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+}
+
+.grid-lead {
+    display: grid;
+    gap: clamp(20px, 2.4vw, 32px);
+    grid-template-columns: 1.35fr 1fr;
+    align-items: start;
+}
+
+.grid-stack {
+    display: grid;
+    gap: clamp(20px, 2.4vw, 32px);
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+
+@media (max-width: 860px) {
+    .grid-lead {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   7. Motion
+
+   Dial is 3. Reveals are short and small; nothing loops, nothing parallaxes.
+   -------------------------------------------------------------------------- */
+
+.reveal {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. Focus
+
+   Preserved from the base sheet and strengthened. Never remove.
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   9. Maturity ladder
+
+   The signature element. Most projects in this category bury how much of
+   the stack actually exists; leading with it is the one risk this design
+   takes, and it is the claim the rest of the site is built to support.
+
+   Rendered as a ladder rather than a card grid so the descent from shipped
+   to proposed is legible at a glance.
+   -------------------------------------------------------------------------- */
+
+.maturity-ladder {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.maturity-ladder .panel-label {
+    margin-bottom: 22px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+}
+
+.ladder {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+}
+
+.ladder-step {
+    display: grid;
+    grid-template-columns: 8.5ch 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.ladder-step:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.ladder-step:last-child {
+    padding-bottom: 0;
+}
+
+.ladder-state {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ladder-item {
+    color: var(--ink);
+    font-size: var(--step-0);
+    line-height: 1.35;
+}
+
+/* The rungs fade as the claim weakens. Colour carries the meaning, so the
+   state word is always present in text for anyone who cannot see it. */
+.ladder-step[data-state="implemented"] .ladder-state {
+    color: var(--cyan);
+}
+
+.ladder-step[data-state="designed"] .ladder-state {
+    color: var(--cyan-bright);
+}
+
+.ladder-step[data-state="planned"] .ladder-state {
+    color: var(--muted-strong);
+}
+
+.ladder-step[data-state="proposed"] .ladder-state {
+    color: var(--muted);
+}
+
+.ladder-step[data-state="planned"] .ladder-item,
+.ladder-step[data-state="proposed"] .ladder-item {
+    color: var(--muted-strong);
+}
+
+
+@media (max-width: 420px) {
+    .ladder-step {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   10. Breaking the three-equal-card rows
+
+   Three identical cards side by side is the most templated row in the
+   category, and the base sheet used it for every trio on the site. Each of
+   these trios has a lead item and two supporting ones, so the grid now says
+   that instead of flattening all three into peers.
+   -------------------------------------------------------------------------- */
+
+/* The three shifts. Demand is the premise the other two rest on, so it
+   leads at full width and the consequences sit beneath it. */
+.shift-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1px, 0.2vw, 2px);
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.shift-grid > .shift-card {
+    margin: 0;
+    padding: clamp(24px, 2.6vw, 34px);
+    border: 0;
+    border-radius: 0;
+    background: var(--navy-900);
+}
+
+.shift-grid > .shift-card:first-child {
+    grid-column: 1 / -1;
+}
+
+.shift-grid > .shift-card:first-child h3 {
+    max-width: 24ch;
+    font-size: var(--step-2);
+}
+
+/* ARD value props and the leverage trio are peers, not a hierarchy, so they
+   lose the card chrome entirely and group with rules and space instead. */
+.ard-value-grid,
+.leverage-grid {
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 0;
+}
+
+.ard-value-grid > *,
+.leverage-grid > * {
+    padding: 4px clamp(20px, 2.4vw, 32px) 4px 0;
+    border: 0;
+    border-left: 1px solid var(--line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.ard-value-grid > *:not(:first-child),
+.leverage-grid > *:not(:first-child) {
+    padding-left: clamp(20px, 2.4vw, 32px);
+}
+
+.ard-value-grid > *:first-child,
+.leverage-grid > *:first-child {
+    border-left: 0;
+}
+
+.ard-value-grid > :first-child h3,
+.leverage-grid > :first-child h3 {
+    font-size: var(--step-2);
+}
+
+@media (max-width: 900px) {
+    .shift-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ard-value-grid,
+    .leverage-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .ard-value-grid > *,
+    .leverage-grid > * {
+        padding: clamp(18px, 4vw, 26px) 0;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+
+    .ard-value-grid > *:first-child,
+    .leverage-grid > *:first-child {
+        border-top: 0;
+        padding-top: 0;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   11. Second pass, from the rendered page
+
+   Everything below was found by screenshotting the built pages rather than
+   by reading the markup. Each fix names what was wrong on screen.
+   -------------------------------------------------------------------------- */
+
+/* The headline wrapped to four lines at 60px inside a 700px column. Two is
+   the ceiling, so the copy column takes more of the grid and the display
+   size drops into the range a seven-word headline belongs in. */
+
+.hero h1 {
+    max-width: 34ch;
+    font-size: clamp(32px, 1.5rem + 1.9vw, 48px);
+    line-height: 1.08;
+}
+
+/* min-height was sized for the old six-element hero and left roughly 290px
+   of dead space under the trimmed one. */
+.hero {
+    min-height: 0;
+    padding-bottom: clamp(56px, 6vw, 88px);
+}
+
+/* The metrics headline was the only all-caps display type on the site, at
+   64px and weight 700 against sentence-case 40px/600 everywhere else. Two
+   display registers on one page reads as two designers. */
+.network-metrics-intro h2 {
+    max-width: 22ch;
+    font: 600 var(--step-3) / 1.1 var(--font-display);
+    letter-spacing: -0.022em;
+    text-transform: none;
+}
+
+/* The disclaimer marking these numbers as preview data was 12px at #5f7287
+   against a dark ground, which fails contrast for the one line on the page
+   that must not be missed. */
+.metrics-footnote {
+    max-width: 62ch;
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: var(--step--1);
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .network-metrics-intro h2 {
+        font-size: var(--step-3);
+    }
+}
+
+/* The lead shift card spans the full width but its text only filled the
+   left third, leaving a large empty field. Splitting it puts the claim on
+   the left and the reasoning on the right, so the width does work. */
+.shift-grid > .shift-card:first-child {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(24px, 3vw, 48px);
+    align-items: start;
+}
+
+.shift-grid > .shift-card:first-child .shift-tag,
+.shift-grid > .shift-card:first-child h3 {
+    grid-column: 1;
+}
+
+.shift-grid > .shift-card:first-child h3 {
+    margin-bottom: 0;
+}
+
+.shift-grid > .shift-card:first-child > p:last-child {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .shift-grid > .shift-card:first-child {
+        grid-template-columns: 1fr;
+    }
+
+    .shift-grid > .shift-card:first-child .shift-tag,
+    .shift-grid > .shift-card:first-child h3,
+    .shift-grid > .shift-card:first-child > p:last-child {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+/* Two of the four ladder items wrapped in a 300px column. */
+
+/* --------------------------------------------------------------------------
+   12. Sub-page openers
+
+   Each sub-page opens on its first content section rather than on a
+   separate banner, so that section carries the h1 and the opening space.
+   -------------------------------------------------------------------------- */
+
+.section.page-open {
+    padding-top: clamp(112px, 13vw, 152px);
+}
+
+.page-open h1 {
+    max-width: 26ch;
+    margin-bottom: 20px;
+    font-size: clamp(30px, 1.4rem + 1.8vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.024em;
+}
+
+/* Two headings still carried the all-caps display register that section 11
+   removed from the metrics headline. Same reason, same fix. */
+.agent-ecosystem-intro h2,
+.data-security-intro h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    text-transform: none;
+}
+
+.agent-ecosystem-intro h2 {
+    font-size: var(--step-3);
+    line-height: 1.1;
+}
+
+.data-security-intro h3 {
+    font-size: var(--step-2);
+    line-height: 1.2;
+}
+
+/* --------------------------------------------------------------------------
+   13. Section intros stack
+
+   The base sheet laid every section intro out as three columns: a label on
+   the left, the headline in the middle, and an explainer paragraph floating
+   in a right-hand column. The columns have unequal content, so the short
+   ones left a void beside the tall one, and the floating explainer is the
+   pattern that most reliably reads as an accident rather than a choice.
+   One column, one message, measure capped for reading.
+   -------------------------------------------------------------------------- */
+
+.section-intro {
+    display: block;
+    max-width: 68ch;
+    margin-bottom: clamp(40px, 4.4vw, 64px);
+}
+
+.section-intro > * {
+    max-width: 100%;
+}
+
+.section-intro h1,
+.section-intro h2 {
+    max-width: 24ch;
+    margin-bottom: 20px;
+}
+
+.section-intro > p:last-child {
+    max-width: 66ch;
+    margin-bottom: 0;
+    color: var(--muted-strong);
+    font-size: var(--step-0);
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   14. Grids that reserved a column for a step number
+
+   Section 3 removed the numbering from items that were parallel rather
+   than sequential. Three grids still declared the narrow leading track
+   those numbers used to sit in, so the content fell into a 40 to 60px
+   column and wrapped one character per line.
+   -------------------------------------------------------------------------- */
+
+.edge-card {
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+.diligence-links a {
+    grid-template-columns: 1fr 25px;
+}
+
+.diligence-disclosure {
+    grid-template-columns: 1fr;
+}
+
+/* --------------------------------------------------------------------------
+   15. Responsive, last
+
+   These rules must stay at the end of the file. Media queries add no
+   specificity, so a later unconditional declaration silently beats an
+   earlier narrow-viewport one. An earlier draft of this sheet set the hero
+   grid twice, and the second declaration cancelled the mobile collapse.
+   -------------------------------------------------------------------------- */
+
+.hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.62fr) minmax(328px, 0.66fr);
+    gap: clamp(40px, 4.2vw, 60px);
+    align-items: start;
+}
+
+@media (max-width: 960px) {
+    .hero-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+    }
+
+    .maturity-ladder {
+        max-width: 520px;
+    }
+
+    .hero h1,
+    .hero-lede {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .maturity-ladder {
+        padding: 22px;
+    }
+
+    .ladder-step {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .section-intro h1,
+    .section-intro h2,
+    .page-open h1 {
+        max-width: 100%;
+    }
+}

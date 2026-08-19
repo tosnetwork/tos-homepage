@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bounded genesis, validator-led distribution, no team or treasury allocation. The full TOS token policy and its seven-year schedule.">
+    <meta name="author" content="TOS Network">
+    <meta name="theme-color" content="#06121b">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Token Economics - TOS Network">
+    <meta property="og:description" content="Bounded genesis, validator-led distribution, no team or treasury allocation. The full TOS token policy and its seven-year schedule.">
+    <meta property="og:image" content="https://tos.network/img/tos-network-vision.webp">
+    <meta property="og:url" content="https://tos.network/token">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@tos_network">
+    <meta name="twitter:title" content="Token Economics - TOS Network">
+    <meta name="twitter:description" content="Bounded genesis, validator-led distribution, no team or treasury allocation. The full TOS token policy and its seven-year schedule.">
+    <meta name="twitter:image" content="https://tos.network/img/tos-network-vision.webp">
+
+    <title>Token Economics - TOS Network</title>
+
+    <link rel="icon" href="favicon.ico">
+    <link rel="canonical" href="https://tos.network/token">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/investor-home.css?v=20260819b">
+    <link rel="stylesheet" href="css/design-system.css?v=20260819b">
+    <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
+    <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="siteHeader">
+        <div class="shell nav-shell">
+            <a class="brand" href="index.html" aria-label="TOS Network home">
+                <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                <span>TOS Network</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="siteNav">
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
+                <a href="platform.html" data-i18n="nav.platform">Platform</a>
+                <a href="foundation.html" data-i18n="nav.foundation">Foundation</a>
+                <a href="token.html" data-i18n="nav.token" aria-current="page">Token</a>
+                <a href="roadmap.html" data-i18n="nav.roadmap">Roadmap</a>
+
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-toggle nav-cta" id="langToggle" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+                        <svg class="lang-globe" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+                            <path d="M1.5 8h13M8 1.5c1.8 1.8 2.8 4 2.8 6.5s-1 4.7-2.8 6.5c-1.8-1.8-2.8-4-2.8-6.5S6.2 3.3 8 1.5Z" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        <span class="lang-toggle-code" id="langToggleCode">EN</span>
+                        <svg class="lang-caret" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="lang-backdrop" id="langBackdrop"></div>
+                    <ul class="lang-dropdown" id="langDropdown" role="listbox" aria-label="Language" aria-hidden="true">
+                        <li role="option" class="lang-option is-active" data-lang="en" aria-selected="true">
+                            <span class="lang-option-name">English</span><span class="lang-option-code">EN</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="zh" aria-selected="false">
+                            <span class="lang-option-name">中文</span><span class="lang-option-code">ZH</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="ja" aria-selected="false">
+                            <span class="lang-option-name">日本語</span><span class="lang-option-code">JA</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="ko" aria-selected="false">
+                            <span class="lang-option-name">한국어</span><span class="lang-option-code">KO</span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+
+        <section class="section token-economics page-open" id="economics">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker" data-i18n="economics.kicker">Supply policy</p>
+                    <h1 data-i18n="economics.title">Bounded genesis. Transparent blocks. No insiders.</h1>
+                    <p data-i18n="economics.desc">
+                        Approximately 500 million TOS is created for produced blocks and
+                        distributed through recurring validator elections over approximately
+                        seven years. The remaining community-agent allocation, approximately
+                        4.5 billion TOS of the five-billion total-supply policy, is planned to
+                        be created through a separately specified protocol reward mechanism,
+                        is not funded at genesis, and is never held by a treasury wallet.
+                        None of these figures is a hard consensus guarantee.
+                    </p>
+                </div>
+
+                <div class="token-metrics" role="group" aria-label="TOS supply policy">
+                    <article class="token-metric reveal">
+                        <span data-i18n="economics.metric1Label">Total supply target</span>
+                        <strong data-i18n="economics.metric1Value">≈ 5B TOS</strong>
+                        <p data-i18n="economics.metric1Desc">≈ 500M validator rewards + ≈ 4.5B planned community-agent allocation; not a guaranteed hard cap.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span data-i18n="economics.metric2Label">Provisional genesis</span>
+                        <strong data-i18n="economics.metric2Value">101,000 TOS</strong>
+                        <p data-i18n="economics.metric2Desc">100,000 bootstrap + two 500-TOS system reserves.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span data-i18n="economics.metric3Label">Target duration</span>
+                        <strong data-i18n="economics.metric3Value">≈ 7 years</strong>
+                        <p data-i18n="economics.metric3Desc">Actual timing follows finalized block production.</p>
+                    </article>
+                    <article class="token-metric reveal">
+                        <span data-i18n="economics.metric4Label">Insider allocation</span>
+                        <strong data-i18n="economics.metric4Value">0 TOS</strong>
+                        <p data-i18n="economics.metric4Desc">No team, investor, foundation, ecosystem, or treasury allocation.</p>
+                    </article>
+                </div>
+
+                <div class="economics-layout">
+                    <article class="economics-card reveal">
+                        <p class="economics-label" data-i18n="economics.card1Label">How validator rewards are created</p>
+                        <h3 data-i18n="economics.card1Title">Blocks fund the elected validator set.</h3>
+                        <div class="issuance-flow" role="group" aria-label="Validator reward flow">
+                            <span data-i18n="economics.flow1">Produced block</span>
+                            <i aria-hidden="true">→</i>
+                            <span>ConfigParam 14</span>
+                            <i aria-hidden="true">→</i>
+                            <span data-i18n="economics.flow3">Elector bonus pool</span>
+                            <i aria-hidden="true">→</i>
+                            <span data-i18n="economics.flow4">Effective-stake share</span>
+                        </div>
+                        <p data-i18n="economics.card1Desc">
+                            No finalized block means no native creation. Outages create no reward
+                            debt, catch-up multiplier, or later backfill. Transaction and service
+                            fees transfer existing TOS and continue after block creation is stopped.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label" data-i18n="economics.card2Label">How genesis is constrained</p>
+                        <h3 data-i18n="economics.card2Title">The bootstrap wallet is temporary.</h3>
+                        <p data-i18n="economics.card2Desc">
+                            Four original validators begin with equal consensus weight. Each
+                            controlling wallet may receive 20,000 TOS of stake principal plus no
+                            more than 100 TOS of measured bootstrap costs. After two overlapping
+                            elected sets succeed, the remaining main-wallet balance must be burned
+                            and its spendable balance reduced to zero.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label" data-i18n="economics.card3Label">How concentration is constrained</p>
+                        <h3 data-i18n="economics.card3Title">Open elections replace administrative allocation.</h3>
+                        <p data-i18n="economics.card3Desc">
+                            Equal bootstrap funding, an initial effective-stake factor of one,
+                            submitted-stake limits, recurring elections, operator-control
+                            disclosures, and public concentration metrics are designed to reduce
+                            single-entry dominance. The four-validator set is only a startup
+                            minimum; the public participation target is 64 independent operators
+                            and the long-term target is at least 75 eligible validators.
+                        </p>
+                    </article>
+
+                    <article class="economics-card reveal">
+                        <p class="economics-label" data-i18n="economics.card4Label">How creation ends</p>
+                        <h3 data-i18n="economics.card4Title">Governance tapers and then sets rewards to zero.</h3>
+                        <p data-i18n="economics.card4Desc">
+                            Finalized gross creation must be published continuously. A public taper
+                            review begins before projected validator creation reaches 495 million
+                            TOS, and governance is expected to set masterchain and basechain
+                            creation values to zero near the 500-million validator policy target.
+                            Configuration authority means the target is transparent policy, not an
+                            immutable cap.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="economics-disclosure reveal">
+                    <div>
+                        <strong data-i18n="economics.disclosureTitle">Distribution controls reduce concentration risk; they cannot guarantee dispersed ownership.</strong>
+                        <p data-i18n="economics.disclosureDesc">
+                            Early rewards necessarily go to the validators then elected, and
+                            stake-proportional rewards may compound existing holdings. TOS provides
+                            no equity, debt, dividend, redemption, fixed yield, liquidity, or price
+                            support. Market value can fall, and participation remains subject to
+                            technical, custody, governance, concentration, and regulatory risk.
+                        </p>
+                    </div>
+                    <a class="button button-secondary" href="pdf/tos.pdf?v=20260818a" target="_blank" rel="noopener">
+                        <span data-i18n="economics.disclosureLink">Read full token economics</span> <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-next">
+            <div class="shell">
+                <h2 data-i18n="next.roadmap">See the roadmap and the open questions.</h2>
+                <a class="button button-secondary" href="roadmap.html">
+                    <span data-i18n="next.roadmapCta">Continue</span>
+                    <span aria-hidden="true">&#8594;</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="index.html">
+                    <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                    <span>TOS Network</span>
+                </a>
+                <p data-i18n="footer.tagline">The open coordination and settlement network for AI services and physical edge intelligence.</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <strong data-i18n="footer.exploreLabel">Explore</strong>
+                    <a href="index.html#thesis" data-i18n="footer.exploreL1">Investment thesis</a>
+                    <a href="platform.html" data-i18n="footer.exploreL2">Platform</a>
+                    <a href="platform.html#a2a" data-i18n="footer.exploreL3">A2A economy</a>
+                    <a href="foundation.html#openfox">OpenFox</a>
+                    <a href="platform.html#ard" data-i18n="footer.exploreL5">ARD discovery</a>
+                    <a href="foundation.html#mesh" data-i18n="footer.exploreL6">Agent mesh</a>
+                    <a href="token.html" data-i18n="footer.exploreL7">Token economics</a>
+                    <a href="roadmap.html" data-i18n="footer.exploreL8">Roadmap</a>
+                    <a href="platform.html#user-assets" data-i18n="footer.exploreL9">AI-era user assets</a>
+                </div>
+                <div>
+                    <strong data-i18n="footer.verifyLabel">Verify</strong>
+                    <a href="pdf/tos.pdf?v=20260818a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
+                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.verifyL2">Source</a>
+                    <a href="https://github.com/tosnetwork/tos/tree/main/doc" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Documentation</a>
+                    <a href="https://github.com/tosnetwork/tos/blob/main/doc/openfox-autonomous-earning-agent.md" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture</a>
+                </div>
+                <div>
+                    <strong data-i18n="footer.connectLabel">Connect</strong>
+                    <a href="https://x.com/tos_network" target="_blank" rel="noopener">X / Twitter</a>
+                    <a href="https://t.me/tos_network" target="_blank" rel="noopener">Telegram</a>
+                    <a href="https://discord.tos.network" target="_blank" rel="noopener">Discord</a>
+                    <a href="song/DigitalDawn.mp3" target="_blank" rel="noopener" data-i18n="footer.connectL4">Digital Dawn ♫</a>
+                    <a href="https://github.com/tosnetwork/tos/issues" target="_blank" rel="noopener" data-i18n="footer.connectL5">Open an issue</a>
+                    <a href="terms.html" data-i18n="footer.connectL6">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+        <div class="shell footer-bottom">
+            <p>© <span id="currentYear">2026</span> <span data-i18n="footer.copyrightSuffix">TOS Network. Open source. Owner operated.</span></p>
+            <p class="disclaimer" data-i18n="footer.disclaimer">This website describes architecture and product direction. It is not an offer of securities or a promise of adoption, protocol revenue, investment return, or token appreciation.</p>
+        </div>
+    </footer>
+
+    <script src="js/i18n.js?v=20260819b"></script>
+    <script src="js/lang-switcher.js?v=20260805a"></script>
+    <script src="js/investor-home.js?v=20260819a"></script>
+</body>
+</html>

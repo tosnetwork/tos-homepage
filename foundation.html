@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The infrastructure that exists today: TOS Core, the agent mesh, site-bound edge intelligence, and the OpenFox autonomous earning agent.">
+    <meta name="author" content="TOS Network">
+    <meta name="theme-color" content="#06121b">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Foundation - TOS Network">
+    <meta property="og:description" content="The infrastructure that exists today: TOS Core, the agent mesh, site-bound edge intelligence, and the OpenFox autonomous earning agent.">
+    <meta property="og:image" content="https://tos.network/img/tos-network-vision.webp">
+    <meta property="og:url" content="https://tos.network/foundation">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@tos_network">
+    <meta name="twitter:title" content="Foundation - TOS Network">
+    <meta name="twitter:description" content="The infrastructure that exists today: TOS Core, the agent mesh, site-bound edge intelligence, and the OpenFox autonomous earning agent.">
+    <meta name="twitter:image" content="https://tos.network/img/tos-network-vision.webp">
+
+    <title>Foundation - TOS Network</title>
+
+    <link rel="icon" href="favicon.ico">
+    <link rel="canonical" href="https://tos.network/foundation">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/investor-home.css?v=20260819b">
+    <link rel="stylesheet" href="css/design-system.css?v=20260819b">
+    <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
+    <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="siteHeader">
+        <div class="shell nav-shell">
+            <a class="brand" href="index.html" aria-label="TOS Network home">
+                <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                <span>TOS Network</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="siteNav">
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
+                <a href="platform.html" data-i18n="nav.platform">Platform</a>
+                <a href="foundation.html" data-i18n="nav.foundation" aria-current="page">Foundation</a>
+                <a href="token.html" data-i18n="nav.token">Token</a>
+                <a href="roadmap.html" data-i18n="nav.roadmap">Roadmap</a>
+
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-toggle nav-cta" id="langToggle" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+                        <svg class="lang-globe" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+                            <path d="M1.5 8h13M8 1.5c1.8 1.8 2.8 4 2.8 6.5s-1 4.7-2.8 6.5c-1.8-1.8-2.8-4-2.8-6.5S6.2 3.3 8 1.5Z" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        <span class="lang-toggle-code" id="langToggleCode">EN</span>
+                        <svg class="lang-caret" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="lang-backdrop" id="langBackdrop"></div>
+                    <ul class="lang-dropdown" id="langDropdown" role="listbox" aria-label="Language" aria-hidden="true">
+                        <li role="option" class="lang-option is-active" data-lang="en" aria-selected="true">
+                            <span class="lang-option-name">English</span><span class="lang-option-code">EN</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="zh" aria-selected="false">
+                            <span class="lang-option-name">中文</span><span class="lang-option-code">ZH</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="ja" aria-selected="false">
+                            <span class="lang-option-name">日本語</span><span class="lang-option-code">JA</span>
+                        </li>
+                        <li role="option" class="lang-option" data-lang="ko" aria-selected="false">
+                            <span class="lang-option-name">한국어</span><span class="lang-option-code">KO</span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+
+        <section class="section foundation page-open" id="foundation">
+            <div class="shell">
+                <div class="section-intro reveal">
+                    <p class="kicker" data-i18n="foundation.kicker">Execution credibility</p>
+                    <h1 data-i18n="foundation.title">Working infrastructure. No blurred lines.</h1>
+                    <p data-i18n="foundation.desc">
+                        The blockchain and networking foundation exists in open source today.
+                        The service protocol and terminal product layers are intentionally
+                        separated and explicitly identified as the next delivery surface.
+                    </p>
+                </div>
+
+                <div class="status-columns">
+                    <article class="status-panel implemented reveal">
+                        <div class="status-heading">
+                            <span data-i18n="foundation.implementedLabel">Implemented foundation</span>
+                            <strong>TOS Core</strong>
+                        </div>
+                        <ul>
+                            <li data-i18n="foundation.implementedLi1">Native TVM actor execution and asynchronous value-bearing messages</li>
+                            <li data-i18n="foundation.implementedLi2">Masterchain, shardchains, validator engine, and full-node stack</li>
+                            <li data-i18n="foundation.implementedLi3">ADNL, DHT, RLDP, QUIC, TOS Sites, and DNS resolution</li>
+                            <li data-i18n="foundation.implementedLi4">Wallet, cryptography, JSON-RPC, indexing, and operator tooling</li>
+                            <li data-i18n="foundation.implementedLi5">Agent Account, Service Actor, Task Escrow, and Dispute foundations</li>
+                            <li data-i18n="foundation.implementedLi6">Capability Registry and Proof Attestation foundations</li>
+                        </ul>
+                        <a class="text-link" href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener">
+                            <span data-i18n="foundation.implementedLink">Verify in the repository</span> <span aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+
+                    <article class="status-panel planned reveal">
+                        <div class="status-heading">
+                            <span data-i18n="foundation.plannedLabel">Planned product layer</span>
+                            <strong>TOS Network</strong>
+                        </div>
+                        <ul>
+                            <li data-i18n="foundation.plannedLi1">Canonical service descriptors, sessions, quotes, and receipts</li>
+                            <li data-i18n="foundation.plannedLi2">ARD catalogs, independently deployable Registry, and bounded federation</li>
+                            <li data-i18n="foundation.plannedLi3">Public <code>.tos</code> registration with verified ARD gateway bindings</li>
+                            <li data-i18n="foundation.plannedLi4">Edge Core, terminal installers, and runtime adapters</li>
+                            <li data-i18n="foundation.plannedLi5">Managed AI terminal and Physical AI terminal distributions</li>
+                            <li data-i18n="foundation.plannedLi6">OpenFox scout, guarded testnet worker, and bounded production agent</li>
+                            <li data-i18n="foundation.plannedLi7">Home and site relays, low-latency settlement, and stronger evidence</li>
+                            <li data-i18n="foundation.plannedLi8">Cross-implementation conformance and extended resource-soak testing</li>
+                        </ul>
+                        <a class="text-link" href="https://github.com/tosnetwork/tos/blob/main/doc/the-tos-protocol-implementation-plan.md" target="_blank" rel="noopener">
+                            <span data-i18n="foundation.plannedLink">Review the implementation plan</span> <span aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+                </div>
+
+                <div class="architecture reveal">
+                    <div class="architecture-row architecture-demand">
+                        <span data-i18n="foundation.archDemandLabel">Demand</span>
+                        <div data-i18n="foundation.archDemandD1">People</div>
+                        <div data-i18n="foundation.archDemandD2">Applications</div>
+                        <div data-i18n="foundation.archDemandD3">Autonomous agents</div>
+                    </div>
+                    <div class="architecture-row architecture-openfox">
+                        <span data-i18n="foundation.archOpenfoxLabel">Autonomous operator</span>
+                        <div>OpenFox</div>
+                        <div data-i18n="foundation.archOpenfoxD2">Skills + economics</div>
+                        <div data-i18n="foundation.archOpenfoxD3">Policy + audit</div>
+                    </div>
+                    <div class="architecture-row architecture-service">
+                        <span data-i18n="foundation.archServiceLabel">Service plane</span>
+                        <div>ARD Registry</div>
+                        <div data-i18n="foundation.archServiceD2">Authentication + quotes</div>
+                        <div data-i18n="foundation.archServiceD3">Receipts + evidence</div>
+                    </div>
+                    <div class="architecture-row architecture-terminal">
+                        <span data-i18n="foundation.archTerminalLabel">Owner-operated supply</span>
+                        <div data-i18n="foundation.archTerminalD1">Managed AI terminals</div>
+                        <div data-i18n="foundation.archTerminalD2">Physical AI terminals</div>
+                        <div data-i18n="foundation.archTerminalD3">Other service profiles</div>
+                    </div>
+                    <div class="architecture-row architecture-core">
+                        <span>TOS Core</span>
+                        <div data-i18n="foundation.archCoreD1">Identity + authority</div>
+                        <div data-i18n="foundation.archCoreD2">Escrow + settlement</div>
+                        <div data-i18n="foundation.archCoreD3">Network + transport</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section mesh" id="mesh">
+            <div class="mesh-grid-bg-wrap" aria-hidden="true">
+                <canvas id="mesh-grid-canvas"></canvas>
+            </div>
+            <div class="shell">
+                <div class="section-intro narrow reveal">
+                    <h2 data-i18n="mesh.title">Intelligence is leaving the data center.</h2>
+                    <p data-i18n="mesh.desc">
+                        Open-weight models in the 8-14B range now run directly on a Mac
+                        mini, a gaming PC, a home NAS, or a Jetson-class box, capable enough
+                        for tool calling, coding, and retrieval, not just chat. That turns a
+                        growing population of ordinary owner-operated devices into potential
+                        agent nodes, not just endpoints.
+                    </p>
+                </div>
+
+                <div class="mesh-flow reveal" role="group" aria-label="Request routing across compute tiers">
+                    <div class="mesh-flow-before">
+                        <small data-i18n="mesh.beforeLabel">Cloud-only pattern</small>
+                        <div class="mesh-chain">
+                            <span data-i18n="mesh.chainUser">User</span><i aria-hidden="true">→</i><span data-i18n="mesh.chainCloud">Cloud frontier model</span>
+                        </div>
+                    </div>
+                    <div class="mesh-flow-after">
+                        <small data-i18n="mesh.afterLabel">Agent mesh pattern</small>
+                        <div class="mesh-chain mesh-chain-wide">
+                            <span data-i18n="mesh.chainUser2">User</span><i aria-hidden="true">→</i>
+                            <span data-i18n="mesh.chainLocal">Local agent</span><i aria-hidden="true">→</i>
+                            <span data-i18n="mesh.chainEdge">Nearby edge node</span><i aria-hidden="true">→</i>
+                            <span data-i18n="mesh.chainRegional">Regional compute</span><i aria-hidden="true">→</i>
+                            <span data-i18n="mesh.chainCloud2">Cloud frontier model</span>
+                        </div>
+                        <p data-i18n="mesh.afterDesc">Escalates outward only when the nearer tier can't meet the request's capability, latency, privacy, or evidence bar.</p>
+                    </div>
+                </div>
+
+                <div class="mesh-tier-grid" role="group" aria-label="Compute tiers by model scale">
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">2-4B</span>
+                        <h3 data-i18n="mesh.tier1Title">Mobile AI</h3>
+                        <p data-i18n="mesh.tier1Desc">Phones, wearables, IoT. Voice, control loops, sensor interpretation.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">8-14B</span>
+                        <h3 data-i18n="mesh.tier2Title">Edge AI</h3>
+                        <p data-i18n="mesh.tier2Desc">Mac mini, MacBook, gaming PC, NAS, Jetson-class boxes. Agents, coding, RAG, tool calling.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">30-70B</span>
+                        <h3 data-i18n="mesh.tier3Title">Regional AI</h3>
+                        <p data-i18n="mesh.tier3Desc">Enterprise and aggregation-tier servers. Knowledge bases, complex reasoning.</p>
+                    </article>
+                    <article class="mesh-tier reveal">
+                        <span class="mesh-tier-band">200B+</span>
+                        <h3 data-i18n="mesh.tier4Title">Cloud Frontier AI</h3>
+                        <p data-i18n="mesh.tier4Desc">Data-center deployments. Frontier research, large-scale training.</p>
+                    </article>
+                </div>
+
+                <div class="mesh-hardware reveal" role="group" aria-label="Consumer hardware that fits the Edge AI and storage tiers">
+                    <div class="mesh-hardware-intro">
+                        <h3 data-i18n="mesh.hardwareTitle">The Edge AI tier is hardware you can already buy.</h3>
+                        <p data-i18n="mesh.hardwareDesc">A Mac mini fits the compute role above, with enough unified memory to run an 8-14B model at home. A Raspberry Pi fits a lighter, always-on role: holding and sharing storage rather than heavy inference.</p>
+                    </div>
+                    <div class="mesh-hardware-grid">
+                        <article class="mesh-hardware-card">
+                            <div class="mesh-hardware-media">
+                                <img src="img/mac-mini.webp" alt="Apple Mac mini desktop computer" width="640" height="640" loading="lazy">
+                            </div>
+                            <div class="mesh-hardware-card-body">
+                                <span class="mesh-hardware-role" data-i18n="mesh.hw1Role">Edge AI tier · Compute</span>
+                                <h4>Mac mini</h4>
+                                <p data-i18n="mesh.hw1Desc">Unified memory and low idle power make it one of the more approachable machines for running an open-weight model at home.</p>
+                            </div>
+                        </article>
+                        <article class="mesh-hardware-card">
+                            <div class="mesh-hardware-media">
+                                <img src="img/raspberry-pi.webp" alt="Raspberry Pi 5 single-board computer" width="640" height="640" loading="lazy">
+                            </div>
+                            <div class="mesh-hardware-card-body">
+                                <span class="mesh-hardware-role" data-i18n="mesh.hw2Role">Mobile / Edge tier · Storage</span>
+                                <h4>Raspberry Pi</h4>
+                                <p data-i18n="mesh.hw2Desc">Low power draw and an attached disk make it a natural fit for always-on storage capacity rather than model inference.</p>
+                            </div>
+                        </article>
+                    </div>
+                    <p class="mesh-hardware-credit">
+                        <span data-i18n="mesh.hardwareCredit">Photos: </span><a href="https://commons.wikimedia.org/wiki/File:MacMiniM4.jpg" target="_blank" rel="noopener">Chiru-2</a>, <a href="https://commons.wikimedia.org/wiki/File:Raspberry_Pi_5_Board.jpg" target="_blank" rel="noopener">SimonWaldherr</a>, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+                    </p>
+                    <div class="openfox-boundary">
+                        <strong data-i18n="mesh.hardwareBoundaryTitle">Naming compatible hardware, not announcing a rewards program.</strong>
+                        <p data-i18n="mesh.hardwareBoundaryDesc">Home and site relays remain planned work, and a storage service profile is scoped for a later roadmap phase. Buying either device does not connect it to TOS today. It identifies the class of owner-operated hardware this architecture is designed to admit once that work ships.</p>
+                    </div>
+                </div>
+
+                <div class="data-security reveal">
+                    <div class="data-security-intro">
+                        <h3 data-i18n="security.title">Distributed model capacity without surrendering core data.</h3>
+                        <p data-i18n="security.desc">TOS coordinates independently operated model services while sensitive workloads can remain on customer-controlled local, private, or on-premise nodes. The network settles evidence and value; it does not require central custody of proprietary datasets.</p>
+                    </div>
+                    <div class="data-security-grid">
+                        <article>
+                            <h4 data-i18n="security.card1Title">Local-first execution</h4>
+                            <p data-i18n="security.card1Desc">Sensitive tasks can be restricted to approved local, private, or edge nodes. Routing moves outward only when customer policy permits it.</p>
+                        </article>
+                        <article>
+                            <h4 data-i18n="security.card2Title">Minimum necessary disclosure</h4>
+                            <p data-i18n="security.card2Desc">Service descriptors expose capabilities and terms, not unrestricted access. Task policy limits payloads, tools, endpoints, budgets, and retention.</p>
+                        </article>
+                        <article>
+                            <h4 data-i18n="security.card3Title">Proof without publishing secrets</h4>
+                            <p data-i18n="security.card3Desc">Private prompts, datasets, and outputs stay off-chain. Signed receipts, hashes, and evidence references provide accountability without publishing the underlying content.</p>
+                        </article>
+                        <article>
+                            <h4 data-i18n="security.card4Title">No single-company chokepoint</h4>
+                            <p data-i18n="security.card4Desc">Plural providers, registries, and owner-operated nodes reduce dependence on one company, region, or platform policy. If one route fails or refuses service, agents can discover policy-compatible alternatives.</p>
+                        </article>
+                    </div>
+                    <div class="data-security-boundary">
+                        <strong data-i18n="security.boundaryTitle">Designed to reduce data exposure, not to make an impossible absolute guarantee.</strong>
+                        <p data-i18n="security.boundaryDesc">Security still depends on node hardening, encryption, access control, trusted runtimes, and operator practice. Highly sensitive workloads should remain on explicitly approved customer-controlled nodes.</p>
+                    </div>
+                </div>
+
+                <div class="openfox-boundary reveal">
+                    <strong data-i18n="mesh.boundaryTitle">Not a bet against any model provider.</strong>
+                    <p data-i18n="mesh.boundaryDesc">TOS does not train models and is not trying to be preferred over any foundation-model provider or inference stack. It is neutral to which model a node runs. Its job is the identity, discovery, quoting, evidence, and settlement that let that node be found, trusted, and paid at whichever tier the request lands on.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section vision-section">
+            <div class="shell">
+                <div class="vision-frame reveal">
+                    <div class="vision-heading">
+                        <div>
+                            <p class="kicker" data-i18n="vision.kicker">One network, two frontiers</p>
+                            <h2 data-i18n="vision.title">Digital services. Physical intelligence.</h2>
+                        </div>
+                        <p data-i18n="vision.desc">Coordination, settlement, and trust sit between independently owned supply and global demand.</p>
+                    </div>
+                    <span class="vision-mobile-hint" data-i18n="vision.hint">Swipe to explore the full network map →</span>
+                    <a href="img/architecture.webp" target="_blank" rel="noopener" aria-label="Open the TOS Network vision diagram">
+                        <img src="img/architecture.webp" alt="TOS Network connecting AI services and physical edge intelligence through identity, authorization, execution, receipts, and settlement" width="1536" height="1024" loading="lazy">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section edge" id="edge">
+            <div class="shell edge-layout">
+                <div class="edge-copy reveal">
+                    <h2 data-i18n="edge.title">Not the biggest edge. The right one.</h2>
+                    <p class="edge-lede" data-i18n="edge.lede">
+                        A terminal beside a camera, robot, vehicle, or production line can execute
+                        where remote clouds face latency, bandwidth, privacy, connectivity, or
+                        safety constraints.
+                    </p>
+                    <p data-i18n="edge.desc">
+                        TOS treats these devices as site-bound service terminals, not miniature
+                        GPU clouds. Local real-time work and independent safety controls always
+                        outrank external network tasks.
+                    </p>
+                    <a class="text-link" href="https://github.com/tosnetwork/tos/blob/main/doc/physical-ai-edge-terminal-use-case.md" target="_blank" rel="noopener">
+                        <span data-i18n="edge.link">Read the Physical AI architecture</span> <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+
+                <div class="edge-stack">
+                    <article class="edge-card reveal">
+                        <div>
+                            <h3 data-i18n="edge.card1Title">Disconnected by design</h3>
+                            <p data-i18n="edge.card1Desc">Approved local workloads continue offline with bounded authority and idempotent reconciliation after reconnect.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <div>
+                            <h3 data-i18n="edge.card2Title">Real-time work comes first</h3>
+                            <p data-i18n="edge.card2Desc">Safety interlocks, control deadlines, and local perception pre-empt external services and background jobs.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <div>
+                            <h3 data-i18n="edge.card3Title">Updates fail safely</h3>
+                            <p data-i18n="edge.card3Desc">Signed artifacts, compatibility gates, staged rollout rings, health checks, and known-good rollback protect fleets.</p>
+                        </div>
+                    </article>
+                    <article class="edge-card reveal">
+                        <div>
+                            <h3 data-i18n="edge.card4Title">Execution stays isolated</h3>
+                            <p data-i18n="edge.card4Desc">No public shell, raw actuator, Docker socket, or unrestricted host access. Every queue and resource has a bound.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section openfox" id="openfox">
+            <div class="openfox-grid" aria-hidden="true"></div>
+            <div class="shell">
+                <div class="openfox-intro">
+                    <div class="openfox-identity reveal">
+                        <span class="openfox-state" data-i18n="openfox.state">Proposed autonomous agent</span>
+                        <img src="img/openfox-mark.webp" alt="OpenFox" width="266" height="230">
+                        <p data-i18n="openfox.identityDesc">Owner-directed. Policy-bound. Built to hunt for productive work, not unrestricted access.</p>
+                    </div>
+
+                    <div class="openfox-pitch reveal">
+                        <p class="kicker" data-i18n="openfox.kicker">The autonomous earning layer</p>
+                        <h2 data-i18n="openfox.title">Finds AI work. Earns while you sleep.</h2>
+                        <p class="openfox-lede" data-i18n="openfox.lede">
+                            OpenFox is the proposed autonomous earning agent for TOS. It discovers
+                            candidate paid tasks, matches them to owner-approved skills, evaluates
+                            cost and risk, executes through bounded AI capacity, and follows the
+                            result through evidence and settlement.
+                        </p>
+                        <p data-i18n="openfox.p2">
+                            The model may plan and recommend. Deterministic policy decides whether
+                            OpenFox may accept, spend, sign, use a tool, or dispatch a task. The
+                            owner key stays outside both OpenFox and <code>tos-ai-worker</code>.
+                        </p>
+                        <a class="text-link" href="https://github.com/tosnetwork/tos/blob/main/doc/openfox-autonomous-earning-agent.md" target="_blank" rel="noopener">
+                            <span data-i18n="openfox.link1">Read the OpenFox architecture</span> <span aria-hidden="true">↗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="openfox-equation reveal" role="group" aria-label="OpenFox product relationship">
+                    <article>
+                        <span data-i18n="openfox.eq1Label">01 · Trust rails</span>
+                        <strong>tos-protocol</strong>
+                        <p data-i18n="openfox.eq1Desc">Establishes the trusted market: identity, discovery, tasks, authorization, quotes, payments, receipts, and settlement.</p>
+                    </article>
+                    <i aria-hidden="true">+</i>
+                    <article>
+                        <span data-i18n="openfox.eq2Label">02 · Production</span>
+                        <strong>tos-ai</strong>
+                        <p data-i18n="openfox.eq2Desc">Supplies bounded production capacity: approved models, local admission, runtime adapters, resource control, and safe cleanup.</p>
+                    </article>
+                    <i aria-hidden="true">+</i>
+                    <article class="openfox-equation-fox">
+                        <span data-i18n="openfox.eq3Label">03 · Autonomous operator</span>
+                        <strong>OpenFox</strong>
+                        <p data-i18n="openfox.eq3Desc">Lets those capabilities seek compatible work, act within an owner mandate, and pursue revenue through accountable execution.</p>
+                    </article>
+                </div>
+
+                <ol class="openfox-loop" aria-label="OpenFox autonomous earning loop">
+                    <li class="reveal"><span>01</span><strong data-i18n="openfox.loop1Title">Discover</strong><p data-i18n="openfox.loop1Desc">Watch bounded, provenance-preserving sources for paid tasks that match approved skills.</p></li>
+                    <li class="reveal"><span>02</span><strong data-i18n="openfox.loop2Title">Verify + price</strong><p data-i18n="openfox.loop2Desc">Recheck identity, escrow, terms, cost, margin, risk, deadlines, and delegated authority.</p></li>
+                    <li class="reveal"><span>03</span><strong data-i18n="openfox.loop3Title">Execute</strong><p data-i18n="openfox.loop3Desc">Reserve capacity and run only approved plans, models, tools, and network destinations.</p></li>
+                    <li class="reveal"><span>04</span><strong data-i18n="openfox.loop4Title">Settle + learn</strong><p data-i18n="openfox.loop4Desc">Submit evidence, observe payout or dispute, and update bounded accounting and performance history.</p></li>
+                </ol>
+
+                <div class="openfox-boundary reveal">
+                    <strong data-i18n="openfox.boundaryTitle">Designed for bounded autonomy, not autonomous ownership.</strong>
+                    <p data-i18n="openfox.boundaryDesc">OpenFox is a proposed product, not a deployed earnings service. Revenue is never guaranteed, discovered content is untrusted, and owner policy, spending limits, terminal admission, and chain state remain authoritative.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-next">
+            <div class="shell">
+                <h2 data-i18n="next.token">See how the token is distributed.</h2>
+                <a class="button button-secondary" href="token.html">
+                    <span data-i18n="next.tokenCta">Continue</span>
+                    <span aria-hidden="true">&#8594;</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="index.html">
+                    <img src="img/logo-navbar.svg" alt="" width="36" height="36">
+                    <span>TOS Network</span>
+                </a>
+                <p data-i18n="footer.tagline">The open coordination and settlement network for AI services and physical edge intelligence.</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <strong data-i18n="footer.exploreLabel">Explore</strong>
+                    <a href="index.html#thesis" data-i18n="footer.exploreL1">Investment thesis</a>
+                    <a href="platform.html" data-i18n="footer.exploreL2">Platform</a>
+                    <a href="platform.html#a2a" data-i18n="footer.exploreL3">A2A economy</a>
+                    <a href="foundation.html#openfox">OpenFox</a>
+                    <a href="platform.html#ard" data-i18n="footer.exploreL5">ARD discovery</a>
+                    <a href="foundation.html#mesh" data-i18n="footer.exploreL6">Agent mesh</a>
+                    <a href="token.html" data-i18n="footer.exploreL7">Token economics</a>
+                    <a href="roadmap.html" data-i18n="footer.exploreL8">Roadmap</a>
+                    <a href="platform.html#user-assets" data-i18n="footer.exploreL9">AI-era user assets</a>
+                </div>
+                <div>
+                    <strong data-i18n="footer.verifyLabel">Verify</strong>
+                    <a href="pdf/tos.pdf?v=20260818a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
+                    <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.verifyL2">Source</a>
+                    <a href="https://github.com/tosnetwork/tos/tree/main/doc" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Documentation</a>
+                    <a href="https://github.com/tosnetwork/tos/blob/main/doc/openfox-autonomous-earning-agent.md" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture</a>
+                </div>
+                <div>
+                    <strong data-i18n="footer.connectLabel">Connect</strong>
+                    <a href="https://x.com/tos_network" target="_blank" rel="noopener">X / Twitter</a>
+                    <a href="https://t.me/tos_network" target="_blank" rel="noopener">Telegram</a>
+                    <a href="https://discord.tos.network" target="_blank" rel="noopener">Discord</a>
+                    <a href="song/DigitalDawn.mp3" target="_blank" rel="noopener" data-i18n="footer.connectL4">Digital Dawn ♫</a>
+                    <a href="https://github.com/tosnetwork/tos/issues" target="_blank" rel="noopener" data-i18n="footer.connectL5">Open an issue</a>
+                    <a href="terms.html" data-i18n="footer.connectL6">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+        <div class="shell footer-bottom">
+            <p>© <span id="currentYear">2026</span> <span data-i18n="footer.copyrightSuffix">TOS Network. Open source. Owner operated.</span></p>
+            <p class="disclaimer" data-i18n="footer.disclaimer">This website describes architecture and product direction. It is not an offer of securities or a promise of adoption, protocol revenue, investment return, or token appreciation.</p>
+        </div>
+    </footer>
+
+    <script src="js/i18n.js?v=20260819b"></script>
+    <script src="js/lang-switcher.js?v=20260805a"></script>
+    <script src="js/investor-home.js?v=20260819a"></script>
+    <script src="js/mesh-animation.js?v=20260805e"></script>
+</body>
+</html>

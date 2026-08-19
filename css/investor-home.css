@@ -14,13 +14,37 @@
     --mint: #03ca9b;
     --gold: #d8b76b;
     --danger: #ff8f8f;
-    --font-display: "Roboto Condensed", "Inter", sans-serif;
-    --font-body: "Inter", sans-serif;
+
+    /* Type roles. Display carries headline authority, body carries the
+       institutional register, mono carries on-chain data. */
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+    /* Modular type scale, ratio 1.25, fluid between 380px and 1440px. */
+    --step--1: clamp(12.5px, 0.74rem + 0.1vw, 13.5px);
+    --step-0: clamp(15px, 0.9rem + 0.16vw, 17px);
+    --step-1: clamp(18px, 1.02rem + 0.34vw, 21px);
+    --step-2: clamp(22px, 1.18rem + 0.62vw, 28px);
+    --step-3: clamp(28px, 1.48rem + 1.15vw, 40px);
+    --step-4: clamp(38px, 1.95rem + 2.25vw, 60px);
+
+    /* Vertical rhythm. Two section heights so the page has cadence
+       instead of one uniform gap repeated twenty times. */
+    --space-section: clamp(72px, 9vw, 120px);
+    --space-section-lg: clamp(96px, 12vw, 168px);
+
     --shell: min(1240px, calc(100vw - 48px));
-    --radius-sm: 14px;
-    --radius-md: 20px;
-    --radius-lg: 24px;
-    --shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
+    --shell-narrow: min(760px, calc(100vw - 48px));
+
+    /* Shape lock: controls 8px, cards 12px, panels 16px. No pills,
+       no mixed systems. Institutional reads tighter than consumer. */
+    --radius-control: 8px;
+    --radius-sm: 12px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    --shadow: 0 24px 64px rgba(0, 0, 0, 0.38);
 }
 
 *,
@@ -1036,7 +1060,7 @@ h3 {
     border: 1px solid var(--gold);
     border-radius: 50%;
     background: var(--navy-900);
-    box-shadow: 0 0 18px rgba(216, 183, 107, 0.55);
+    box-shadow: none;
 }
 
 .openfox-identity::before {
@@ -1048,7 +1072,7 @@ h3 {
     bottom: 26px;
     left: 22px;
     border-color: var(--mint);
-    box-shadow: 0 0 18px rgba(114, 210, 178, 0.48);
+    box-shadow: none;
 }
 
 .openfox-state {
@@ -1124,7 +1148,7 @@ h3 {
     min-width: 0;
     padding: 27px;
     border: 1px solid rgba(120, 207, 231, 0.18);
-    border-radius: 14px;
+    border-radius: 12px;
     background: rgba(120, 207, 231, 0.035);
 }
 
@@ -1257,7 +1281,7 @@ h3 {
 .ard-layer {
     padding: 32px;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 12px;
 }
 
 .ard-layer-open {
@@ -1559,7 +1583,7 @@ h3 {
 .token-metric,
 .economics-card {
     border-color: rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
+    border-radius: 12px;
     box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
 }
 
@@ -1639,7 +1663,7 @@ h3 {
     justify-content: center;
     padding: 26px;
     border: 1px solid transparent;
-    border-radius: 20px;
+    border-radius: 12px;
     background: linear-gradient(#0b1923, #0b1923) padding-box, linear-gradient(126deg, rgba(3, 202, 155, 0.08), rgba(3, 202, 155, 0.36), rgba(255, 255, 255, 0.08)) border-box;
     box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
     text-align: center;
@@ -2120,7 +2144,7 @@ h3 {
     margin-top: 72px;
     padding: clamp(30px, 5vw, 56px);
     border: 1px solid transparent;
-    border-radius: 24px;
+    border-radius: 16px;
     background:
         linear-gradient(rgba(8, 27, 36, 0.97), rgba(8, 22, 31, 0.98)) padding-box,
         linear-gradient(126deg, rgba(3, 202, 155, 0.12), rgba(3, 202, 155, 0.52), rgba(255, 255, 255, 0.08)) border-box;
@@ -2180,7 +2204,7 @@ h3 {
     min-height: 210px;
     padding: 26px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
+    border-radius: 12px;
     background: rgba(11, 25, 35, 0.7);
 }
 
@@ -2272,7 +2296,7 @@ h3 {
     display: block;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 12px;
 }
 
 .vision-mobile-hint {
@@ -2418,7 +2442,7 @@ h3 {
     border-radius: 50%;
     text-align: center;
     background: #08192a;
-    box-shadow: 0 0 80px rgba(43, 141, 255, 0.25);
+    box-shadow: inset 0 0 0 1px rgba(3, 202, 155, 0.16);
     transform: translate(-50%, -50%);
 }
 
@@ -2439,7 +2463,7 @@ h3 {
     width: 190px;
     padding: 16px;
     border: 1px solid var(--line-strong);
-    border-radius: 14px;
+    border-radius: 12px;
     background: rgba(6, 16, 29, 0.4);
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
@@ -2619,7 +2643,7 @@ h3 {
     min-height: 67px;
     padding: 19px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .architecture-row > span {
@@ -3230,7 +3254,7 @@ body.music-player-open {
     width: 0;
     height: 4px;
     background: linear-gradient(90deg, var(--gold), var(--cyan));
-    box-shadow: 0 0 12px rgba(120, 207, 231, 0.28);
+    box-shadow: none;
     transition: width 260ms linear;
 }
 
@@ -3380,12 +3404,6 @@ body.music-player-open {
         gap: 52px;
     }
 
-    .hero-thesis {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
     .panel-label {
         grid-column: 1 / -1;
     }
@@ -3491,7 +3509,7 @@ body.music-player-open {
         overscroll-behavior: contain;
         padding: 20px;
         border: 1px solid var(--line);
-        border-radius: 18px;
+        border-radius: 12px;
         background: rgba(4, 12, 24, 0.97);
         box-shadow: var(--shadow);
         -webkit-backdrop-filter: blur(20px);
@@ -3849,12 +3867,12 @@ body.music-player-open {
 
     .ard-stack {
         padding: 7px;
-        border-radius: 19px;
+        border-radius: 12px;
     }
 
     .ard-layer {
         padding: 22px;
-        border-radius: 14px;
+        border-radius: 12px;
     }
 
     .ard-layer-heading {
@@ -3918,7 +3936,7 @@ body.music-player-open {
     .vision-frame {
         margin-inline: -6px;
         padding: 9px;
-        border-radius: 20px;
+        border-radius: 12px;
     }
 
     .vision-heading {
@@ -3948,7 +3966,7 @@ body.music-player-open {
         min-height: 0;
         gap: 8px;
         padding: 14px;
-        border-radius: 18px;
+        border-radius: 12px;
         background: linear-gradient(145deg, rgba(15, 38, 62, 0.52), rgba(4, 12, 23, 0.82));
     }
 
@@ -4218,7 +4236,7 @@ body.music-player-open {
     .faq-item
 ) {
     border: 1px solid transparent;
-    border-radius: 20px;
+    border-radius: 12px;
     background:
         linear-gradient(rgba(11, 25, 35, 0.96), rgba(11, 25, 35, 0.96)) padding-box,
         linear-gradient(126deg, rgba(3, 202, 155, 0.05), rgba(3, 202, 155, 0.26), rgba(255, 255, 255, 0.09)) border-box;
