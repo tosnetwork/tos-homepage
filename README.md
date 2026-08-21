@@ -2,52 +2,52 @@
 
 Official homepage for TOS Network.
 
-The site presents TOS as the open coordination and settlement network for AI
-services, autonomous agents, and physical edge intelligence. Its primary
-audience is institutional investors, strategic partners, builders, terminal
-operators, and researchers.
+The site presents TOS Network as **The Open System for the Agentic Internet**:
+an economic operation layer that turns Internet actions into typed, authorized,
+metered, receipted, and settleable operations for autonomous agents. Its primary
+audience is builders, service providers, strategic partners, researchers, and
+institutional investors.
 
 ## Positioning
 
 The homepage follows the current TOS Network whitepaper and implementation
 plan:
 
-- intelligence is exposed as a bounded service outcome, not bare GPU capacity
-- providers retain control of hardware, models, data, pricing, and local policy
-- autonomous agents receive persistent identity, delegated authority, budgets,
-  receipts, and settlement
-- OpenFox is presented as the proposed autonomous earning agent that discovers
-  candidate paid work, applies owner policy, and coordinates execution through
-  approved TOS capacity
-- physical AI terminals remain local-first, continue approved work while
-  disconnected, and keep safety and hard real-time control outside blockchain
-- TOS Core is identified as implemented infrastructure
-- the TOS Service Protocol, discovery products, and AI Edge Computing
-  Terminals are clearly identified as planned product layers
-- token economics are described as a validator-led distribution with a bounded
-  genesis, no team or treasury allocation, an approximate five-billion-TOS
-  gross-creation target, and an approximate seven-year policy horizon
+- the canonical unit is an Agentic Service Operation, not a raw API call,
+  hardware hour, message, or token transfer
+- every operation binds an immutable identity and revision to delegated
+  authority, a live quote, resource limits, metering, a signed receipt,
+  evidence, recourse, and settlement policy
+- TOS complements HTTP, MCP, A2A, OpenAPI, WebSocket, QUIC, RLDP, ARD, and
+  existing payment rails instead of replacing them
+- the first commercial beachhead is paid model and tool invocation across
+  unrelated agent builders and providers
+- Messenger and Mailbox are the second validation profile for bounded
+  anti-abuse economics
+- storage, events, commerce, human services, and physical edge are expansion
+  profiles that reuse the same authority and receipt model
+- TOS Core is identified as implemented open-source infrastructure, while the
+  canonical operation protocol, SDKs, verifier, and cross-provider market are
+  clearly identified as partial, planned, or proposed work
+- native issuance follows product use: AIPoW begins disabled and cannot activate
+  before product, organic-demand, security, legal, and decentralization gates
+  pass
 
 The homepage does not project adoption, protocol revenue, investment return,
 or token appreciation.
 
 ## Information Architecture
 
-1. Investment thesis and structural market transition
-2. TOS service transaction model
-3. AI services and Physical Edge Intelligence vision
-4. OpenFox autonomous earning agent and its bounded economic loop
-5. Physical AI terminal wedge
-6. Network-effect and application-layer leverage thesis
-7. Implemented foundation versus planned product layer
-8. Validator-led token economics and concentration-risk disclosures
-9. Focused delivery roadmap
-10. Due-diligence links and investor FAQ
-11. AI-era user asset thesis: agent wallets as a new spending track,
-    pay-per-call as a new revenue line, and the four owner-controlled access
-    tiers (open by default, human-confirmed, policy-capped, always logged)
-    that make a resource controllable, discoverable, callable, and
-    monetizable at agent scale
+1. Agentic Internet thesis and the five operation guarantees
+2. Transport-neutral operation model and protocol boundaries
+3. Public release gates instead of simulated network metrics
+4. Paid model and tool invocation as the commercial beachhead
+5. Open definitions, competing providers, and portable receipts
+6. Implemented TOS Core versus planned operation-protocol components
+7. Product-first token launch discipline and AIPoW activation gates
+8. Compute proof, open SDKs, adjacent profiles, and physical-edge expansion
+9. Due-diligence evidence and investor FAQ
+10. Owner-controlled assets, bounded delegation, and future agent applications
 
 The visual system uses a restrained institutional navy foundation, TOS
 champagne-gold brand accents, operational mint, and desaturated network blue.
@@ -79,7 +79,7 @@ song/DigitalDawn.mp3
 ## Source Material
 
 - TOS Network source: <https://github.com/tosnetwork/tos>
-- Whitepaper source: `tos/doc/tos.tex`
+- Whitepaper source: <https://github.com/tosnetwork/whitepaper>
 - Validator-led token economics:
   `tos/doc/tos-validator-only-token-economics.md`
 - Implementation plan:
