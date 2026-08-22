@@ -91,9 +91,42 @@ suffix). This applies per file: bumping `investor-home.js`'s version does not
 cover an edit to `i18n.js`, and vice versa. Before committing, check every
 `css/*.css` and `js/*.js` file touched in the diff against its own `?v=` tag.
 
+## Root cause 5 (2026-08-23 addendum): deploying to the wrong Pages branch is a silent no-op
+
+`wrangler pages deploy` requires a `--branch` value, and this project's
+Cloudflare Pages production branch is **`master`**, not `main`. Running
+`wrangler pages deploy . --project-name=tos-homepage --branch=main` succeeds,
+prints a working `https://<hash>.tos-homepage.pages.dev` URL, and uploads every
+file — but it registers as a *Preview* deployment. The custom domains
+(`tos.network`, `www.tos.network`) and the production alias
+(`tos-homepage.pages.dev`) keep serving the previous production build, with no
+error anywhere in the deploy output.
+
+This is easy to misread as root cause 3's custom-domain propagation delay: the
+hash URL shows the new content, `tos.network` does not, and waiting looks like
+the fix. It is not — waiting never resolves it, because production was never
+updated.
+
+**Preventive measure**: always deploy with `--branch=master`:
+
+```bash
+npx wrangler pages deploy . --project-name=tos-homepage --branch=master --commit-dirty=true
+```
+
+To tell the two failure modes apart, check the production alias
+`https://tos-homepage.pages.dev` (not the hash URL, and not `tos.network`).
+It updates immediately on a real production deploy and is not subject to the
+custom-domain propagation delay. If the alias shows the old build, the deploy
+went to a preview branch — redeploy against `master` instead of waiting.
+`wrangler pages deployment list --project-name=tos-homepage` shows each
+deployment's Environment (Production / Preview) and branch if confirmation is
+needed.
+
 ## Checklist (before deploying any CSS/JS change or new static asset)
 
 - [ ] Changed `css/*.css`? Did you bump the `?v=` version on the `<link>` that references it?
 - [ ] Changed `js/*.js`? Did you bump the `?v=` version on the `<script>` tag that references it?
 - [ ] Added a new `<img>`? Does it have explicit `width`/`height`?
+- [ ] Deploying? Did you pass `--branch=master` (production), not `--branch=main` (preview)?
 - [ ] After `wrangler pages deploy`, did you verify against the returned hash URL first, instead of jumping straight to `tos.network`?
+- [ ] Did `tos-homepage.pages.dev` pick up the change before you blamed custom-domain propagation delay?
