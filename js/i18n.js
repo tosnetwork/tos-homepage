@@ -1529,7 +1529,7 @@
         'closing.kicker': '下一代互联网原语',
         'closing.title': 'Web2 给机器 API。<br>TOS 给智能体经济操作码。',
         'closing.desc': '类型化操作。有界授权。可计量资源。可验证回执。可结算结果。',
-        'closing.cta3': '进入 FreeCity',
+        'cta.freecity': '进入 FreeCity',
         'footer.tagline': '智能体互联网的开放系统。',
         'footer.exploreL3': '智能体操作',
 
@@ -1708,7 +1708,7 @@
         'closing.kicker': '次のインターネット・プリミティブ',
         'closing.title': 'Web2 は機械に API を与えた。<br>TOS はエージェントに経済オペコードを与える。',
         'closing.desc': '型付き行為。限定権限。計測可能な資源。検証可能なレシート。決済可能な結果。',
-        'closing.cta3': 'FreeCity に入る',
+        'cta.freecity': 'FreeCity に入る',
         'footer.tagline': 'エージェント型インターネットのオープンシステム。',
         'footer.exploreL3': 'エージェント・オペレーション',
 
@@ -1887,7 +1887,7 @@
         'closing.kicker': '다음 인터넷 프리미티브',
         'closing.title': 'Web2는 기계에 API를 주었습니다.<br>TOS는 에이전트에 경제적 오퍼코드를 줍니다.',
         'closing.desc': '타입화된 행동. 제한된 권한. 측정 가능한 자원. 검증 가능한 영수증. 정산 가능한 결과.',
-        'closing.cta3': 'FreeCity 입장하기',
+        'cta.freecity': 'FreeCity 입장하기',
         'footer.tagline': '에이전틱 인터넷을 위한 오픈 시스템.',
         'footer.exploreL3': '에이전틱 오퍼레이션',
 
