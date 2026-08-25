@@ -1,4 +1,16 @@
-# TOS Network - BlockDAG Animation Documentation
+# Historical BlockDAG Animation Note (Non-Authoritative)
+
+> Archived design record. This file does **not** describe the current homepage,
+> protocol architecture, consensus implementation, deployment status, or evidence
+> boundary. The referenced `js/dag-animation.js` no longer exists. The current
+> homepage uses `js/mesh-animation.js` as a decorative illustration; it must not be
+> interpreted as a live network, BlockDAG consensus, topology, or telemetry view.
+>
+> For current public-claim authority, see [CONTENT_AUTHORITY.md](CONTENT_AUTHORITY.md).
+> For implementation evidence, inspect the exact repository and revision named by
+> the relevant page.
+
+The material below is retained only as historical visual-design context.
 
 ## Overview
 

@@ -1,14 +1,15 @@
-  ---
-  🎯 后续建议
+# Historical Website Notes (Non-Authoritative)
 
-  短期（可选）
+This file previously contained an unscoped backlog that could be mistaken for a
+current delivery plan. It is retained as a historical marker only.
 
-  1. 实时数据API - 连接真实链上数据
-  2. SEO优化 - meta标签和结构化数据
-  3. 性能监控 - Google Analytics集成
+Current homepage work is governed by [CONTENT_AUTHORITY.md](CONTENT_AUTHORITY.md).
+Product and protocol delivery gates belong in the canonical TOS Service
+Specification roadmap, while implementation, deployment, finalized-state,
+security, legal, commercial, and production claims each require evidence from
+their own authority domain.
 
-  长期（未来）
-
-  1. A/B测试 - 转化率优化
-  2. 多语言扩展 - 添加更多语言支持
-  3. 可访问性增强 - WCAG AAA标准
+Do not connect a “live metrics” interface until independently verifiable telemetry
+exists. Do not use analytics, conversion experiments, or localization changes to
+silently change protocol meaning, owner authority, privacy expectations, or claim
+maturity.

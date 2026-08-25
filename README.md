@@ -2,33 +2,50 @@
 
 Official homepage for TOS Network.
 
-The site presents TOS Network as **The Open System for the Agentic Internet**:
-an economic operation layer that turns Internet actions into typed, authorized,
-metered, receipted, and settleable operations for autonomous agents. Its primary
-audience is builders, service providers, strategic partners, researchers, and
-institutional investors.
+The site presents TOS Network as a founding reference ecosystem for **The Open
+System for the Agentic Internet**. TOS does not own the Agentic Internet. It
+develops public protocol proposals, reference implementations, infrastructure,
+and conformance evidence that humans, autonomous Agents, and independent
+providers can use without joining one marketplace or surrendering local
+judgment.
+
+Its primary audience is builders, service providers, protocol implementers,
+strategic partners, researchers, governance participants, and institutional
+reviewers.
 
 ## Positioning
 
-The homepage follows the current TOS Network whitepaper and implementation
-plan:
+The homepage is a non-normative public projection. It follows the constitutional
+direction, normative specifications, implementation evidence, and finalized
+state identified in [CONTENT_AUTHORITY.md](CONTENT_AUTHORITY.md); it does not
+replace any of them.
 
-- the canonical unit is an Agentic Service Operation, not a raw API call,
-  hardware hour, message, or token transfer
-- every operation binds an immutable identity and revision to delegated
-  authority, a live quote, resource limits, metering, a signed receipt,
-  evidence, recourse, and settlement policy
+- an Intent is a revocable expression of an outcome or opportunity, not an
+  Agreement or payment authority
+- consequential work proceeds through exact, accepted Agreements, bounded
+  authority, stable action identity, evidence, Receipts, and explicit recourse
+- settlement follows trust and transaction cost: direct cooperation may stay
+  off-chain, authenticated evidence may cross organizations, and TOS escrow is
+  selected only when its stronger authority is required and accepted
 - TOS complements HTTP, MCP, A2A, OpenAPI, WebSocket, QUIC, RLDP, ARD, and
   existing payment rails instead of replacing them
-- the first commercial beachhead is paid model and tool invocation across
-  unrelated agent builders and providers
-- Messenger and Mailbox are the second validation profile for bounded
-  anti-abuse economics
-- storage, events, commerce, human services, and physical edge are expansion
-  profiles that reuse the same authority and receipt model
-- TOS Core is identified as implemented open-source infrastructure, while the
-  canonical operation protocol, SDKs, verifier, and cross-provider market are
-  clearly identified as partial, planned, or proposed work
+- the first commercial acceptance target is machine-checkable software work
+  between unrelated buyer, provider, and verifier roles
+- generic Intent Commerce organizes open-ended demand without adding a new core
+  interface for every industry; specialized profiles are justified only by a
+  genuinely different authority, ordering, privacy, or side-effect class
+- Agent Intent Exchange is an implementation-complete release candidate, while
+  Root Gate O for the common operation envelope, multiple operation families,
+  independent runtimes, independent Carriers, and cross-profile admission is
+  still pending
+- TOS Core and current `tos_service_v1` engineering are distinguished from
+  fresh current-domain public-testnet evidence, external acceptance, recurring
+  demand, and production readiness
+- OpenFox is an owner-directed local interpreter and bounded executor; its AI
+  proposes while deterministic policy and accepted protocol authority decide
+- third parties may build independent compatible implementations without using
+  OpenFox or TOS reference code once the required specification licenses and
+  conformance gates are published
 - native issuance follows product use: AIPoW begins disabled and cannot activate
   before product, organic-demand, security, legal, and decentralization gates
   pass
@@ -38,16 +55,16 @@ or token appreciation.
 
 ## Information Architecture
 
-1. Agentic Internet thesis and the five operation guarantees
-2. Transport-neutral operation model and protocol boundaries
-3. Public release gates instead of simulated network metrics
-4. Paid model and tool invocation as the commercial beachhead
-5. Open definitions, competing providers, and portable receipts
-6. Implemented TOS Core versus planned operation-protocol components
-7. Product-first token launch discipline and AIPoW activation gates
-8. Compute proof, open SDKs, adjacent profiles, and physical-edge expansion
-9. Due-diligence evidence and investor FAQ
-10. Owner-controlled assets, bounded delegation, and future agent applications
+1. TOS as one founding reference ecosystem inside an open Agentic Internet
+2. Intent, negotiation, Agreement, execution, evidence, and settlement
+3. Direct, authenticated, escrow, external, and refusal paths
+4. Root Agentic Internet operations before profile-specific market claims
+5. Protocol, implementation, projection, and finalized-state authority
+6. Public release gates instead of simulated network metrics
+7. Machine-checkable software work as the first external acceptance target
+8. Independent implementation, polycentric governance, and meaningful exit
+9. OpenFox capability admission, bounded adaptation, and human owner control
+10. Product-first token discipline, evidence review, and current blockers
 
 The visual system uses a restrained institutional navy foundation, TOS
 champagne-gold brand accents, operational mint, and desaturated network blue.
@@ -78,17 +95,28 @@ song/DigitalDawn.mp3
 
 ## Source Material
 
+- Agentic Internet Constitution:
+  <https://github.com/tosnetwork/constitution/blob/main/AGENTIC_INTERNET_CONSTITUTION.md>
+- TOS Service Protocol specification:
+  <https://github.com/tosnetwork/tos-service-spec>
+- TOS Service Protocol implementation roadmap:
+  <https://github.com/tosnetwork/tos-service-spec/blob/main/docs/ROADMAP.md>
+- Agent Intent Exchange:
+  <https://github.com/tosnetwork/tos-service-spec/blob/main/docs/AGENT_INTENT_EXCHANGE_V1.md>
 - TOS Network source: <https://github.com/tosnetwork/tos>
 - Whitepaper source: <https://github.com/tosnetwork/whitepaper>
-- Validator-led token economics:
-  `tos/doc/tos-validator-only-token-economics.md`
-- Implementation plan:
-  `tos/doc/the-tos-protocol-implementation-plan.md`
-- Physical AI terminal:
-  `tos/doc/physical-ai-edge-terminal-use-case.md`
-- OpenFox autonomous earning agent:
-  `tos/doc/openfox-autonomous-earning-agent.md`
+- Cross-ecosystem blockchain documents:
+  <https://github.com/tosnetwork/constitution/tree/main/tos-blockchain>
+- OpenFox autonomous earning design and evidence:
+  <https://github.com/tosnetwork/openfox/tree/main/docs>
 
 ## License
 
-Copyright © 2025–2026 TOS Network. All rights reserved.
+This repository does not currently publish a repository-wide license. Public
+visibility does not itself grant permission to copy, modify, or redistribute
+the website source or brand assets. Linked TOS repositories and third-party
+assets remain subject to their own stated licenses.
+
+Publishing an explicit website-source license and separate brand, media, and
+third-party asset terms is an open governance requirement. Until that happens,
+the website must not describe this repository itself as open source.

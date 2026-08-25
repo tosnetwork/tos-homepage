@@ -25,9 +25,9 @@
     <link rel="canonical" href="https://tos.network/token">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/investor-home.css?v=20260819b">
-    <link rel="stylesheet" href="css/design-system.css?v=20260820d">
+    <link rel="stylesheet" href="css/design-system.css?v=20260825a">
     <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
 </head>
@@ -193,6 +193,13 @@
                         <span data-i18n="economics.disclosureLink">Read full token economics</span> <span aria-hidden="true">↗</span>
                     </a>
                 </div>
+
+                <div class="economics-disclosure reveal">
+                    <div>
+                        <strong data-i18n="economics.settlementBoundaryTitle">Native TOS is one selectable settlement profile—not the whole Intent Commerce protocol.</strong>
+                        <p data-i18n="economics.settlementBoundaryDesc">Trusted parties may settle directly, and an Agreement may select an external rail. TOS fees, escrow, bonds, and finality apply only when TOS network execution is explicitly selected. Other evidence must retain its own authority label and must not be described as TOS-finalized.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -232,8 +239,8 @@
                     <strong data-i18n="footer.verifyLabel">Verify</strong>
                     <a href="pdf/tos.pdf?v=20260821a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
                     <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.verifyL2">Source</a>
-                    <a href="https://github.com/tosnetwork/tos/tree/main/doc" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Documentation</a>
-                    <a href="https://github.com/tosnetwork/tos/blob/main/doc/openfox-autonomous-earning-agent.md" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture</a>
+                    <a href="https://github.com/tosnetwork/constitution" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Constitution + documentation</a>
+                    <a href="https://github.com/tosnetwork/openfox" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture + evidence</a>
                 </div>
                 <div>
                     <strong data-i18n="footer.connectLabel">Connect</strong>
@@ -247,12 +254,12 @@
             </div>
         </div>
         <div class="shell footer-bottom">
-            <p>© <span id="currentYear">2026</span> <span data-i18n="footer.copyrightSuffix">TOS Network. Open source. Owner operated.</span></p>
+            <p>© <span id="currentYear">2026</span> <span data-i18n="footer.copyrightSuffix">TOS Network. Public development. Owner operated.</span></p>
             <p class="disclaimer" data-i18n="footer.disclaimer">This website describes architecture and product direction. It is not an offer of securities or a promise of adoption, protocol revenue, investment return, or token appreciation.</p>
         </div>
     </footer>
 
-    <script src="js/i18n.js?v=20260821a"></script>
+    <script src="js/i18n.js?v=20260825a"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
     <script src="js/investor-home.js?v=20260819a"></script>
 </body>

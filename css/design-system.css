@@ -312,10 +312,9 @@ h2 em {
     background: rgba(255, 255, 255, 0.02);
 }
 
-/* The label is a single line by contract: it is the panel's headline, and a
-   two-line eyebrow reads as a sentence that ran out of room. Tracking is kept
-   low and the column below reserves enough width that even the longest
-   translation clears it with room to spare, so nowrap cannot overflow. */
+/* Keep the label compact on wide layouts. The mobile override below allows
+   wrapping because constitutional copy and translations can be longer than
+   the original marketing label. */
 .pillar-panel .panel-label {
     margin-bottom: 20px;
     color: var(--muted);
@@ -786,6 +785,12 @@ h2 em {
         padding: 22px;
     }
 
+    .pillar-panel .panel-label {
+        white-space: normal;
+        text-wrap: balance;
+        overflow-wrap: anywhere;
+    }
+
     .pillar {
         padding: 14px 0;
     }
@@ -898,4 +903,3 @@ h2 em {
         font-size: 16px;
     }
 }
-
