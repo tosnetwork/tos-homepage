@@ -180,7 +180,10 @@
 
             return {
                 t: random(),
-                speed: 0.038 + random() * 0.075,
+                // Keep the packets visibly moving even on wide desktop displays.
+                // The former range took up to ~26 seconds to cross the scene,
+                // which made the flow read as static beside the rotating portal.
+                speed: 0.065 + random() * 0.12,
                 startY,
                 middleY: portalCenter.y + gateOffset,
                 endY,
@@ -442,10 +445,10 @@
             context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, 0.32)`;
             context.stroke();
 
-            context.setLineDash(width < 700 ? [12, 34] : [18, 48]);
-            context.lineDashOffset = -(time * (34 + signal.speed * 150) + signal.phase * 18);
-            context.lineWidth = baseWidth + 0.42;
-            context.globalAlpha = 0.34;
+            context.setLineDash(width < 700 ? [10, 25] : [14, 34]);
+            context.lineDashOffset = -(time * (92 + signal.speed * 220) + signal.phase * 18);
+            context.lineWidth = baseWidth + 0.68;
+            context.globalAlpha = 0.52;
             context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, 84%, 0.72)`;
             context.shadowBlur = 4;
             context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, 76%, 0.68)`;
@@ -455,7 +458,7 @@
 
         const drawSignal = (signal, time, pointerState) => {
             const trailSteps = width < 700 ? 7 : 11;
-            const trailLength = signal.t < 0.5 ? 0.075 : 0.105;
+            const trailLength = signal.t < 0.5 ? 0.1 : 0.135;
             const trailStart = Math.max(0, signal.t - trailLength);
 
             context.beginPath();
@@ -470,8 +473,8 @@
             }
 
             const intensity = signal.t > 0.47 && signal.t < 0.57 ? 1 : signal.alpha;
-            context.lineWidth = signal.size * (signal.t > 0.5 ? 0.98 : 0.72);
-            context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, ${0.16 + intensity * 0.4})`;
+            context.lineWidth = signal.size * (signal.t > 0.5 ? 1.18 : 0.9);
+            context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, ${0.24 + intensity * 0.5})`;
             context.shadowBlur = 3 + signal.size * 3;
             context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, 0.62)`;
             context.stroke();
@@ -483,7 +486,7 @@
 
         const drawGlyph = (x, y, signal, progress) => {
             const transformed = progress > 0.5;
-            const size = signal.size * (transformed ? 2.25 : 1.7);
+            const size = signal.size * (transformed ? 2.55 : 1.95);
             context.save();
             context.translate(x, y);
             context.rotate((progress + signal.phase) * 1.8);
