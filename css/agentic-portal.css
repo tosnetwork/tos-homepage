@@ -1,0 +1,243 @@
+/* Realtime Agentic Internet entry scene.
+   The authored image is the 2.5D depth plate, Canvas carries the signal field,
+   and WebGL renders the central protocol geometry. The scene intentionally has
+   no explanatory cards: navigation leads to overview.html for detail. */
+
+.portal-page {
+    background: #020611;
+}
+
+.portal-page::before {
+    display: none;
+}
+
+.portal-page .site-header {
+    background: linear-gradient(180deg, rgba(2, 6, 17, 0.7), rgba(2, 6, 17, 0));
+}
+
+.portal-page .site-header.is-scrolled {
+    background: rgba(2, 6, 17, 0.9);
+}
+
+.portal-page .nav-shell {
+    min-height: 72px;
+}
+
+.portal-hero {
+    --portal-pointer-x: 0;
+    --portal-pointer-y: 0;
+    --portal-rotation: 0deg;
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #020611;
+}
+
+.portal-visual,
+.portal-art,
+.portal-webgl,
+.portal-flow,
+.portal-depth-grid,
+.portal-vignette {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.portal-visual {
+    z-index: -1;
+    overflow: hidden;
+}
+
+.portal-art {
+    z-index: 0;
+    object-fit: cover;
+    object-position: 50% 50%;
+    opacity: 0.88;
+    filter: saturate(1.04) contrast(1.1) brightness(0.86);
+    transform: translate3d(
+        calc(var(--portal-pointer-x) * -8px),
+        calc(var(--portal-pointer-y) * -5px),
+        0
+    ) scale(1.035);
+    transition: filter 500ms ease;
+}
+
+.portal-webgl {
+    z-index: 2;
+    display: block;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.portal-flow {
+    z-index: 3;
+    display: block;
+    pointer-events: none;
+}
+
+.portal-ring-fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: clamp(160px, 22vw, 290px);
+    height: min(76vh, 580px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.portal-ring-fallback span {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(107, 207, 255, 0.48);
+    border-radius: 50%;
+    box-shadow: 0 0 18px rgba(45, 150, 255, 0.18);
+}
+
+.portal-ring-fallback span:first-child {
+    border-left-color: transparent;
+    border-bottom-color: rgba(174, 128, 255, 0.56);
+    transform: rotate(var(--portal-rotation));
+}
+
+.portal-ring-fallback span:nth-child(2) {
+    inset: 8% 12%;
+    border-color: rgba(153, 114, 255, 0.42);
+}
+
+.portal-ring-fallback span:nth-child(3) {
+    inset: 17% 25%;
+    border-color: rgba(120, 229, 255, 0.58);
+}
+
+.webgl-ready .portal-ring-fallback {
+    opacity: 0;
+}
+
+.portal-depth-grid {
+    z-index: 4;
+    top: 52%;
+    height: 62%;
+    opacity: 0.24;
+    background-image:
+        linear-gradient(rgba(86, 175, 255, 0.13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(86, 175, 255, 0.13) 1px, transparent 1px);
+    background-size: 58px 44px;
+    transform: perspective(520px) rotateX(68deg) scale(1.55);
+    transform-origin: center bottom;
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 75%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 75%);
+}
+
+.portal-vignette {
+    z-index: 5;
+    background:
+        linear-gradient(180deg, rgba(2, 6, 17, 0.32) 0%, transparent 18%, transparent 82%, rgba(2, 6, 17, 0.28) 100%),
+        radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(1, 4, 12, 0.38) 100%);
+}
+
+.portal-motion-toggle {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    z-index: 9;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: rgba(225, 240, 255, 0.55);
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.46;
+    transition: color 160ms ease, opacity 160ms ease, background-color 160ms ease;
+}
+
+.portal-motion-toggle:hover,
+.portal-motion-toggle:focus-visible {
+    color: #fff;
+    background: rgba(3, 8, 20, 0.38);
+    opacity: 1;
+}
+
+.motion-icon {
+    width: 9px;
+    height: 9px;
+    border-left: 3px double currentColor;
+    border-right: 3px double currentColor;
+}
+
+.portal-motion-toggle[aria-pressed="true"] .motion-icon {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-right: 0;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid currentColor;
+}
+
+.motion-play,
+.portal-motion-toggle[aria-pressed="true"] .motion-pause {
+    display: none;
+}
+
+.portal-motion-toggle[aria-pressed="true"] .motion-play {
+    display: inline;
+}
+
+.portal-footer {
+    background: #01040b;
+}
+
+.portal-scene-paused .portal-art {
+    filter: saturate(0.9) contrast(1.06) brightness(0.78);
+}
+
+@media (max-width: 640px) {
+    .portal-art {
+        opacity: 0.82;
+        object-position: 50% 50%;
+        transform: scale(1.16);
+    }
+
+    .portal-depth-grid {
+        opacity: 0.16;
+    }
+
+    .portal-vignette {
+        background:
+            linear-gradient(180deg, rgba(2, 6, 17, 0.35) 0%, transparent 20%, transparent 84%, rgba(2, 6, 17, 0.28) 100%),
+            radial-gradient(ellipse at 50% 50%, transparent 56%, rgba(1, 4, 12, 0.3) 100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .portal-art {
+        transform: scale(1.035);
+        transition: none;
+    }
+
+    .portal-motion-toggle {
+        display: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .portal-art,
+    .portal-webgl,
+    .portal-flow,
+    .portal-depth-grid {
+        display: none;
+    }
+
+    .portal-motion-toggle {
+        border: 1px solid ButtonText;
+        color: ButtonText;
+    }
+}

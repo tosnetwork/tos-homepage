@@ -2918,6 +2918,93 @@
         'faq.a5': 'tos_service_v1 엔지니어링 기준, Agent Intent Exchange Release Candidate, OpenFox 제한 로컬 수익 루프는 구현·시험되었습니다. Root Gate O, 현재 도메인의 신규 권한 증거, 무관한 당사자 수락, 반복 외부 수요, 프로덕션 준비는 미완료 게이트입니다.'
     });
 
+    Object.assign(translations.zh, {
+        'nav.overview': '总览',
+        'portal.inputLabel': '开放输入',
+        'portal.inputValue': '智能体 + Web2',
+        'portal.outputLabel': '开放输出',
+        'portal.outputValue': '多元 Web3 世界',
+        'portal.eyebrow': '开放协调场',
+        'portal.title': '自主意图在这里<br>成为可问责的行动。',
+        'portal.lede': '智能体和现有互联网服务保留各自的本地判断。TOS 提供开放语义，用来形成精确约定、约束权限、验证证据，并选择不同的结算路径。',
+        'portal.ctaOverview': '了解完整系统',
+        'portal.ctaProtocol': '审阅协议',
+        'portal.live': '实时协议模拟',
+        'portal.stage1': '意图',
+        'portal.stage2': '约定',
+        'portal.stage3': '证据',
+        'portal.stage4': '结算',
+        'portal.pause': '暂停动画',
+        'portal.play': '播放动画',
+        'portal.description': '实时可视化：自主智能体和 Web2 信号从左侧进入，穿过 TOS Network 协调协议，再沿多条独立路径进入开放的 Web3 世界。',
+        'portal.principlesKicker': '协议改变什么',
+        'portal.principlesTitle': '结构化承诺，保留自由。',
+        'portal.principle1Title': '本地发现',
+        'portal.principle1Desc': '智能体使用自己的模型、技能、策略和可信数据源来理解机会。',
+        'portal.principle2Title': '有界协调',
+        'portal.principle2Desc': '协议绑定精确条款、权限、证据、救济方式和稳定的行动身份，但不取代参与者做决定。',
+        'portal.principle3Title': '多元结果',
+        'portal.principle3Desc': '参与者可以直接行动、使用认证消息、选择托管或外部结算，也可以拒绝交易。'
+    });
+
+    Object.assign(translations.ja, {
+        'nav.overview': '概要',
+        'portal.inputLabel': 'オープン入力',
+        'portal.inputValue': 'Agent + Web2',
+        'portal.outputLabel': 'オープン出力',
+        'portal.outputValue': '多元的な Web3 世界',
+        'portal.eyebrow': 'オープンな協調フィールド',
+        'portal.title': '自律的な Intent が<br>説明可能な行動になる場所。',
+        'portal.lede': 'Agent と既存のインターネットサービスは、それぞれのローカルな判断を保ちます。TOS は、正確な Agreement、限定された権限、検証可能な証拠、選択可能な決済経路のためのオープンな意味体系を提供します。',
+        'portal.ctaOverview': 'システム全体を見る',
+        'portal.ctaProtocol': 'プロトコルを確認',
+        'portal.live': 'リアルタイム・プロトコルシミュレーション',
+        'portal.stage1': 'Intent',
+        'portal.stage2': 'Agreement',
+        'portal.stage3': 'Evidence',
+        'portal.stage4': 'Settlement',
+        'portal.pause': '動きを一時停止',
+        'portal.play': '動きを再生',
+        'portal.description': 'リアルタイム可視化：自律 Agent と Web2 の信号が左から入り、TOS Network の協調プロトコルを通過し、複数の独立経路でオープンな Web3 世界へ進みます。',
+        'portal.principlesKicker': 'プロトコルが変えるもの',
+        'portal.principlesTitle': '約束を構造化し、自由を守る。',
+        'portal.principle1Title': 'ローカル発見',
+        'portal.principle1Desc': 'Agent は自身のモデル、Skill、Policy、信頼できるデータソースで機会を解釈します。',
+        'portal.principle2Title': '限定された協調',
+        'portal.principle2Desc': 'プロトコルは正確な条件、権限、証拠、救済、安定した行動識別子を結び付けますが、意思決定者にはなりません。',
+        'portal.principle3Title': '多元的な結果',
+        'portal.principle3Desc': '参加者は直接行動し、認証メッセージを使い、Escrow や外部決済を選び、または取引を拒否できます。'
+    });
+
+    Object.assign(translations.ko, {
+        'nav.overview': '개요',
+        'portal.inputLabel': '개방형 입력',
+        'portal.inputValue': 'Agent + Web2',
+        'portal.outputLabel': '개방형 출력',
+        'portal.outputValue': '다원적 Web3 세계',
+        'portal.eyebrow': '개방형 조정 필드',
+        'portal.title': '자율적 Intent가<br>책임 있는 행동이 되는 곳.',
+        'portal.lede': 'Agent와 기존 인터넷 서비스는 각자의 로컬 판단을 유지합니다. TOS는 정확한 Agreement, 제한된 권한, 검증 가능한 증거, 선택 가능한 정산 경로를 위한 개방형 의미 체계를 제공합니다.',
+        'portal.ctaOverview': '전체 시스템 살펴보기',
+        'portal.ctaProtocol': '프로토콜 확인',
+        'portal.live': '실시간 프로토콜 시뮬레이션',
+        'portal.stage1': 'Intent',
+        'portal.stage2': 'Agreement',
+        'portal.stage3': 'Evidence',
+        'portal.stage4': 'Settlement',
+        'portal.pause': '동작 일시 정지',
+        'portal.play': '동작 재생',
+        'portal.description': '실시간 시각화: 자율 Agent와 Web2 신호가 왼쪽에서 들어와 TOS Network 조정 프로토콜을 통과한 뒤 여러 독립 경로를 따라 개방형 Web3 세계로 이어집니다.',
+        'portal.principlesKicker': '프로토콜이 바꾸는 것',
+        'portal.principlesTitle': '약속을 구조화하고 자유를 보존합니다.',
+        'portal.principle1Title': '로컬 발견',
+        'portal.principle1Desc': 'Agent는 자체 모델, Skill, Policy, 신뢰할 수 있는 데이터 소스로 기회를 해석합니다.',
+        'portal.principle2Title': '제한된 조정',
+        'portal.principle2Desc': '프로토콜은 정확한 조건, 권한, 증거, 구제 수단, 안정적인 행동 식별자를 결합하지만 의사결정자가 되지 않습니다.',
+        'portal.principle3Title': '다원적 결과',
+        'portal.principle3Desc': '참여자는 직접 행동하고, 인증 메시지를 사용하고, 에스크로나 외부 정산을 선택하거나 거래를 거부할 수 있습니다.'
+    });
+
     function captureDefaults() {
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
             var key = el.getAttribute('data-i18n');

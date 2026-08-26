@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TOS Network is a founding reference ecosystem for an open Agentic Internet: revocable Intents, exact Agreements, bounded authority, verifiable evidence, and plural settlement.">
+    <meta name="description" content="Enter the open Agentic Internet through TOS Network: revocable Intent, exact Agreement, bounded execution, verifiable evidence, and plural settlement.">
     <meta name="author" content="TOS Network">
-    <meta name="theme-color" content="#06121b">
+    <meta name="theme-color" content="#020611">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="TOS Network: The Open System for the Agentic Internet">
-    <meta property="og:description" content="Revocable Intents, exact Agreements, bounded authority, verifiable evidence, and plural settlement for humans and autonomous Agents.">
-    <meta property="og:image" content="https://tos.network/img/tos-network-vision.webp">
+    <meta property="og:title" content="TOS Network: Enter the Agentic Internet">
+    <meta property="og:description" content="A live view of autonomous Agents and Web2 services becoming verifiable, portable action across an open Web3 world.">
+    <meta property="og:image" content="https://tos.network/img/agentic-internet-portal-v2.webp">
     <meta property="og:url" content="https://tos.network/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@tos_network">
-    <meta name="twitter:title" content="TOS Network: The Open System for the Agentic Internet">
-    <meta name="twitter:description" content="Revocable Intents, exact Agreements, bounded authority, verifiable evidence, and plural settlement for humans and autonomous Agents.">
-    <meta name="twitter:image" content="https://tos.network/img/tos-network-vision.webp">
+    <meta name="twitter:title" content="TOS Network: Enter the Agentic Internet">
+    <meta name="twitter:description" content="From autonomous Intent to accountable action across an open Agentic Internet.">
+    <meta name="twitter:image" content="https://tos.network/img/agentic-internet-portal-v2.webp">
 
-    <title>TOS Network: The Open System for the Agentic Internet</title>
+    <title>TOS Network: Enter the Agentic Internet</title>
 
     <link rel="icon" href="favicon.ico">
     <link rel="canonical" href="https://tos.network/">
@@ -28,8 +28,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/investor-home.css?v=20260819b">
     <link rel="stylesheet" href="css/design-system.css?v=20260825a">
-    <link rel="stylesheet" href="css/mesh-animation.css?v=20260805e">
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
+    <link rel="stylesheet" href="css/agentic-portal.css?v=20260826c">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -45,12 +45,12 @@
     }
     </script>
 </head>
-<body>
+<body class="portal-page">
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header" id="siteHeader">
         <div class="shell nav-shell">
-            <a class="brand" href="index.html" aria-label="TOS Network home">
+            <a class="brand" href="index.html" aria-label="TOS Network home" aria-current="page">
                 <img src="img/logo-navbar.svg" alt="" width="36" height="36">
                 <span>TOS Network</span>
             </a>
@@ -61,6 +61,7 @@
             </button>
 
             <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
+                <a href="overview.html" data-i18n="nav.overview">Overview</a>
                 <a href="platform.html" data-i18n="nav.platform">Platform</a>
                 <a href="foundation.html" data-i18n="nav.foundation">Foundation</a>
                 <a href="token.html" data-i18n="nav.token">Token</a>
@@ -99,321 +100,30 @@
     </header>
 
     <main id="main">
-
-        <section class="hero" id="top">
-            <div class="hero-grid" aria-hidden="true"></div>
-
-            <div class="shell hero-layout">
-                <div class="hero-copy reveal">
-                    <p class="eyebrow" data-i18n="hero.eyebrow">A founding reference ecosystem for an open Agentic Internet</p>
-                    <h1 data-i18n="hero.title">The Open System for<br>the Agentic Internet.</h1>
-                    <p class="hero-lede" data-i18n="hero.lede">
-                        TOS develops public protocol proposals, reference implementations,
-                        and infrastructure for humans and Agents to express revocable Intents,
-                        form exact Agreements, act with bounded authority, prove outcomes, and
-                        choose a settlement path. TOS is one open part of the Agentic Internet,
-                        not its owner or mandatory marketplace.
-                    </p>
-                    <div class="hero-actions">
-                        <a class="button button-primary" href="https://github.com/tosnetwork/constitution/blob/main/AGENTIC_INTERNET_CONSTITUTION.md" target="_blank" rel="noopener">
-                            <span data-i18n="hero.cta1">Read the Constitution</span>
-                            <span aria-hidden="true">&#8599;</span>
-                        </a>
-                        <a class="button button-secondary" href="https://github.com/tosnetwork/tos-service-spec" target="_blank" rel="noopener">
-                            <span data-i18n="hero.cta2">Inspect the protocol</span>
-                            <span aria-hidden="true">&#8594;</span>
-                        </a>
-                        <a class="button button-secondary" href="https://freecity.im" target="_blank" rel="noopener" aria-label="FreeCity, a god-mode visualization of TOS network operations">
-                            <span>FreeCity</span>
-                            <span aria-hidden="true">&#8599;</span>
-                        </a>
-                    </div>
+        <section class="portal-hero" id="top" data-portal-scene aria-labelledby="portal-title">
+            <div class="portal-visual" aria-hidden="true">
+                <img class="portal-art" src="img/agentic-internet-portal-v2.webp" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
+                <canvas class="portal-webgl" id="portalWebglCanvas"></canvas>
+                <div class="portal-ring-fallback">
+                    <span></span><span></span><span></span>
                 </div>
-
-                <aside class="pillar-panel reveal" aria-labelledby="pillarLabel">
-                    <!-- Non-breaking spaces, not styling: the label must hold one
-                         line even in the render where the stylesheet has not applied. -->
-                    <p class="panel-label" id="pillarLabel" data-i18n="hero.pillarLabel">From&nbsp;revocable&nbsp;Intent&nbsp;to&nbsp;accountable&nbsp;action.</p>
-                    <dl class="pillars">
-                        <div class="pillar" data-pillar="connect">
-                            <dt data-i18n="hero.pillar1Label">Express</dt>
-                            <dd data-i18n="hero.pillar1Text">An Intent states a desired outcome without silently creating an obligation.</dd>
-                        </div>
-                        <div class="pillar" data-pillar="trust">
-                            <dt data-i18n="hero.pillar2Label">Agree</dt>
-                            <dd data-i18n="hero.pillar2Text">Exact accepted terms bind parties, authority, evidence, recourse, and payment.</dd>
-                        </div>
-                        <div class="pillar" data-pillar="transact">
-                            <dt data-i18n="hero.pillar3Label">Execute</dt>
-                            <dd data-i18n="hero.pillar3Text">Agents act only within admitted capabilities, policy, budgets, and stable action identity.</dd>
-                        </div>
-                        <div class="pillar" data-pillar="own">
-                            <dt data-i18n="hero.pillar4Label">Account</dt>
-                            <dd data-i18n="hero.pillar4Text">Evidence, Receipts, disputes, and settlement remain tied to the accepted Agreement.</dd>
-                        </div>
-                    </dl>
-                </aside>
-            </div>
-        </section>
-
-        <section class="proof-strip" aria-label="TOS design principles">
-            <div class="shell proof-grid">
-                <div><span data-i18n="proof.label1">Public proposal</span><strong data-i18n="proof.text1">Specifications, versions, vectors, licensing gates</strong></div>
-                <div><span data-i18n="proof.label2">Authority-bounded</span><strong data-i18n="proof.text2">Purpose, capability, budget, expiry, revocation</strong></div>
-                <div><span data-i18n="proof.label3">Settlement-plural</span><strong data-i18n="proof.text3">Direct, authenticated, escrow, external, refuse</strong></div>
-                <div><span data-i18n="proof.label4">Outcome-accountable</span><strong data-i18n="proof.text4">Stable identity, evidence, Receipts, recourse</strong></div>
-            </div>
-        </section>
-
-        <section class="agent-ecosystem" id="agent-ecosystem" aria-labelledby="agent-ecosystem-title">
-            <div class="shell agent-ecosystem-intro reveal">
-                <div>
-                    <h2 id="agent-ecosystem-title" data-i18n="agentEcosystem.title">Shared semantics. Independent implementations.</h2>
-                </div>
-                <p data-i18n="agentEcosystem.desc">TOS is designed to complement existing agent and Internet interfaces, not replace them. Any party should be able to implement compatible Intent, Agreement, authority, evidence, and settlement semantics in its own repository and runtime, subject to the published profile and conformance gates. Using OpenFox, a TOS SDK, or a TOS-operated service must never be a condition of protocol compatibility. The clients below illustrate possible interoperability only; they do not imply completed integrations or endorsements.</p>
+                <canvas class="portal-flow" id="portalFlowCanvas"></canvas>
+                <div class="portal-depth-grid"></div>
+                <div class="portal-vignette"></div>
             </div>
 
-            <div class="shell">
-                <ul class="agent-ecosystem-grid reveal" role="list">
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="currentColor" stroke="none"><path d="M20 20 C14 19 11 12 13 5 C14 2 18 2 19 5 C20 10 20 15 20 20 Z"/><path d="M20 20 C14 19 11 12 13 5 C14 2 18 2 19 5 C20 10 20 15 20 20 Z" transform="rotate(72 20 20)"/><path d="M20 20 C14 19 11 12 13 5 C14 2 18 2 19 5 C20 10 20 15 20 20 Z" transform="rotate(144 20 20)"/><path d="M20 20 C14 19 11 12 13 5 C14 2 18 2 19 5 C20 10 20 15 20 20 Z" transform="rotate(216 20 20)"/><path d="M20 20 C14 19 11 12 13 5 C14 2 18 2 19 5 C20 10 20 15 20 20 Z" transform="rotate(288 20 20)"/><circle cx="20" cy="20" r="3.4"/></svg></span>
-                        <span class="agent-name">Claude</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12 L8 20 L15 28"/><path d="M25 12 L32 20 L25 28"/></svg></span>
-                        <span class="agent-name">Codex</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6 L10 30 L16 25 L20 33 L24 31 L20 23 L28 23 Z"/></svg></span>
-                        <span class="agent-name">Cursor</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="31" r="2.2" fill="currentColor" stroke="none"/><circle cx="28" cy="20" r="2.2" fill="currentColor" stroke="none"/><path d="M12 11 L12 29"/><path d="M12 20 L28 20"/></svg></span>
-                        <span class="agent-name">Devin</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="28" height="24" rx="4"/><path d="M13 17 L18 21 L13 25"/><path d="M22 25 L28 25"/></svg></span>
-                        <span class="agent-name">Gemini CLI</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 6 L12 22 L19 22 L17 34 L29 16 L21 16 Z"/></svg></span>
-                        <span class="agent-name">GenSpark</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20 L34 8 L22 34 L18 22 L6 20 Z"/><path d="M18 22 L34 8"/></svg></span>
-                        <span class="agent-name">GitHub Copilot</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 28 C14 20 14 12 22 6"/><path d="M8 28 C16 24 18 16 26 10"/><path d="M8 28 C18 27 22 20 30 14"/></svg></span>
-                        <span class="agent-name">Hermes Agent</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="currentColor" stroke="none"><path d="M25 8 C16 6 8 12 8 21 C8 29 15 34 23 33 C25 32.7 25.4 30.2 23.2 29.6 C17.8 28.2 14 24.6 14 20 C14 14.8 18.2 11 24 12 C26.6 12.4 30.4 14.4 31 18 C31.6 14.6 29.4 9.4 25 8 Z"/></svg></span>
-                        <span class="agent-name">LobsterAI</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 26 Q20 32 28 26"/><path d="M14 24 L13 10"/><path d="M18 23 L17 7"/><path d="M22 23 L23 7"/><path d="M26 24 L27 10"/><path d="M12 24 C8 20 8 16 11 13"/></svg></span>
-                        <span class="agent-name">Manus</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><circle cx="20" cy="20" r="2.6" fill="currentColor" stroke="none"/><ellipse cx="20" cy="20" rx="15" ry="7.5" transform="rotate(-24 20 20)"/><circle cx="32.5" cy="14" r="2.2" fill="currentColor" stroke="none"/></svg></span>
-                        <span class="agent-name">Marvis</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10 C6 16 6 24 12 30"/><path d="M30 10 C34 16 34 24 28 30"/><path d="M10 10 L6 7"/><path d="M30 10 L34 7"/></svg></span>
-                        <span class="agent-name">OpenClaw</span>
-                    </li>
-                    <li class="agent-chip agent-chip-brand">
-                        <span class="agent-icon" aria-hidden="true"><img src="img/openfox-icon.webp" alt="" width="44" height="35" loading="lazy"></span>
-                        <span class="agent-name">OpenFox</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13 L32 13"/><path d="M15 13 L13 30"/><path d="M25 13 L25 26 Q25 30 30 29"/></svg></span>
-                        <span class="agent-name">Pi Agent</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8 L20 30"/><path d="M20 8 L10 25 L20 22 Z"/><path d="M6 32 C10 30 14 34 18 32 C22 30 26 34 30 32 C32 31 34 32 34 32"/></svg></span>
-                        <span class="agent-name">Windsurf</span>
-                    </li>
-                    <li class="agent-chip">
-                        <span class="agent-icon" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12 Q15 6 20 6 Q25 6 25 12"/><rect x="8" y="12" width="24" height="18" rx="3"/><path d="M8 21 L32 21"/><rect x="17.5" y="18" width="5" height="6" rx="1.2"/></svg></span>
-                        <span class="agent-name">WorkBuddy</span>
-                    </li>
-                </ul>
-            </div>
-        </section>
+            <button class="portal-motion-toggle" id="portalMotionToggle" type="button" aria-pressed="false">
+                <span class="motion-icon" aria-hidden="true"></span>
+                <span class="motion-pause visually-hidden" data-i18n="portal.pause">Pause motion</span>
+                <span class="motion-play visually-hidden" data-i18n="portal.play">Play motion</span>
+            </button>
 
-        <section class="network-metrics" id="network-metrics" aria-labelledby="network-metrics-title">
-            <div class="shell network-metrics-intro reveal">
-                <div>
-                    <h2 id="network-metrics-title" data-i18n="metrics.title">What TOS must prove before it claims a network effect</h2>
-                </div>
-                <p data-i18n="metrics.desc">Adoption is measured through unrelated repeat payers, conforming providers, portable receipts, organic settled value, and low-cost completion, not simulated dashboards, address counts, or reward-funded traffic.</p>
-            </div>
-
-            <div class="metrics-marquee reveal" aria-label="TOS network activity metrics">
-                <div class="metrics-track">
-                    <div class="metrics-group">
-                        <article class="metric-module metric-card metric-card-volume">
-                            <strong data-metric="volume24h">P5</strong>
-                            <span data-i18n="metrics.volumeLabel">Organic settled value</span>
-                            <svg class="metric-curves" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true">
-                                <path class="curve curve-one" d="M-12 108 C38 102 40 35 91 54 S154 121 197 73 S266 14 306 47 S350 104 395 67"/>
-                                <path class="curve curve-two" d="M-8 127 C43 95 67 120 109 91 S159 29 205 58 S267 120 313 87 S350 34 395 48"/>
-                                <path class="curve curve-three" d="M-5 77 C42 41 71 78 116 65 S178 9 224 39 S275 92 321 62 S359 22 394 28"/>
-                            </svg>
-                        </article>
-                        <article class="metric-module metric-card metric-card-capacity metric-card-compute">
-                            <strong data-metric="totalAiCompute">P1</strong>
-                            <span><b>2+</b> <span data-i18n="metrics.computeTotalLabel">Conforming providers</span></span>
-                            <svg class="metric-capacity-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true">
-                                <path class="capacity-line capacity-line-one" d="M-8 111 C30 90 44 112 76 85 S126 38 157 69 S207 113 241 67 S289 21 321 53 S359 82 392 45"/>
-                                <path class="capacity-line capacity-line-two" d="M-5 128 C40 119 53 81 92 96 S149 129 184 91 S235 42 270 72 S324 116 391 68"/>
-                                <path class="capacity-line capacity-line-three" d="M-2 71 C37 58 63 77 99 51 S155 18 190 42 S250 82 286 48 S340 13 392 28"/>
-                            </svg>
-                        </article>
-                        <article class="metric-module metric-card metric-card-capacity metric-card-storage">
-                            <strong data-metric="totalStorage">P4</strong>
-                            <span><b>OPEN</b> <span data-i18n="metrics.storageTotalLabel">Portable receipts</span></span>
-                            <svg class="metric-storage-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true">
-                                <path class="storage-area storage-area-back" d="M0 94 C42 68 74 80 113 57 S178 68 216 44 S279 59 315 31 S355 37 380 20 L380 150 L0 150 Z"/>
-                                <path class="storage-area storage-area-mid" d="M0 116 C45 93 79 105 119 82 S177 93 219 70 S282 83 320 59 S360 61 380 50 L380 150 L0 150 Z"/>
-                                <path class="storage-area storage-area-front" d="M0 137 C47 122 84 132 128 110 S190 119 231 98 S287 108 329 85 S361 91 380 76 L380 150 L0 150 Z"/>
-                            </svg>
-                        </article>
-                        <div class="metric-module metric-stack metric-stack-activity">
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.tasksLabel">Quote-to-paid completion</span><strong data-metric="tasks24h">P2</strong><em data-metric="tasksChange" data-i18n="metrics.measureLabel">measure</em></article>
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.callsLabel">Repeat payer retention</span><strong data-metric="calls24h">P3</strong><em data-metric="callsChange" data-i18n="metrics.cohortsLabel">cohorts</em></article>
-                        </div>
-                        <article class="metric-module metric-card metric-card-statement"><strong data-metric="gasBurned24h">OFF</strong><span data-i18n="metrics.gasBurnLabel">AIPoW before product-market fit</span></article>
-                        <div class="metric-module metric-stack metric-stack-market">
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.agentsLabel">Unrelated payer domains</span><strong data-metric="activeAgents">P5</strong><em data-i18n="metrics.onlineLabel">organic</em></article>
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.servicesLabel">Third-party integrations</span><strong data-metric="publishedServices">P8</strong><em data-i18n="metrics.discoverableLabel">open</em></article>
-                        </div>
-                        <article class="metric-module metric-card metric-card-accent"><div class="metric-ring" style="--ring-value: 100%"><span data-metric="successRate">P4</span></div><span data-i18n="metrics.successLabel">Receipt verification</span></article>
-                        <article class="metric-module metric-card metric-card-mix"><div class="metric-pie" aria-hidden="true"><span>P8</span></div><div class="metric-mix-copy"><strong data-metric="signedReceipts">OPEN</strong><span data-i18n="metrics.receiptsLabel">Third-party surfaces</span></div><ul><li data-i18n="metrics.mixInference">Agent SDK</li><li data-i18n="metrics.mixData">Provider SDK</li><li data-i18n="metrics.mixTools">Verifier</li></ul></article>
-                        <div class="metric-module metric-stack metric-stack-infrastructure">
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.nodesLabel">First-party reference app</span><strong data-metric="computeNodes">P0</strong><em data-i18n="metrics.ownerOperatedLabel">dogfood</em></article>
-                            <article class="metric-card metric-card-market"><span data-i18n="metrics.uptimeLabel">Provider retention</span><strong data-metric="edgeUptime">P3</strong><em data-i18n="metrics.rollingLabel">no rewards</em></article>
-                        </div>
-                        <article class="metric-module metric-card metric-card-latency"><span data-i18n="metrics.timeLabel">Settlement cost</span><strong data-metric="medianSettlement">P6</strong><svg class="metric-latency-chart" viewBox="0 0 320 94" preserveAspectRatio="none" aria-hidden="true"><path d="M0 72 C35 70 41 24 76 38 S129 81 165 51 S211 13 246 34 S283 65 320 27"/><path d="M0 84 C45 72 60 87 103 63 S158 35 198 56 S260 79 320 51"/></svg><p data-i18n="metrics.timeDesc">Measured as a share of completed operation value</p></article>
-                    </div>
-
-                    <div class="metrics-group" aria-hidden="true">
-                        <article class="metric-module metric-card metric-card-volume"><strong data-metric="volume24h">P5</strong><span data-i18n="metrics.volumeLabel">Organic settled value</span><svg class="metric-curves" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="curve curve-one" d="M-12 108 C38 102 40 35 91 54 S154 121 197 73 S266 14 306 47 S350 104 395 67"/><path class="curve curve-two" d="M-8 127 C43 95 67 120 109 91 S159 29 205 58 S267 120 313 87 S350 34 395 48"/><path class="curve curve-three" d="M-5 77 C42 41 71 78 116 65 S178 9 224 39 S275 92 321 62 S359 22 394 28"/></svg></article>
-                        <article class="metric-module metric-card metric-card-capacity metric-card-compute"><strong data-metric="totalAiCompute">P1</strong><span><b>2+</b> <span data-i18n="metrics.computeTotalLabel">Conforming providers</span></span><svg class="metric-capacity-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="capacity-line capacity-line-one" d="M-8 111 C30 90 44 112 76 85 S126 38 157 69 S207 113 241 67 S289 21 321 53 S359 82 392 45"/><path class="capacity-line capacity-line-two" d="M-5 128 C40 119 53 81 92 96 S149 129 184 91 S235 42 270 72 S324 116 391 68"/><path class="capacity-line capacity-line-three" d="M-2 71 C37 58 63 77 99 51 S155 18 190 42 S250 82 286 48 S340 13 392 28"/></svg></article>
-                        <article class="metric-module metric-card metric-card-capacity metric-card-storage"><strong data-metric="totalStorage">P4</strong><span><b>OPEN</b> <span data-i18n="metrics.storageTotalLabel">Portable receipts</span></span><svg class="metric-storage-chart" viewBox="0 0 380 150" preserveAspectRatio="none" aria-hidden="true"><path class="storage-area storage-area-back" d="M0 94 C42 68 74 80 113 57 S178 68 216 44 S279 59 315 31 S355 37 380 20 L380 150 L0 150 Z"/><path class="storage-area storage-area-mid" d="M0 116 C45 93 79 105 119 82 S177 93 219 70 S282 83 320 59 S360 61 380 50 L380 150 L0 150 Z"/><path class="storage-area storage-area-front" d="M0 137 C47 122 84 132 128 110 S190 119 231 98 S287 108 329 85 S361 91 380 76 L380 150 L0 150 Z"/></svg></article>
-                        <div class="metric-module metric-stack metric-stack-activity"><article class="metric-card metric-card-market"><span data-i18n="metrics.tasksLabel">Quote-to-paid completion</span><strong data-metric="tasks24h">P2</strong><em data-metric="tasksChange" data-i18n="metrics.measureLabel">measure</em></article><article class="metric-card metric-card-market"><span data-i18n="metrics.callsLabel">Repeat payer retention</span><strong data-metric="calls24h">P3</strong><em data-metric="callsChange" data-i18n="metrics.cohortsLabel">cohorts</em></article></div>
-                        <article class="metric-module metric-card metric-card-statement"><strong data-metric="gasBurned24h">OFF</strong><span data-i18n="metrics.gasBurnLabel">AIPoW before product-market fit</span></article>
-                        <div class="metric-module metric-stack metric-stack-market"><article class="metric-card metric-card-market"><span data-i18n="metrics.agentsLabel">Unrelated payer domains</span><strong data-metric="activeAgents">P5</strong><em data-i18n="metrics.onlineLabel">organic</em></article><article class="metric-card metric-card-market"><span data-i18n="metrics.servicesLabel">Third-party integrations</span><strong data-metric="publishedServices">P8</strong><em data-i18n="metrics.discoverableLabel">open</em></article></div>
-                        <article class="metric-module metric-card metric-card-accent"><div class="metric-ring" style="--ring-value: 100%"><span data-metric="successRate">P4</span></div><span data-i18n="metrics.successLabel">Receipt verification</span></article>
-                        <article class="metric-module metric-card metric-card-mix"><div class="metric-pie" aria-hidden="true"><span>P8</span></div><div class="metric-mix-copy"><strong data-metric="signedReceipts">OPEN</strong><span data-i18n="metrics.receiptsLabel">Third-party surfaces</span></div><ul><li data-i18n="metrics.mixInference">Agent SDK</li><li data-i18n="metrics.mixData">Provider SDK</li><li data-i18n="metrics.mixTools">Verifier</li></ul></article>
-                        <div class="metric-module metric-stack metric-stack-infrastructure"><article class="metric-card metric-card-market"><span data-i18n="metrics.nodesLabel">First-party reference app</span><strong data-metric="computeNodes">P0</strong><em data-i18n="metrics.ownerOperatedLabel">dogfood</em></article><article class="metric-card metric-card-market"><span data-i18n="metrics.uptimeLabel">Provider retention</span><strong data-metric="edgeUptime">P3</strong><em data-i18n="metrics.rollingLabel">no rewards</em></article></div>
-                        <article class="metric-module metric-card metric-card-latency"><span data-i18n="metrics.timeLabel">Settlement cost</span><strong data-metric="medianSettlement">P6</strong><svg class="metric-latency-chart" viewBox="0 0 320 94" preserveAspectRatio="none" aria-hidden="true"><path d="M0 72 C35 70 41 24 76 38 S129 81 165 51 S211 13 246 34 S283 65 320 27"/><path d="M0 84 C45 72 60 87 103 63 S158 35 198 56 S260 79 320 51"/></svg><p data-i18n="metrics.timeDesc">Measured as a share of completed operation value</p></article>
-                    </div>
-                </div>
-            </div>
-            <p class="shell metrics-footnote" data-i18n="metrics.footnote">These are public release gates, not live network metrics. Results remain unpublished until independently verifiable telemetry exists.</p>
-        </section>
-
-        <section class="section flywheel">
-            <div class="shell">
-                <div class="flywheel-layout">
-                    <div class="flywheel-copy reveal">
-                        <h2 data-i18n="flywheel.title">Public specifications. Competing implementations. Portable evidence.</h2>
-                        <p data-i18n="flywheel.desc">
-                            The first external acceptance target is machine-checkable software work.
-                            Once independent buyers, providers, verifiers, and implementations share
-                            the same Agreement and evidence semantics, Agents can compare offers,
-                            carry bounded authority, verify outcomes, and change providers without
-                            making one Gateway or marketplace the source of truth.
-                        </p>
-                    </div>
-
-                    <figure class="flywheel-ring reveal" aria-labelledby="flywheel-caption">
-                        <figcaption class="visually-hidden" id="flywheel-caption">
-                            TOS Network flywheel: supply attracts demand, completed services
-                            create evidence, and shared standards lower integration cost.
-                        </figcaption>
-                        <div class="flywheel-center">
-                            <span>TOS</span>
-                            <small data-i18n="flywheel.centerDesc">Agentic operation layer</small>
-                        </div>
-                        <div class="flywheel-node node-one"><strong data-i18n="flywheel.node1Title">Definitions</strong><span data-i18n="flywheel.node1Desc">Versioned operations</span></div>
-                        <div class="flywheel-node node-two"><strong data-i18n="flywheel.node2Title">Providers</strong><span data-i18n="flywheel.node2Desc">Competing implementations</span></div>
-                        <div class="flywheel-node node-three"><strong data-i18n="flywheel.node3Title">Receipts</strong><span data-i18n="flywheel.node3Desc">Portable outcomes</span></div>
-                        <div class="flywheel-node node-four"><strong data-i18n="flywheel.node4Title">Demand</strong><span data-i18n="flywheel.node4Desc">Repeat agent buyers</span></div>
-                    </figure>
-                </div>
-
-                <div class="leverage-grid">
-                    <article class="leverage-card reveal">
-                        <p data-i18n="flywheel.leverage1Label">Beachhead</p>
-                        <h3 data-i18n="flywheel.leverage1Title">Machine-checkable software work</h3>
-                        <span data-i18n="flywheel.leverage1Desc">Start with one independently verifiable lifecycle: Intent, offer, Agreement, bounded execution, evidence, Receipt, and settlement across unrelated roles.</span>
-                    </article>
-                    <article class="leverage-card reveal">
-                        <p data-i18n="flywheel.leverage2Label">Expansion</p>
-                        <h3 data-i18n="flywheel.leverage2Title">Generic core, narrow profiles</h3>
-                        <span data-i18n="flywheel.leverage2Desc">Intent content can describe new industries without changing the core protocol. Add a profile only when authority, ordering, privacy, admission, or side effects genuinely differ.</span>
-                    </article>
-                    <article class="leverage-card reveal">
-                        <p data-i18n="flywheel.leverage3Label">Defensibility</p>
-                        <h3 data-i18n="flywheel.leverage3Title">Conformance and verified history compound</h3>
-                        <span data-i18n="flywheel.leverage3Desc">Durable value comes from independent implementation, portable evidence, repeat demand, and measured reliability, not forced lock-in, one mandatory marketplace, or token issuance.</span>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section diligence" id="governance">
-            <div class="shell diligence-layout">
-                <div class="diligence-copy reveal">
-                    <p class="kicker" data-i18n="governanceHome.kicker">Constitutional direction</p>
-                    <h2 data-i18n="governanceHome.title">Local judgment. Minimum authority. Verifiable commitments.</h2>
-                    <p data-i18n="governanceHome.desc">TOS proposes a polycentric design for the Agentic Internet: decisions stay with the lowest competent and accountable layer; consensus is reserved for facts that need one authoritative history; participants retain meaningful choice and exit; and experiments never promote themselves into greater power.</p>
-                </div>
-                <div class="diligence-links reveal">
-                    <a href="https://github.com/tosnetwork/constitution/blob/main/AGENTIC_INTERNET_CONSTITUTION.md" target="_blank" rel="noopener">
-                        <div><strong data-i18n="governanceHome.constitutionTitle">Agentic Internet Constitution</strong><small data-i18n="governanceHome.constitutionDesc">Founding proposal · published, reviewed internally, not yet ratified</small></div>
-                        <b>↗</b>
-                    </a>
-                    <a href="https://github.com/tosnetwork/tos-service-spec" target="_blank" rel="noopener">
-                        <div><strong data-i18n="governanceHome.specTitle">Normative service specification</strong><small data-i18n="governanceHome.specDesc">Schemas, authority rules, invariants, profiles, vectors, and acceptance gates</small></div>
-                        <b>↗</b>
-                    </a>
-                    <a href="https://github.com/tosnetwork/openfox" target="_blank" rel="noopener">
-                        <div><strong data-i18n="governanceHome.openfoxTitle">OpenFox reference Agent</strong><small data-i18n="governanceHome.openfoxDesc">Local interpretation and bounded execution; model output is never protocol authority</small></div>
-                        <b>↗</b>
-                    </a>
-                    <div class="diligence-disclosure">
-                        <div>
-                            <strong data-i18n="governanceHome.boundaryTitle">Proposal is not adoption</strong>
-                            <small data-i18n="governanceHome.boundaryDesc">The Constitution becomes governing only through an explicit ratification record naming the authority, exact commit, date, and adoption scope. Its publication does not bind independent projects.</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="closing">
-            <div class="closing-wave-bg-wrap" aria-hidden="true">
-                <canvas id="closing-wave-canvas"></canvas>
-            </div>
-            <div class="shell closing-inner reveal">
-                <p class="kicker" data-i18n="closing.kicker">One open part of a larger Internet</p>
-                <h2 data-i18n="closing.title">Agents discover locally.<br>Protocols make commitments portable.</h2>
-                <p data-i18n="closing.desc">Revocable Intents. Exact Agreements. Bounded authority. Verifiable evidence. Plural settlement.</p>
-                <div class="hero-actions">
-                    <a class="button button-primary" href="https://github.com/tosnetwork/constitution/blob/main/AGENTIC_INTERNET_CONSTITUTION.md" target="_blank" rel="noopener"><span data-i18n="closing.cta1">Read the Constitution</span> <span aria-hidden="true">↗</span></a>
-                    <a class="button button-secondary" href="https://github.com/tosnetwork/tos-service-spec" target="_blank" rel="noopener"><span data-i18n="hero.cta2">Inspect the protocol</span> <span aria-hidden="true">→</span></a>
-                    <a class="button button-secondary" href="https://freecity.im" target="_blank" rel="noopener" aria-label="Enter FreeCity, a god-mode view of TOS network operations"><span data-i18n="cta.freecity">Enter FreeCity</span> <span aria-hidden="true">↗</span></a>
-                </div>
-            </div>
+            <h1 class="visually-hidden" id="portal-title" data-i18n="portal.title">Where autonomous Intent becomes accountable action.</h1>
+            <p class="visually-hidden" data-i18n="portal.description">A realtime visualization: autonomous Agents and Web2 signals enter from the left, pass through the TOS Network coordination protocol, and continue through many independent paths into an open Web3 world.</p>
         </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer portal-footer">
         <div class="shell footer-grid">
             <div class="footer-brand">
                 <a class="brand" href="index.html">
@@ -425,30 +135,24 @@
             <div class="footer-links">
                 <div>
                     <strong data-i18n="footer.exploreLabel">Explore</strong>
+                    <a href="overview.html" data-i18n="nav.overview">Overview</a>
                     <a href="platform.html" data-i18n="footer.exploreL2">Platform</a>
-                    <a href="platform.html#a2a" data-i18n="footer.exploreL3">Agentic operations</a>
                     <a href="foundation.html#openfox">OpenFox</a>
                     <a href="https://freecity.im" target="_blank" rel="noopener">FreeCity</a>
-                    <a href="platform.html#ard" data-i18n="footer.exploreL5">ARD discovery</a>
-                    <a href="foundation.html#mesh" data-i18n="footer.exploreL6">Agent mesh</a>
-                    <a href="token.html" data-i18n="footer.exploreL7">Token economics</a>
                     <a href="roadmap.html" data-i18n="footer.exploreL8">Roadmap</a>
-                    <a href="platform.html#user-assets" data-i18n="footer.exploreL9">AI-era user assets</a>
                 </div>
                 <div>
                     <strong data-i18n="footer.verifyLabel">Verify</strong>
                     <a href="pdf/tos.pdf?v=20260821a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
                     <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.verifyL2">Source</a>
                     <a href="https://github.com/tosnetwork/constitution" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Constitution + documentation</a>
-                    <a href="https://github.com/tosnetwork/openfox/tree/main/docs" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture + evidence</a>
+                    <a href="https://github.com/tosnetwork/tos-service-spec" target="_blank" rel="noopener">Service specification</a>
                 </div>
                 <div>
                     <strong data-i18n="footer.connectLabel">Connect</strong>
                     <a href="https://x.com/tos_network" target="_blank" rel="noopener">X / Twitter</a>
                     <a href="https://t.me/tos_network" target="_blank" rel="noopener">Telegram</a>
                     <a href="https://discord.tos.network" target="_blank" rel="noopener">Discord</a>
-                    <a href="song/DigitalDawn.mp3" target="_blank" rel="noopener" data-i18n="footer.connectL4">Digital Dawn ♫</a>
-                    <a href="https://github.com/tosnetwork/tos/issues" target="_blank" rel="noopener" data-i18n="footer.connectL5">Open an issue</a>
                     <a href="terms.html" data-i18n="footer.connectL6">Terms of Use</a>
                 </div>
             </div>
@@ -459,13 +163,9 @@
         </div>
     </footer>
 
-    <script src="js/i18n.js?v=20260825a"></script>
+    <script src="js/i18n.js?v=20260826a"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
     <script src="js/investor-home.js?v=20260819a"></script>
-    <script src="js/mesh-animation.js?v=20260805e"></script>
-    <script src="js/particle-grid.js?v=20260807a"></script>
-    <script src="js/wave-animation.js?v=20260807a"></script>
-    <script src="js/tos-music.js?v=20260802"></script>
-    <script src="js/legacy-anchors.js?v=20260819d"></script>
+    <script src="js/agentic-portal.js?v=20260827c"></script>
 </body>
 </html>
