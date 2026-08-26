@@ -1,832 +1,859 @@
-(() => {
-    "use strict";
+(function () {
+    'use strict';
 
-    const scene = document.querySelector("[data-portal-scene]");
-    const flowCanvas = document.getElementById("portalFlowCanvas");
-    const webglCanvas = document.getElementById("portalWebglCanvas");
-    const motionToggle = document.getElementById("portalMotionToggle");
+    var scene = document.querySelector('[data-portal-scene]');
+    var canvas = document.getElementById('portalFlowCanvas');
+    var meshField = document.getElementById('portalMeshField');
+    var edgeLayer = document.getElementById('portalMeshEdges');
+    var nodeLayer = document.getElementById('portalMeshNodes');
+    var motionToggle = document.getElementById('portalMotionToggle');
+    var portalArt = scene ? scene.querySelector('.portal-art') : null;
+    var worldCanvas = document.getElementById('portalWorldCanvas');
 
-    if (!scene || !flowCanvas || !webglCanvas) {
+    if (!scene || !canvas || !meshField || !edgeLayer || !nodeLayer || !motionToggle || !portalArt || !worldCanvas) {
         return;
     }
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
-    const flow = createFlowRenderer(flowCanvas);
-    const portal = createPortalRenderer(webglCanvas);
+    var context = canvas.getContext('2d', { alpha: true });
+    var worldContext = worldCanvas.getContext('2d', { alpha: true });
 
-    let animationFrame = 0;
-    let lastFrame = 0;
-    let paused = reducedMotion.matches;
-    let sceneVisible = true;
-    let pageVisible = !document.hidden;
-
-    if (portal) {
-        scene.classList.add("webgl-ready");
+    if (!context || !worldContext) {
+        return;
     }
 
-    const resize = () => {
-        const rect = scene.getBoundingClientRect();
-        const width = Math.max(1, Math.round(rect.width));
-        const height = Math.max(1, Math.round(rect.height));
-        flow.resize(width, height);
-        portal?.resize(width, height);
-        render(performance.now(), 0, true);
-    };
-
-    const render = (time, delta, staticFrame = false) => {
-        pointer.x += (pointer.targetX - pointer.x) * (staticFrame ? 1 : 0.055);
-        pointer.y += (pointer.targetY - pointer.y) * (staticFrame ? 1 : 0.055);
-
-        scene.style.setProperty("--portal-pointer-x", pointer.x.toFixed(3));
-        scene.style.setProperty("--portal-pointer-y", pointer.y.toFixed(3));
-        scene.style.setProperty("--portal-rotation", `${(time * 0.009) % 360}deg`);
-
-        flow.render(time * 0.001, delta, pointer, staticFrame);
-        portal?.render(time * 0.001, pointer);
-    };
-
-    const shouldAnimate = () => !paused && sceneVisible && pageVisible;
-
-    const stop = () => {
-        if (animationFrame) {
-            cancelAnimationFrame(animationFrame);
-            animationFrame = 0;
-        }
-    };
-
-    const frame = (time) => {
-        if (!shouldAnimate()) {
-            stop();
-            return;
-        }
-
-        const minimumFrameTime = window.innerWidth < 700 ? 1000 / 30 : 1000 / 48;
-        const elapsed = lastFrame ? time - lastFrame : minimumFrameTime;
-
-        if (!lastFrame || elapsed >= minimumFrameTime) {
-            const delta = Math.min(0.05, elapsed / 1000);
-            render(time, delta);
-            lastFrame = time;
-        }
-
-        animationFrame = requestAnimationFrame(frame);
-    };
-
-    const start = () => {
-        if (!shouldAnimate() || animationFrame) {
-            return;
-        }
-        lastFrame = 0;
-        animationFrame = requestAnimationFrame(frame);
-    };
-
-    const setPaused = (nextPaused) => {
-        paused = nextPaused;
-        motionToggle?.setAttribute("aria-pressed", String(paused));
-        scene.classList.toggle("portal-scene-paused", paused);
-
-        if (paused) {
-            stop();
-            render(performance.now(), 0, true);
-        } else {
-            start();
-        }
-    };
-
-    motionToggle?.addEventListener("click", () => setPaused(!paused));
-
-    scene.addEventListener("pointermove", (event) => {
-        if (event.pointerType === "touch") {
-            return;
-        }
-        const rect = scene.getBoundingClientRect();
-        pointer.targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-        pointer.targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-    }, { passive: true });
-
-    scene.addEventListener("pointerleave", () => {
-        pointer.targetX = 0;
-        pointer.targetY = 0;
-    }, { passive: true });
-
-    document.addEventListener("visibilitychange", () => {
-        pageVisible = !document.hidden;
-        if (pageVisible) {
-            start();
-        } else {
-            stop();
-        }
-    });
-
-    if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver((entries) => {
-            sceneVisible = entries[0]?.isIntersecting ?? true;
-            if (sceneVisible) {
-                start();
-            } else {
-                stop();
-            }
-        }, { threshold: 0.02 });
-        observer.observe(scene);
-    }
-
-    const handleReducedMotionChange = (event) => setPaused(event.matches);
-    if (typeof reducedMotion.addEventListener === "function") {
-        reducedMotion.addEventListener("change", handleReducedMotionChange);
-    } else {
-        reducedMotion.addListener?.(handleReducedMotionChange);
-    }
-
-    if ("ResizeObserver" in window) {
-        const resizeObserver = new ResizeObserver(resize);
-        resizeObserver.observe(scene);
-    } else {
-        window.addEventListener("resize", resize, { passive: true });
-    }
-
-    resize();
-    setPaused(paused);
-    start();
-
-    function createFlowRenderer(canvas) {
-        const context = canvas.getContext("2d", { alpha: true, desynchronized: true });
-        const random = mulberry32(0x544f534e);
-        const portalCenter = { x: 0.5, y: 0.49 };
-        let width = 1;
-        let height = 1;
-        let ratio = 1;
-        let signals = [];
-        let lanes = [];
-        let laneGradient = null;
-        const brandCanvas = document.createElement("canvas");
-        const brandContext = brandCanvas.getContext("2d", { alpha: true });
-        let lastBrandFrame = -Infinity;
-
-        const palettes = [
-            { h: 31, s: 94, l: 71 },
-            { h: 202, s: 96, l: 72 },
-            { h: 224, s: 92, l: 70 },
-            { h: 266, s: 92, l: 72 },
-            { h: 314, s: 84, l: 70 }
-        ];
-
-        const createSignal = (index, total) => {
-            const targetBands = [0.19, 0.27, 0.35, 0.43, 0.51, 0.59, 0.67, 0.76, 0.84];
-            const startY = 0.08 + random() * 0.84;
-            const gateOffset = (random() - 0.5) * 0.008;
-            const endY = targetBands[index % targetBands.length] + (random() - 0.5) * 0.045;
-            const palette = palettes[index % palettes.length];
-
-            return {
-                t: random(),
-                // Keep the packets visibly moving even on wide desktop displays.
-                // The former range took up to ~26 seconds to cross the scene,
-                // which made the flow read as static beside the rotating portal.
-                speed: 0.065 + random() * 0.12,
-                startY,
-                middleY: portalCenter.y + gateOffset,
-                endY,
-                wave: 0.009 + random() * 0.022,
-                waveSpeed: 1.2 + random() * 2.4,
-                phase: random() * Math.PI * 2,
-                size: 0.7 + random() * 1.9,
-                shape: index % 5,
-                hue: palette.h,
-                saturation: palette.s,
-                lightness: palette.l,
-                alpha: 0.35 + random() * 0.55,
-                depth: index / Math.max(1, total - 1)
-            };
-        };
-
-        const rebuild = () => {
-            const compact = width < 700;
-            const count = compact ? 64 : Math.min(150, Math.round(width / 10));
-            signals = Array.from({ length: count }, (_, index) => createSignal(index, count));
-            lanes = signals.filter((_, index) => index % (compact ? 3 : 4) === 0);
-        };
-
-        const resize = (nextWidth, nextHeight) => {
-            width = nextWidth;
-            height = nextHeight;
-            ratio = Math.min(window.devicePixelRatio || 1, width < 700 ? 1.2 : 1.6);
-            canvas.width = Math.max(1, Math.round(width * ratio));
-            canvas.height = Math.max(1, Math.round(height * ratio));
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
-            context.setTransform(ratio, 0, 0, ratio, 0, 0);
-            brandCanvas.width = width;
-            brandCanvas.height = height;
-            lastBrandFrame = -Infinity;
-            laneGradient = context.createLinearGradient(0, 0, width, 0);
-            laneGradient.addColorStop(0, "rgba(255, 184, 96, 0.26)");
-            laneGradient.addColorStop(0.36, "rgba(255, 213, 156, 0.42)");
-            laneGradient.addColorStop(0.49, "rgba(255, 246, 226, 0.88)");
-            laneGradient.addColorStop(0.51, "rgba(229, 246, 255, 0.9)");
-            laneGradient.addColorStop(0.66, "rgba(96, 190, 255, 0.48)");
-            laneGradient.addColorStop(1, "rgba(144, 102, 255, 0.26)");
-            rebuild();
-        };
-
-        const render = (time, delta, pointerState, staticFrame) => {
-            context.clearRect(0, 0, width, height);
-
-            drawProtocolMembrane(time, pointerState);
-
-            context.save();
-            context.globalCompositeOperation = "lighter";
-
-            drawPortalBloom(time, pointerState);
-            drawProtocolAperture(time, pointerState);
-            lanes.forEach((signal) => drawLane(signal, time, pointerState));
-
-            signals.forEach((signal) => {
-                if (!staticFrame) {
-                    signal.t = (signal.t + delta * signal.speed) % 1;
-                }
-                drawSignal(signal, time, pointerState);
-            });
-
-            context.restore();
-        };
-
-        const drawPortalBloom = (time, pointerState) => {
-            const centerX = width * (portalCenter.x + pointerState.x * 0.002);
-            const centerY = height * (portalCenter.y + pointerState.y * 0.002);
-            const radius = Math.min(width, height) * (0.23 + Math.sin(time * 1.2) * 0.005);
-            const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-            gradient.addColorStop(0, "rgba(120, 95, 255, 0.12)");
-            gradient.addColorStop(0.35, "rgba(70, 171, 255, 0.08)");
-            gradient.addColorStop(1, "rgba(30, 85, 255, 0)");
-            context.fillStyle = gradient;
-            context.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
-        };
-
-        const getApertureMetrics = (time, pointerState) => {
-            const compact = width < 700;
-            const pulse = 1 + Math.sin(time * 0.78) * 0.006;
-            return {
-                centerX: width * (portalCenter.x + pointerState.x * 0.002),
-                centerY: height * (portalCenter.y + pointerState.y * 0.002),
-                radiusX: (compact
-                    ? Math.min(width * 0.29, height * 0.16)
-                    : Math.min(width * 0.115, height * 0.18)) * pulse,
-                radiusY: (compact
-                    ? Math.min(height * 0.37, width * 0.8)
-                    : Math.min(height * 0.385, width * 0.29)) * pulse
-            };
-        };
-
-        const drawProtocolMembrane = (time, pointerState) => {
-            const aperture = getApertureMetrics(time, pointerState);
-            const { centerX, centerY, radiusX, radiusY } = aperture;
-
-            context.save();
-            context.translate(centerX, centerY);
-            context.scale(radiusX / radiusY, 1);
-
-            const membrane = context.createRadialGradient(0, 0, radiusY * 0.08, 0, 0, radiusY);
-            membrane.addColorStop(0, "rgba(7, 18, 51, 0.14)");
-            membrane.addColorStop(0.58, "rgba(3, 12, 37, 0.28)");
-            membrane.addColorStop(0.84, "rgba(2, 8, 27, 0.58)");
-            membrane.addColorStop(1, "rgba(2, 7, 22, 0.42)");
-
-            context.beginPath();
-            context.arc(0, 0, radiusY, 0, Math.PI * 2);
-            context.fillStyle = membrane;
-            context.fill();
-            context.restore();
-        };
-
-        const drawProtocolAperture = (time, pointerState) => {
-            const aperture = getApertureMetrics(time, pointerState);
-            const { centerX, centerY, radiusX, radiusY } = aperture;
-            const compact = width < 700;
-
-            context.save();
-            context.translate(centerX, centerY);
-            context.lineCap = "round";
-            context.shadowColor = "rgba(87, 190, 255, 0.72)";
-            context.shadowBlur = compact ? 5 : 8;
-
-            context.save();
-            context.scale(radiusX, radiusY);
-            context.beginPath();
-            context.arc(0, 0, 0.965, 0, Math.PI * 2);
-            context.clip();
-            context.rotate(time * 0.055);
-            context.lineWidth = compact ? 0.0034 : 0.0025;
-            context.shadowBlur = 0;
-
-            context.beginPath();
-            for (let offset = -1.5; offset <= 1.5; offset += 0.15) {
-                context.moveTo(-1.5, offset);
-                context.lineTo(1.5, offset);
-                context.moveTo(offset, -1.5);
-                context.lineTo(offset, 1.5);
-            }
-            context.strokeStyle = "rgba(95, 194, 255, 0.105)";
-            context.stroke();
-
-            context.beginPath();
-            for (let offset = -1.5; offset <= 1.5; offset += 0.15) {
-                context.moveTo(-1.5, offset - 0.72);
-                context.lineTo(1.5, offset + 0.72);
-            }
-            context.strokeStyle = "rgba(172, 118, 255, 0.075)";
-            context.stroke();
-
-            for (let group = 0; group < 3; group += 1) {
-                context.beginPath();
-                for (let node = group; node < 22; node += 3) {
-                    const angle = node * 2.3999632297 + time * (node % 2 === 0 ? 0.035 : -0.024);
-                    const radius = 0.18 + ((node * 17) % 67) / 100;
-                    context.moveTo(Math.cos(angle) * radius + 0.006, Math.sin(angle) * radius);
-                    context.arc(Math.cos(angle) * radius, Math.sin(angle) * radius, node % 5 === 0 ? 0.012 : 0.006, 0, Math.PI * 2);
-                }
-                context.fillStyle = group === 0
-                    ? "rgba(186, 135, 255, 0.42)"
-                    : "rgba(113, 219, 255, 0.42)";
-                context.fill();
-            }
-            context.restore();
-
-            [0.64, 0.79, 0.92, 1].forEach((scale, index) => {
-                context.beginPath();
-                context.setLineDash(index % 2 === 0 ? [3, 9, 15, 8] : [1, 12, 6, 11]);
-                context.lineDashOffset = (index % 2 === 0 ? -1 : 1) * time * (13 + index * 4);
-                context.ellipse(0, 0, radiusX * scale, radiusY * scale, 0, 0, Math.PI * 2);
-                context.lineWidth = index === 3 ? 1.25 : 0.7;
-                context.strokeStyle = index % 2 === 0
-                    ? `rgba(91, 205, 255, ${0.24 + index * 0.06})`
-                    : `rgba(154, 112, 255, ${0.23 + index * 0.05})`;
-                context.stroke();
-            });
-
-            context.setLineDash([]);
-            for (let index = 0; index < 18; index += 1) {
-                const direction = index % 3 === 0 ? -1 : 1;
-                const angle = (index / 18) * Math.PI * 2 + time * 0.17 * direction;
-                const inner = index % 4 === 0 ? 0.72 : 0.84;
-                const outer = index % 5 === 0 ? 1.045 : 1.015;
-                context.beginPath();
-                context.moveTo(Math.cos(angle) * radiusX * inner, Math.sin(angle) * radiusY * inner);
-                context.lineTo(Math.cos(angle) * radiusX * outer, Math.sin(angle) * radiusY * outer);
-                context.lineWidth = index % 4 === 0 ? 1.35 : 0.65;
-                context.strokeStyle = index % 2 === 0
-                    ? "rgba(124, 221, 255, 0.54)"
-                    : "rgba(178, 130, 255, 0.42)";
-                context.stroke();
-            }
-
-            context.restore();
-            drawOrbitingBrand(aperture, time, compact);
-        };
-
-        const drawOrbitingBrand = (aperture, time, compact) => {
-            if (!brandContext) {
-                return;
-            }
-
-            const phrase = "TOS NETWORK  ·  ".repeat(4);
-            const radiusX = aperture.radiusX * 1.085;
-            const radiusY = aperture.radiusY * 1.085;
-            const rotation = time * 0.16 - Math.PI * 0.5;
-
-            if (time - lastBrandFrame >= 0.075) {
-                brandContext.clearRect(0, 0, width, height);
-                brandContext.save();
-                brandContext.font = `600 ${compact ? 9.5 : 11.5}px "IBM Plex Mono", monospace`;
-                brandContext.textAlign = "center";
-                brandContext.textBaseline = "middle";
-                brandContext.fillStyle = "rgba(196, 235, 255, 0.78)";
-
-                Array.from(phrase).forEach((character, index) => {
-                    const angle = rotation + (index / phrase.length) * Math.PI * 2;
-                    const x = aperture.centerX + Math.cos(angle) * radiusX;
-                    const y = aperture.centerY + Math.sin(angle) * radiusY;
-                    const tangent = Math.atan2(radiusY * Math.cos(angle), -radiusX * Math.sin(angle));
-
-                    brandContext.save();
-                    brandContext.translate(x, y);
-                    brandContext.rotate(tangent);
-                    brandContext.fillText(character, 0, 0);
-                    brandContext.restore();
-                });
-
-                brandContext.restore();
-                lastBrandFrame = time;
-            }
-
-            context.drawImage(brandCanvas, 0, 0, width, height);
-        };
-
-        const drawLane = (signal, time, pointerState) => {
-            context.save();
-            context.beginPath();
-            const steps = width < 700 ? 48 : 72;
-            for (let index = 0; index <= steps; index += 1) {
-                const point = pointOnPath(signal, index / steps, time, pointerState);
-                if (index === 0) {
-                    context.moveTo(point.x, point.y);
-                } else {
-                    context.lineTo(point.x, point.y);
-                }
-            }
-
-            const baseWidth = 0.55 + signal.depth * 0.72;
-            context.lineCap = "round";
-            context.lineJoin = "round";
-            context.lineWidth = baseWidth;
-            context.globalAlpha = 0.56 + signal.depth * 0.16;
-            context.strokeStyle = laneGradient || "rgba(164, 218, 255, 0.42)";
-            context.shadowBlur = 1.5;
-            context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, 0.32)`;
-            context.stroke();
-
-            context.setLineDash(width < 700 ? [10, 25] : [14, 34]);
-            context.lineDashOffset = -(time * (92 + signal.speed * 220) + signal.phase * 18);
-            context.lineWidth = baseWidth + 0.68;
-            context.globalAlpha = 0.52;
-            context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, 84%, 0.72)`;
-            context.shadowBlur = 4;
-            context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, 76%, 0.68)`;
-            context.stroke();
-            context.restore();
-        };
-
-        const drawSignal = (signal, time, pointerState) => {
-            const trailSteps = width < 700 ? 7 : 11;
-            const trailLength = signal.t < 0.5 ? 0.1 : 0.135;
-            const trailStart = Math.max(0, signal.t - trailLength);
-
-            context.beginPath();
-            for (let index = 0; index <= trailSteps; index += 1) {
-                const trailT = trailStart + (signal.t - trailStart) * (index / trailSteps);
-                const point = pointOnPath(signal, trailT, time, pointerState);
-                if (index === 0) {
-                    context.moveTo(point.x, point.y);
-                } else {
-                    context.lineTo(point.x, point.y);
-                }
-            }
-
-            const intensity = signal.t > 0.47 && signal.t < 0.57 ? 1 : signal.alpha;
-            context.lineWidth = signal.size * (signal.t > 0.5 ? 1.18 : 0.9);
-            context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, ${0.24 + intensity * 0.5})`;
-            context.shadowBlur = 3 + signal.size * 3;
-            context.shadowColor = `hsla(${signal.hue}, ${signal.saturation}%, ${signal.lightness}%, 0.62)`;
-            context.stroke();
-
-            const point = pointOnPath(signal, signal.t, time, pointerState);
-            drawGlyph(point.x, point.y, signal, signal.t);
-            context.shadowBlur = 0;
-        };
-
-        const drawGlyph = (x, y, signal, progress) => {
-            const transformed = progress > 0.5;
-            const size = signal.size * (transformed ? 2.55 : 1.95);
-            context.save();
-            context.translate(x, y);
-            context.rotate((progress + signal.phase) * 1.8);
-            context.fillStyle = `hsla(${signal.hue}, ${signal.saturation}%, ${Math.min(88, signal.lightness + 8)}%, ${signal.alpha})`;
-            context.strokeStyle = `hsla(${signal.hue}, ${signal.saturation}%, 88%, ${signal.alpha})`;
-            context.lineWidth = 0.8;
-
-            if (transformed || signal.shape === 0) {
-                context.beginPath();
-                context.moveTo(0, -size);
-                context.lineTo(size, 0);
-                context.lineTo(0, size);
-                context.lineTo(-size, 0);
-                context.closePath();
-                if (transformed) {
-                    context.stroke();
-                } else {
-                    context.fill();
-                }
-            } else if (signal.shape === 1) {
-                context.fillRect(-size, -size * 0.62, size * 2, size * 1.24);
-            } else if (signal.shape === 2) {
-                context.beginPath();
-                context.arc(0, 0, size, 0, Math.PI * 2);
-                context.fill();
-            } else if (signal.shape === 3) {
-                context.beginPath();
-                context.moveTo(-size, -size * 0.7);
-                context.lineTo(size, -size * 0.7);
-                context.lineTo(size, size * 0.7);
-                context.lineTo(-size, size * 0.7);
-                context.closePath();
-                context.stroke();
-            } else {
-                context.beginPath();
-                context.arc(0, 0, size, 0, Math.PI * 2);
-                context.stroke();
-                context.beginPath();
-                context.arc(0, 0, Math.max(0.8, size * 0.25), 0, Math.PI * 2);
-                context.fill();
-            }
-            context.restore();
-        };
-
-        const pointOnPath = (signal, progress, time, pointerState) => {
-            const portalX = portalCenter.x;
-            let x;
-            let y;
-
-            if (progress <= 0.5) {
-                const t = progress * 2;
-                x = cubic(-0.08, 0.13, 0.35, portalX, t);
-                y = cubic(signal.startY, signal.startY * 0.82 + 0.09, signal.middleY, signal.middleY, t);
-                y += Math.sin(time * signal.waveSpeed + signal.phase + t * 7) * signal.wave * (1 - t);
-            } else {
-                const t = (progress - 0.5) * 2;
-                x = cubic(portalX, 0.64, 0.81, 1.08, t);
-                y = cubic(signal.middleY, signal.middleY, signal.endY, signal.endY, t);
-                y += Math.sin(time * (signal.waveSpeed * 0.72) + signal.phase + t * 4) * signal.wave * 0.32 * t;
-            }
-
-            const gateInfluence = Math.max(0, 1 - Math.abs(progress - 0.5) / 0.18);
-            const depthShiftX = pointerState.x * (signal.depth - 0.5) * 8 * (1 - gateInfluence)
-                + pointerState.x * width * 0.002 * gateInfluence;
-            const depthShiftY = pointerState.y * (signal.depth - 0.5) * 5 * (1 - gateInfluence)
-                + pointerState.y * height * 0.002 * gateInfluence;
-            return { x: x * width + depthShiftX, y: y * height + depthShiftY };
-        };
-
-        return { resize, render };
-    }
-
-    function createPortalRenderer(canvas) {
-        const gl = canvas.getContext("webgl", {
-            alpha: true,
-            antialias: true,
-            depth: false,
-            premultipliedAlpha: true,
-            powerPreference: "high-performance"
-        });
-
-        if (!gl) {
-            return null;
-        }
-
-        const vertexSource = `
-            attribute vec3 aPosition;
-            attribute float aPhase;
-            uniform float uTime;
-            uniform float uAspect;
-            uniform float uScale;
-            uniform float uRotation;
-            uniform vec2 uPointer;
-            varying float vPulse;
-
-            void main() {
-                vec3 point = aPosition * uScale;
-                float spinCos = cos(uRotation);
-                float spinSin = sin(uRotation);
-                point.xy = vec2(
-                    point.x * spinCos - point.y * spinSin,
-                    point.x * spinSin + point.y * spinCos
-                );
-
-                point.x *= 0.43;
-                point.z += sin(uTime * 0.82 + aPhase * 6.28318) * 0.009;
-
-                float angleY = 0.04 + uPointer.x * 0.075 + sin(uTime * 0.17) * 0.012;
-                float cosY = cos(angleY);
-                float sinY = sin(angleY);
-                point = vec3(
-                    point.x * cosY + point.z * sinY,
-                    point.y,
-                    -point.x * sinY + point.z * cosY
-                );
-
-                float angleX = -0.035 + uPointer.y * 0.045;
-                float cosX = cos(angleX);
-                float sinX = sin(angleX);
-                point = vec3(
-                    point.x,
-                    point.y * cosX - point.z * sinX,
-                    point.y * sinX + point.z * cosX
-                );
-
-                float perspective = 2.42 / (3.55 + point.z);
-                vec2 projected = point.xy * perspective;
-                projected.x /= uAspect;
-                projected += vec2(uPointer.x * 0.007, uPointer.y * 0.007);
-
-                gl_Position = vec4(projected, 0.0, 1.0);
-                vPulse = 0.58 + 0.42 * sin(uTime * 1.35 + aPhase * 6.28318);
-            }
-        `;
-
-        const fragmentSource = `
-            precision mediump float;
-            uniform vec3 uColor;
-            uniform float uAlpha;
-            varying float vPulse;
-
-            void main() {
-                vec3 color = mix(uColor * 0.72, min(vec3(1.0), uColor * 1.28), vPulse);
-                gl_FragColor = vec4(color, uAlpha * (0.46 + vPulse * 0.54));
-            }
-        `;
-
-        const program = createProgram(gl, vertexSource, fragmentSource);
-        if (!program) {
-            return null;
-        }
-
-        const geometry = createApertureGeometry(128);
-        const positionBuffer = gl.createBuffer();
-        const phaseBuffer = gl.createBuffer();
-        const indexBuffer = gl.createBuffer();
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, geometry.positions, gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, phaseBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, geometry.phases, gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
-
-        const locations = {
-            position: gl.getAttribLocation(program, "aPosition"),
-            phase: gl.getAttribLocation(program, "aPhase"),
-            time: gl.getUniformLocation(program, "uTime"),
-            aspect: gl.getUniformLocation(program, "uAspect"),
-            scale: gl.getUniformLocation(program, "uScale"),
-            rotation: gl.getUniformLocation(program, "uRotation"),
-            pointer: gl.getUniformLocation(program, "uPointer"),
-            color: gl.getUniformLocation(program, "uColor"),
-            alpha: gl.getUniformLocation(program, "uAlpha")
-        };
-
-        let width = 1;
-        let height = 1;
-
-        const resize = (nextWidth, nextHeight) => {
-            width = nextWidth;
-            height = nextHeight;
-            const ratio = Math.min(window.devicePixelRatio || 1, width < 700 ? 1.15 : 1.5);
-            canvas.width = Math.max(1, Math.round(width * ratio));
-            canvas.height = Math.max(1, Math.round(height * ratio));
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
-            gl.viewport(0, 0, canvas.width, canvas.height);
-        };
-
-        const render = (time, pointerState) => {
-            gl.clearColor(0, 0, 0, 0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-            gl.useProgram(program);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.enableVertexAttribArray(locations.position);
-            gl.vertexAttribPointer(locations.position, 3, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, phaseBuffer);
-            gl.enableVertexAttribArray(locations.phase);
-            gl.vertexAttribPointer(locations.phase, 1, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            gl.uniform1f(locations.time, time);
-            gl.uniform1f(locations.aspect, width / Math.max(1, height));
-            gl.uniform2f(locations.pointer, pointerState.x, pointerState.y);
-
-            const layers = [
-                { scale: 0.76, color: [0.49, 0.84, 1], alpha: 0.2, speed: -0.13, phase: 0.8 },
-                { scale: 0.94, color: [0.35, 0.62, 1], alpha: 0.32, speed: 0.17, phase: 0 },
-                { scale: 1.075, color: [0.63, 0.36, 1], alpha: 0.22, speed: -0.075, phase: 2.1 }
-            ];
-
-            layers.forEach((layer, index) => {
-                gl.uniform1f(locations.scale, layer.scale + Math.sin(time * 0.42 + index) * 0.004);
-                gl.uniform1f(locations.rotation, time * layer.speed + layer.phase);
-                gl.uniform3fv(locations.color, layer.color);
-                gl.uniform1f(locations.alpha, layer.alpha);
-                gl.drawElements(gl.LINES, geometry.indices.length, gl.UNSIGNED_SHORT, 0);
-            });
-        };
-
-        canvas.addEventListener("webglcontextlost", (event) => {
-            event.preventDefault();
-            scene.classList.remove("webgl-ready");
-        });
-
-        return { resize, render };
-    }
-
-    function createApertureGeometry(segments) {
-        const positions = [];
-        const phases = [];
-        const indices = [];
-
-        const addPoint = (radius, angle, phase, depth = 0) => {
-            const index = positions.length / 3;
-            positions.push(
-                radius * Math.cos(angle),
-                radius * Math.sin(angle),
-                depth
-            );
-            phases.push(phase % 1);
-            return index;
-        };
-
-        [0.28, 0.46, 0.64, 0.82, 1].forEach((radius, ringIndex) => {
-            const start = positions.length / 3;
-            for (let segment = 0; segment < segments; segment += 1) {
-                const angle = (segment / segments) * Math.PI * 2;
-                addPoint(radius, angle, segment / segments + ringIndex * 0.11, Math.sin(angle * 3 + ringIndex) * 0.006);
-            }
-            for (let segment = 0; segment < segments; segment += 1) {
-                indices.push(start + segment, start + ((segment + 1) % segments));
-            }
-        });
-
-        for (let spoke = 0; spoke < 19; spoke += 1) {
-            const angle = (spoke / 19) * Math.PI * 2 + (spoke % 3) * 0.035;
-            const inner = 0.2 + (spoke % 4) * 0.045;
-            const outer = 0.74 + (spoke % 5) * 0.055;
-            const first = addPoint(inner, angle, spoke / 19);
-            const second = addPoint(outer, angle, spoke / 19 + 0.08);
-            indices.push(first, second);
-        }
-
-        const sectors = [0.08, 0.73, 1.62, 2.48, 3.86, 5.14];
-        sectors.forEach((startAngle, sectorIndex) => {
-            const arcSegments = 12 + (sectorIndex % 3) * 4;
-            const radius = 1.065 + (sectorIndex % 2) * 0.045;
-            let previous = -1;
-            for (let segment = 0; segment <= arcSegments; segment += 1) {
-                const angle = startAngle + segment * 0.018;
-                const current = addPoint(radius, angle, sectorIndex / sectors.length + segment * 0.01);
-                if (previous >= 0) {
-                    indices.push(previous, current);
-                }
-                previous = current;
-            }
-        });
-
-        return {
-            positions: new Float32Array(positions),
-            phases: new Float32Array(phases),
-            indices: new Uint16Array(indices)
-        };
-    }
-
-    function createProgram(gl, vertexSource, fragmentSource) {
-        const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
-        const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-        if (!vertexShader || !fragmentShader) {
-            return null;
-        }
-
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            console.warn("Realtime protocol geometry unavailable.", gl.getProgramInfoLog(program));
-            gl.deleteProgram(program);
-            return null;
-        }
-
-        return program;
-    }
-
-    function compileShader(gl, type, source) {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.warn("Realtime shader unavailable.", gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
-        }
-
-        return shader;
-    }
-
-    function cubic(a, b, c, d, t) {
-        const inverse = 1 - t;
-        return inverse * inverse * inverse * a
-            + 3 * inverse * inverse * t * b
-            + 3 * inverse * t * t * c
-            + t * t * t * d;
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var compactQuery = window.matchMedia('(max-width: 640px)');
+    var width = 0;
+    var height = 0;
+    var pixelRatio = 0.75;
+    var graph = { edges: [], nodes: [] };
+    var particles = [];
+    var animationFrame = 0;
+    var lastFrameTime = 0;
+    var manuallyPaused = false;
+    var sceneVisible = true;
+    var pointerFrame = 0;
+    var lastWorldFrameTime = 0;
+    var worldPixelRatio = 0.45;
+    var worldRandom = null;
+    var worldActors = [];
+    var worldClusters = [];
+    var worldBridges = [];
+    var nextWorldEntityId = 1;
+
+    var worldClusterDefinitions = [
+        { x: 0.75, y: 0.28, radius: 0.032, max: 4 },
+        { x: 0.84, y: 0.23, radius: 0.038, max: 5 },
+        { x: 0.90, y: 0.37, radius: 0.034, max: 4 },
+        { x: 0.96, y: 0.48, radius: 0.029, max: 4 },
+        { x: 0.78, y: 0.49, radius: 0.031, max: 4 },
+        { x: 0.87, y: 0.60, radius: 0.041, max: 5 },
+        { x: 0.83, y: 0.79, radius: 0.045, max: 6 },
+        { x: 0.95, y: 0.76, radius: 0.052, max: 6 }
+    ];
+
+    var worldColors = [
+        [120, 207, 231],
+        [224, 95, 214],
+        [168, 85, 247],
+        [245, 179, 111]
+    ];
+
+    function createSvgElement(name, className) {
+        var element = document.createElementNS(SVG_NS, name);
+        element.setAttribute('class', className);
+        return element;
     }
 
     function mulberry32(seed) {
-        return () => {
-            let value = seed += 0x6D2B79F5;
-            value = Math.imul(value ^ value >>> 15, value | 1);
-            value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+        return function () {
+            seed |= 0;
+            seed = seed + 0x6D2B79F5 | 0;
+            var value = Math.imul(seed ^ seed >>> 15, 1 | seed);
+            value = value + Math.imul(value ^ value >>> 7, 61 | value) ^ value;
             return ((value ^ value >>> 14) >>> 0) / 4294967296;
         };
     }
-})();
+
+    function randomBetween(minimum, maximum) {
+        return minimum + (maximum - minimum) * worldRandom();
+    }
+
+    function entityAlpha(entity) {
+        return Math.max(0, Math.min(
+            1,
+            entity.age / entity.fadeIn,
+            (entity.life - entity.age) / entity.fadeOut
+        ));
+    }
+
+    function assignActorTarget(actor) {
+        if (actor.behavior === 1) {
+            actor.targetX = randomBetween(0.445, 0.475);
+            actor.targetY = randomBetween(0.27, 0.73);
+        } else {
+            actor.targetX = randomBetween(0.025, 0.43);
+            actor.targetY = randomBetween(0.1, 0.9);
+        }
+    }
+
+    function spawnWorldActor(initial) {
+        var behavior = Math.floor(worldRandom() * 3);
+        var actor = {
+            id: nextWorldEntityId,
+            role: Math.floor(worldRandom() * worldColors.length),
+            behavior: behavior,
+            x: randomBetween(0.025, 0.42),
+            y: randomBetween(0.1, 0.9),
+            vx: randomBetween(-0.008, 0.008),
+            vy: randomBetween(-0.008, 0.008),
+            targetX: 0,
+            targetY: 0,
+            homeX: randomBetween(0.04, 0.4),
+            homeY: randomBetween(0.13, 0.87),
+            orbitRadius: randomBetween(0.025, 0.075),
+            orbitRate: randomBetween(0.00028, 0.00065),
+            phase: randomBetween(0, Math.PI * 2),
+            speed: randomBetween(0.035, 0.068),
+            size: randomBetween(2.2, 4.1),
+            life: randomBetween(6.5, 15),
+            age: 0,
+            fadeIn: randomBetween(0.7, 1.5),
+            fadeOut: randomBetween(0.9, 1.8)
+        };
+
+        nextWorldEntityId += 1;
+        assignActorTarget(actor);
+
+        if (initial) {
+            actor.age = randomBetween(0, actor.life * 0.78);
+        }
+
+        worldActors.push(actor);
+    }
+
+    function spawnClusterMember(cluster, initial) {
+        var member = {
+            id: nextWorldEntityId,
+            role: Math.floor(worldRandom() * worldColors.length),
+            angle: randomBetween(0, Math.PI * 2),
+            distance: randomBetween(0.32, 1),
+            angularSpeed: randomBetween(0.22, 0.72) * (worldRandom() < 0.5 ? -1 : 1),
+            size: randomBetween(1.7, 3.2),
+            life: randomBetween(5, 13),
+            age: 0,
+            fadeIn: randomBetween(0.5, 1.2),
+            fadeOut: randomBetween(0.7, 1.5),
+            px: 0,
+            py: 0
+        };
+
+        nextWorldEntityId += 1;
+
+        if (initial) {
+            member.age = randomBetween(0, member.life * 0.72);
+        }
+
+        cluster.members.push(member);
+    }
+
+    function buildAgenticWorld() {
+        worldRandom = mulberry32(718239);
+        worldActors = [];
+        worldBridges = [];
+        nextWorldEntityId = 1;
+
+        var initialActors = compactQuery.matches ? 10 : 18;
+        for (var actorIndex = 0; actorIndex < initialActors; actorIndex += 1) {
+            spawnWorldActor(true);
+        }
+
+        worldClusters = worldClusterDefinitions.map(function (definition, clusterIndex) {
+            var cluster = {
+                x: definition.x,
+                y: definition.y,
+                radius: definition.radius,
+                max: compactQuery.matches ? Math.max(3, definition.max - 2) : definition.max,
+                phase: randomBetween(0, Math.PI * 2),
+                members: [],
+                interactions: [],
+                id: clusterIndex
+            };
+            var initialMembers = Math.max(2, Math.floor(randomBetween(2, cluster.max)));
+
+            for (var memberIndex = 0; memberIndex < initialMembers; memberIndex += 1) {
+                spawnClusterMember(cluster, true);
+            }
+
+            return cluster;
+        });
+    }
+
+    function updateWorldActors(delta, time) {
+        worldActors.forEach(function (actor) {
+            actor.age += delta;
+
+            if (actor.behavior === 2) {
+                actor.targetX = actor.homeX + Math.cos(time * actor.orbitRate + actor.phase) * actor.orbitRadius;
+                actor.targetY = actor.homeY + Math.sin(time * actor.orbitRate * 0.81 + actor.phase) * actor.orbitRadius;
+            }
+
+            var deltaX = actor.targetX - actor.x;
+            var deltaY = actor.targetY - actor.y;
+            var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) || 1;
+            actor.vx += deltaX / distance * actor.speed * delta * 0.85;
+            actor.vy += deltaY / distance * actor.speed * delta * 0.85;
+            actor.vx += Math.sin(time * 0.0007 + actor.phase) * 0.0025 * delta;
+            actor.vy += Math.cos(time * 0.00057 + actor.phase) * 0.0025 * delta;
+
+            var velocity = Math.sqrt(actor.vx * actor.vx + actor.vy * actor.vy) || 1;
+            if (velocity > actor.speed) {
+                actor.vx = actor.vx / velocity * actor.speed;
+                actor.vy = actor.vy / velocity * actor.speed;
+            }
+
+            actor.vx *= Math.pow(0.22, delta);
+            actor.vy *= Math.pow(0.22, delta);
+            actor.x += actor.vx * delta;
+            actor.y += actor.vy * delta;
+
+            if (distance < 0.018 && actor.behavior !== 2) {
+                if (actor.behavior === 1) {
+                    actor.life = Math.min(actor.life, actor.age + actor.fadeOut + 0.7);
+                }
+                assignActorTarget(actor);
+            }
+
+            if (actor.x < 0.015 || actor.x > 0.49) {
+                actor.vx *= -0.8;
+                actor.x = Math.max(0.015, Math.min(0.49, actor.x));
+            }
+            if (actor.y < 0.07 || actor.y > 0.93) {
+                actor.vy *= -0.8;
+                actor.y = Math.max(0.07, Math.min(0.93, actor.y));
+            }
+        });
+
+        worldActors = worldActors.filter(function (actor) {
+            return actor.age < actor.life;
+        });
+
+        var baseCount = compactQuery.matches ? 8 : 15;
+        var targetCount = baseCount + Math.round((Math.sin(time * 0.00022) + 1) * (compactQuery.matches ? 3 : 4));
+
+        if (worldActors.length < targetCount && worldRandom() < Math.min(1, delta * 4.2)) {
+            spawnWorldActor(false);
+        }
+        if (worldActors.length > targetCount + 3 && worldRandom() < delta * 0.7) {
+            var retiringActor = worldActors[Math.floor(worldRandom() * worldActors.length)];
+            retiringActor.life = Math.min(retiringActor.life, retiringActor.age + retiringActor.fadeOut);
+        }
+    }
+
+    function updateWorldClusters(delta, time) {
+        worldClusters.forEach(function (cluster) {
+            cluster.members.forEach(function (member) {
+                member.age += delta;
+                member.angle += member.angularSpeed * delta;
+                var orbitPixels = cluster.radius * Math.min(width, height) * member.distance;
+                member.px = cluster.x * width + Math.cos(member.angle) * orbitPixels;
+                member.py = cluster.y * height + Math.sin(member.angle) * orbitPixels * 0.58;
+            });
+
+            cluster.members = cluster.members.filter(function (member) {
+                return member.age < member.life;
+            });
+
+            var dynamicMaximum = Math.max(2, cluster.max - Math.round((Math.sin(time * 0.00031 + cluster.phase) + 1) * 1.2));
+            if (cluster.members.length < dynamicMaximum && worldRandom() < Math.min(1, delta * 1.15)) {
+                spawnClusterMember(cluster, false);
+            }
+
+            cluster.interactions.forEach(function (interaction) {
+                interaction.age += delta;
+            });
+            cluster.interactions = cluster.interactions.filter(function (interaction) {
+                return interaction.age < interaction.duration
+                    && cluster.members.indexOf(interaction.from) !== -1
+                    && cluster.members.indexOf(interaction.to) !== -1;
+            });
+
+            if (cluster.members.length > 1
+                && cluster.interactions.length < 2
+                && worldRandom() < delta * 0.42) {
+                var fromIndex = Math.floor(worldRandom() * cluster.members.length);
+                var toIndex = (fromIndex + 1 + Math.floor(worldRandom() * (cluster.members.length - 1))) % cluster.members.length;
+                cluster.interactions.push({
+                    from: cluster.members[fromIndex],
+                    to: cluster.members[toIndex],
+                    age: 0,
+                    duration: randomBetween(0.9, 2.1)
+                });
+            }
+        });
+
+        worldBridges.forEach(function (bridge) {
+            bridge.age += delta;
+        });
+        worldBridges = worldBridges.filter(function (bridge) {
+            return bridge.age < bridge.duration;
+        });
+
+        if (worldBridges.length < 3 && worldRandom() < delta * 0.18) {
+            var sourceIndex = Math.floor(worldRandom() * worldClusters.length);
+            var destinationIndex = (sourceIndex + 1 + Math.floor(worldRandom() * (worldClusters.length - 1))) % worldClusters.length;
+            worldBridges.push({
+                from: worldClusters[sourceIndex],
+                to: worldClusters[destinationIndex],
+                age: 0,
+                duration: randomBetween(1.4, 2.8),
+                color: Math.floor(worldRandom() * worldColors.length)
+            });
+        }
+    }
+
+    function drawEntity(x, y, size, role, alpha) {
+        var color = worldColors[role];
+        var colorValue = color[0] + ', ' + color[1] + ', ' + color[2];
+
+        worldContext.beginPath();
+
+        if (role === 0) {
+            worldContext.arc(x, y, size, 0, Math.PI * 2);
+        } else if (role === 1) {
+            worldContext.moveTo(x, y - size * 1.25);
+            worldContext.lineTo(x + size * 1.25, y);
+            worldContext.lineTo(x, y + size * 1.25);
+            worldContext.lineTo(x - size * 1.25, y);
+            worldContext.closePath();
+        } else if (role === 2) {
+            for (var side = 0; side < 6; side += 1) {
+                var angle = Math.PI / 3 * side - Math.PI / 2;
+                var sideX = x + Math.cos(angle) * size * 1.2;
+                var sideY = y + Math.sin(angle) * size * 1.2;
+                if (side === 0) {
+                    worldContext.moveTo(sideX, sideY);
+                } else {
+                    worldContext.lineTo(sideX, sideY);
+                }
+            }
+            worldContext.closePath();
+        } else {
+            worldContext.rect(x - size, y - size, size * 2, size * 2);
+        }
+
+        worldContext.fillStyle = 'rgba(' + colorValue + ', ' + alpha * 0.86 + ')';
+        worldContext.fill();
+        if (size >= 2.45) {
+            worldContext.lineWidth = 0.7;
+            worldContext.strokeStyle = 'rgba(244, 252, 255, ' + alpha * 0.62 + ')';
+            worldContext.stroke();
+        }
+    }
+
+    function drawActorConnections() {
+        var thresholdSquared = 0.072 * 0.072;
+
+        worldActors.forEach(function (actor, actorIndex) {
+            if ((actor.id + actorIndex) % 3 === 0) {
+                return;
+            }
+
+            var nearest = null;
+            var nearestDistance = thresholdSquared;
+
+            worldActors.forEach(function (candidate) {
+                if (candidate === actor) {
+                    return;
+                }
+                var deltaX = candidate.x - actor.x;
+                var deltaY = candidate.y - actor.y;
+                var distance = deltaX * deltaX + deltaY * deltaY;
+                if (distance < nearestDistance) {
+                    nearest = candidate;
+                    nearestDistance = distance;
+                }
+            });
+
+            if (!nearest || actor.id > nearest.id) {
+                return;
+            }
+
+            var alpha = Math.min(entityAlpha(actor), entityAlpha(nearest));
+            worldContext.beginPath();
+            worldContext.moveTo(actor.x * width, actor.y * height);
+            worldContext.lineTo(nearest.x * width, nearest.y * height);
+            worldContext.lineWidth = 0.7;
+            worldContext.strokeStyle = 'rgba(120, 207, 231, ' + alpha * 0.2 + ')';
+            worldContext.stroke();
+        });
+    }
+
+    function drawCluster(cluster, time) {
+        var centerX = cluster.x * width;
+        var centerY = cluster.y * height;
+        var radius = cluster.radius * Math.min(width, height);
+
+        worldContext.beginPath();
+        worldContext.arc(centerX, centerY, radius * 1.14, time * 0.00016 + cluster.phase, time * 0.00016 + cluster.phase + Math.PI * 1.28);
+        worldContext.lineWidth = 0.8;
+        worldContext.strokeStyle = 'rgba(120, 207, 231, 0.16)';
+        worldContext.stroke();
+
+        cluster.interactions.forEach(function (interaction) {
+            var progress = interaction.age / interaction.duration;
+            var alpha = Math.sin(progress * Math.PI);
+            var packetX = interaction.from.px + (interaction.to.px - interaction.from.px) * progress;
+            var packetY = interaction.from.py + (interaction.to.py - interaction.from.py) * progress;
+
+            worldContext.beginPath();
+            worldContext.moveTo(interaction.from.px, interaction.from.py);
+            worldContext.lineTo(interaction.to.px, interaction.to.py);
+            worldContext.lineWidth = 0.9;
+            worldContext.strokeStyle = 'rgba(178, 231, 243, ' + alpha * 0.42 + ')';
+            worldContext.stroke();
+            worldContext.beginPath();
+            worldContext.arc(packetX, packetY, 1.8, 0, Math.PI * 2);
+            worldContext.fillStyle = 'rgba(255, 255, 255, ' + alpha * 0.9 + ')';
+            worldContext.fill();
+        });
+
+        cluster.members.forEach(function (member) {
+            drawEntity(member.px, member.py, member.size, member.role, entityAlpha(member));
+        });
+    }
+
+    function drawWorldBridges() {
+        worldBridges.forEach(function (bridge) {
+            var progress = bridge.age / bridge.duration;
+            var alpha = Math.sin(progress * Math.PI);
+            var fromX = bridge.from.x * width;
+            var fromY = bridge.from.y * height;
+            var toX = bridge.to.x * width;
+            var toY = bridge.to.y * height;
+            var controlX = (fromX + toX) / 2;
+            var controlY = Math.min(fromY, toY) - 24;
+            var inverse = 1 - progress;
+            var packetX = inverse * inverse * fromX + 2 * inverse * progress * controlX + progress * progress * toX;
+            var packetY = inverse * inverse * fromY + 2 * inverse * progress * controlY + progress * progress * toY;
+            var color = worldColors[bridge.color];
+
+            worldContext.beginPath();
+            worldContext.moveTo(fromX, fromY);
+            worldContext.quadraticCurveTo(controlX, controlY, toX, toY);
+            worldContext.lineWidth = 0.7;
+            worldContext.strokeStyle = 'rgba(120, 207, 231, ' + alpha * 0.14 + ')';
+            worldContext.stroke();
+            worldContext.beginPath();
+            worldContext.arc(packetX, packetY, 2.2, 0, Math.PI * 2);
+            worldContext.fillStyle = 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + alpha * 0.85 + ')';
+            worldContext.fill();
+        });
+    }
+
+    function drawWorldLayer(time) {
+        if (!worldRandom) {
+            return;
+        }
+
+        if (lastWorldFrameTime && time - lastWorldFrameTime < 1000 / 8) {
+            return;
+        }
+
+        var delta = lastWorldFrameTime ? Math.min(0.18, (time - lastWorldFrameTime) / 1000) : 0;
+        lastWorldFrameTime = time;
+        updateWorldActors(delta, time);
+        updateWorldClusters(delta, time);
+        worldContext.clearRect(0, 0, width, height);
+        worldContext.globalCompositeOperation = 'source-over';
+        drawWorldBridges();
+        drawActorConnections();
+
+        worldClusters.forEach(function (cluster) {
+            drawCluster(cluster, time);
+        });
+        worldActors.forEach(function (actor) {
+            drawEntity(actor.x * width, actor.y * height, actor.size, actor.role, entityAlpha(actor));
+        });
+
+        worldContext.globalCompositeOperation = 'source-over';
+        worldContext.globalAlpha = 1;
+    }
+
+    function cubicPoint(edge, t) {
+        var inverse = 1 - t;
+        var inverseSquared = inverse * inverse;
+        var tSquared = t * t;
+
+        return {
+            x: inverseSquared * inverse * edge.from.x
+                + 3 * inverseSquared * t * edge.controlOne.x
+                + 3 * inverse * tSquared * edge.controlTwo.x
+                + tSquared * t * edge.to.x,
+            y: inverseSquared * inverse * edge.from.y
+                + 3 * inverseSquared * t * edge.controlOne.y
+                + 3 * inverse * tSquared * edge.controlTwo.y
+                + tSquared * t * edge.to.y
+        };
+    }
+
+    function addEdge(edges, seen, from, to) {
+        var key = from.id + ':' + to.id;
+
+        if (seen[key]) {
+            return;
+        }
+
+        seen[key] = true;
+        var deltaX = to.x - from.x;
+        var deltaY = to.y - from.y;
+        var edge = {
+            from: from,
+            to: to,
+            controlOne: {
+                x: from.x + deltaX * 0.36,
+                y: from.y + deltaY * 0.08
+            },
+            controlTwo: {
+                x: from.x + deltaX * 0.68,
+                y: to.y - deltaY * 0.08
+            },
+            samples: []
+        };
+
+        for (var sampleIndex = 0; sampleIndex <= 28; sampleIndex += 1) {
+            edge.samples.push(cubicPoint(edge, sampleIndex / 28));
+        }
+
+        edges.push(edge);
+    }
+
+    function nearestNodes(nodes, target, amount) {
+        return nodes.slice().sort(function (first, second) {
+            return Math.abs(first.y - target.y) - Math.abs(second.y - target.y);
+        }).slice(0, amount);
+    }
+
+    function buildGraph() {
+        var compact = compactQuery.matches;
+        var random = mulberry32(compact ? 7319 : 23861);
+        var columnXs = compact
+            ? [-0.08, 0.08, 0.24, 0.39, 0.5, 0.64, 0.82, 1.08]
+            : [-0.06, 0.06, 0.17, 0.28, 0.39, 0.5, 0.61, 0.73, 0.86, 1.06];
+        var columns = [];
+        var nodes = [];
+        var nextNodeId = 0;
+
+        columnXs.forEach(function (x, columnIndex) {
+            var column = [];
+
+            if (x === 0.5) {
+                column.push({
+                    id: nextNodeId,
+                    x: 0.5,
+                    y: 0.5,
+                    protocol: true,
+                    radius: compact ? 3.1 : 3.5
+                });
+                nextNodeId += 1;
+            } else {
+                var count = compact ? 2 + columnIndex % 2 : 2 + columnIndex % 3;
+
+                for (var nodeIndex = 0; nodeIndex < count; nodeIndex += 1) {
+                    var spread = compact ? 0.72 : 0.76;
+                    var baseY = 0.5 - spread / 2 + spread * (nodeIndex + 1) / (count + 1);
+                    var jitter = (random() - 0.5) * (compact ? 0.07 : 0.09);
+
+                    column.push({
+                        id: nextNodeId,
+                        x: x,
+                        y: Math.max(0.1, Math.min(0.9, baseY + jitter)),
+                        protocol: false,
+                        radius: compact ? 1.6 + random() * 0.7 : 1.75 + random() * 0.9
+                    });
+                    nextNodeId += 1;
+                }
+            }
+
+            columns.push(column);
+            Array.prototype.push.apply(nodes, column);
+        });
+
+        var edges = [];
+        var seenEdges = Object.create(null);
+
+        for (var columnCursor = 1; columnCursor < columns.length; columnCursor += 1) {
+            var previous = columns[columnCursor - 1];
+            var current = columns[columnCursor];
+            var currentIsProtocol = current.length === 1 && current[0].protocol;
+            var previousIsProtocol = previous.length === 1 && previous[0].protocol;
+
+            if (currentIsProtocol) {
+                previous.forEach(function (from) {
+                    addEdge(edges, seenEdges, from, current[0]);
+                });
+                continue;
+            }
+
+            if (previousIsProtocol) {
+                current.forEach(function (to) {
+                    addEdge(edges, seenEdges, previous[0], to);
+                });
+                continue;
+            }
+
+            current.forEach(function (to, targetIndex) {
+                var connectionCount = (targetIndex + columnCursor) % 2 === 0 ? 2 : 1;
+                nearestNodes(previous, to, connectionCount).forEach(function (from) {
+                    addEdge(edges, seenEdges, from, to);
+                });
+            });
+
+            previous.forEach(function (from) {
+                nearestNodes(current, from, 1).forEach(function (to) {
+                    addEdge(edges, seenEdges, from, to);
+                });
+            });
+        }
+
+        graph = { edges: edges, nodes: nodes };
+        renderStaticMesh();
+        buildParticles();
+    }
+
+    function edgePath(edge) {
+        return [
+            'M', edge.from.x * 1000, edge.from.y * 600,
+            'C', edge.controlOne.x * 1000, edge.controlOne.y * 600,
+            edge.controlTwo.x * 1000, edge.controlTwo.y * 600,
+            edge.to.x * 1000, edge.to.y * 600
+        ].join(' ');
+    }
+
+    function renderStaticMesh() {
+        var edgeFragment = document.createDocumentFragment();
+        var nodeFragment = document.createDocumentFragment();
+
+        graph.edges.forEach(function (edge) {
+            var glow = createSvgElement('path', 'portal-mesh-edge-glow');
+            var line = createSvgElement('path', 'portal-mesh-edge');
+            var path = edgePath(edge);
+
+            glow.setAttribute('d', path);
+            line.setAttribute('d', path);
+            edgeFragment.appendChild(glow);
+            edgeFragment.appendChild(line);
+        });
+
+        graph.nodes.forEach(function (node) {
+            var glow = createSvgElement('circle', 'portal-mesh-node-glow');
+            var coreClass = node.protocol
+                ? 'portal-mesh-node portal-mesh-node-protocol'
+                : 'portal-mesh-node';
+            var core = createSvgElement('circle', coreClass);
+            var centerX = node.x * 1000;
+            var centerY = node.y * 600;
+            var radius = node.radius;
+
+            glow.setAttribute('cx', centerX);
+            glow.setAttribute('cy', centerY);
+            glow.setAttribute('r', node.protocol ? radius * 4.4 : radius * 3.2);
+            core.setAttribute('cx', centerX);
+            core.setAttribute('cy', centerY);
+            core.setAttribute('r', radius);
+            nodeFragment.appendChild(glow);
+            nodeFragment.appendChild(core);
+        });
+
+        edgeLayer.replaceChildren(edgeFragment);
+        nodeLayer.replaceChildren(nodeFragment);
+    }
+
+    function buildParticles() {
+        var compact = compactQuery.matches;
+        var random = mulberry32(compact ? 9017 : 54233);
+        particles = [];
+
+        graph.edges.forEach(function (edge) {
+            var particleCount = 2;
+
+            for (var particleIndex = 0; particleIndex < particleCount; particleIndex += 1) {
+                particles.push({
+                    edge: edge,
+                    progress: (random() + particleIndex / particleCount) % 1,
+                    // Overview advances particles by 0.008-0.012 per 60 Hz frame.
+                    // Expressing that rate per second keeps the same motion at 24/30 fps.
+                    speed: 0.48 + random() * 0.24,
+                    size: 3 + random() * 2.2,
+                    opacity: 0.6 + random() * 0.4
+                });
+            }
+        });
+    }
+
+    function sampledPoint(edge, progress) {
+        var scaled = progress * (edge.samples.length - 1);
+        var index = Math.min(edge.samples.length - 2, Math.floor(scaled));
+        var fraction = scaled - index;
+        var from = edge.samples[index];
+        var to = edge.samples[index + 1];
+
+        return {
+            x: (from.x + (to.x - from.x) * fraction) * width,
+            y: (from.y + (to.y - from.y) * fraction) * height
+        };
+    }
+
+    function drawParticle(particle) {
+        var point = sampledPoint(particle.edge, particle.progress);
+
+        context.beginPath();
+        context.arc(point.x, point.y, particle.size * 1.7, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(178, 231, 243, ' + particle.opacity * 0.36 + ')';
+        context.fill();
+
+        context.beginPath();
+        context.arc(point.x, point.y, particle.size, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(255, 255, 255, ' + particle.opacity + ')';
+        context.fill();
+    }
+
+    function draw(time) {
+        animationFrame = window.requestAnimationFrame(draw);
+
+        if (shouldPause()) {
+            lastFrameTime = time;
+            return;
+        }
+
+        var frameInterval = compactQuery.matches ? 1000 / 20 : 1000 / 24;
+
+        if (lastFrameTime && time - lastFrameTime < frameInterval) {
+            return;
+        }
+
+        var delta = lastFrameTime ? Math.min(0.06, (time - lastFrameTime) / 1000) : 0;
+        lastFrameTime = time;
+        drawWorldLayer(time);
+        context.clearRect(0, 0, width, height);
+        context.globalCompositeOperation = 'source-over';
+
+        particles.forEach(function (particle) {
+            particle.progress += particle.speed * delta;
+
+            if (particle.progress >= 1) {
+                particle.progress -= 1;
+            }
+
+            drawParticle(particle);
+        });
+
+        context.globalCompositeOperation = 'source-over';
+    }
+
+    function resizeCanvas() {
+        var bounds = scene.getBoundingClientRect();
+        var nextWidth = Math.max(1, Math.round(bounds.width));
+        var nextHeight = Math.max(1, Math.round(bounds.height));
+
+        if (nextWidth === width && nextHeight === height) {
+            return;
+        }
+
+        width = nextWidth;
+        height = nextHeight;
+        canvas.width = Math.max(1, Math.round(width * pixelRatio));
+        canvas.height = Math.max(1, Math.round(height * pixelRatio));
+        worldCanvas.width = Math.max(1, Math.round(width * worldPixelRatio));
+        worldCanvas.height = Math.max(1, Math.round(height * worldPixelRatio));
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        worldContext.setTransform(worldPixelRatio, 0, 0, worldPixelRatio, 0, 0);
+        lastWorldFrameTime = 0;
+    }
+
+    function shouldPause() {
+        return manuallyPaused || reducedMotionQuery.matches || document.hidden || !sceneVisible;
+    }
+
+    function updatePauseState() {
+        var paused = shouldPause();
+        scene.classList.toggle('portal-scene-paused', paused);
+        motionToggle.setAttribute('aria-pressed', manuallyPaused ? 'true' : 'false');
+
+        if (!paused) {
+            lastFrameTime = performance.now();
+        } else {
+            context.clearRect(0, 0, width, height);
+            worldContext.clearRect(0, 0, width, height);
+        }
+    }
+
+    function handlePointer(event) {
+        if (reducedMotionQuery.matches || pointerFrame) {
+            return;
+        }
+
+        pointerFrame = window.requestAnimationFrame(function () {
+            var bounds = scene.getBoundingClientRect();
+            var pointerX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+            var pointerY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+            scene.style.setProperty('--portal-pointer-x', pointerX.toFixed(3));
+            scene.style.setProperty('--portal-pointer-y', pointerY.toFixed(3));
+            pointerFrame = 0;
+        });
+    }
+
+    motionToggle.addEventListener('click', function () {
+        manuallyPaused = !manuallyPaused;
+        updatePauseState();
+    });
+
+    document.addEventListener('visibilitychange', updatePauseState);
+    scene.addEventListener('pointermove', handlePointer, { passive: true });
+    scene.addEventListener('pointerleave', function () {
+        scene.style.setProperty('--portal-pointer-x', '0');
+        scene.style.setProperty('--portal-pointer-y', '0');
+    });
+
+    if (typeof reducedMotionQuery.addEventListener === 'function') {
+        reducedMotionQuery.addEventListener('change', updatePauseState);
+        compactQuery.addEventListener('change', function () {
+            buildGraph();
+            buildAgenticWorld();
+            resizeCanvas();
+        });
+    } else {
+        reducedMotionQuery.addListener(updatePauseState);
+        compactQuery.addListener(function () {
+            buildGraph();
+            buildAgenticWorld();
+            resizeCanvas();
+        });
+    }
+
+    if ('IntersectionObserver' in window) {
+        var intersectionObserver = new IntersectionObserver(function (entries) {
+            sceneVisible = entries[0] ? entries[0].isIntersecting : true;
+            updatePauseState();
+        }, { threshold: 0.03 });
+        intersectionObserver.observe(scene);
+    }
+
+    if ('ResizeObserver' in window) {
+        var resizeObserver = new ResizeObserver(resizeCanvas);
+        resizeObserver.observe(scene);
+    } else {
+        window.addEventListener('resize', resizeCanvas, { passive: true });
+    }
+
+    resizeCanvas();
+    buildGraph();
+    buildAgenticWorld();
+    updatePauseState();
+    animationFrame = window.requestAnimationFrame(draw);
+
+    window.addEventListener('pagehide', function () {
+        window.cancelAnimationFrame(animationFrame);
+    }, { once: true });
+}());

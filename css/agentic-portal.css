@@ -1,7 +1,7 @@
 /* Realtime Agentic Internet entry scene.
-   The authored image is the 2.5D depth plate, Canvas carries the signal field,
-   and WebGL renders the central protocol geometry. The scene intentionally has
-   no explanatory cards: navigation leads to overview.html for detail. */
+   The authored image is the 2.5D depth plate, a static SVG carries the legacy
+   hero mesh, a low-DPR Canvas moves protocol particles, and a slower auxiliary
+   Canvas runs an autonomous Agent/Intent/local-market simulation. */
 
 .portal-page {
     background: #020611;
@@ -26,7 +26,6 @@
 .portal-hero {
     --portal-pointer-x: 0;
     --portal-pointer-y: 0;
-    --portal-rotation: 0deg;
     position: relative;
     isolation: isolate;
     min-height: 100vh;
@@ -36,8 +35,10 @@
 }
 
 .portal-visual,
+.portal-art-layers,
+.portal-world-canvas,
 .portal-art,
-.portal-webgl,
+.portal-mesh,
 .portal-flow,
 .portal-depth-grid,
 .portal-vignette {
@@ -52,8 +53,17 @@
     overflow: hidden;
 }
 
+.portal-art-layers {
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
 .portal-art {
     z-index: 0;
+    inset: -12px;
+    width: calc(100% + 24px);
+    height: calc(100% + 24px);
     object-fit: cover;
     object-position: 50% 50%;
     opacity: 0.88;
@@ -66,56 +76,56 @@
     transition: filter 500ms ease;
 }
 
-.portal-webgl {
+.portal-world-canvas {
     z-index: 2;
     display: block;
     pointer-events: none;
-    mix-blend-mode: screen;
 }
 
 .portal-flow {
     z-index: 3;
     display: block;
     pointer-events: none;
+    opacity: 0.56;
 }
 
-.portal-ring-fallback {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+.portal-mesh {
     z-index: 1;
-    width: clamp(160px, 22vw, 290px);
-    height: min(76vh, 580px);
-    transform: translate(-50%, -50%);
+    display: block;
+    overflow: visible;
     pointer-events: none;
+    opacity: 0.52;
+    mix-blend-mode: screen;
 }
 
-.portal-ring-fallback span {
-    position: absolute;
-    inset: 0;
-    border: 1px solid rgba(107, 207, 255, 0.48);
-    border-radius: 50%;
-    box-shadow: 0 0 18px rgba(45, 150, 255, 0.18);
+.portal-mesh-edge {
+    fill: none;
+    stroke: rgba(120, 207, 231, 0.52);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
 }
 
-.portal-ring-fallback span:first-child {
-    border-left-color: transparent;
-    border-bottom-color: rgba(174, 128, 255, 0.56);
-    transform: rotate(var(--portal-rotation));
+.portal-mesh-edge-glow {
+    fill: none;
+    stroke: rgba(178, 231, 243, 0.14);
+    stroke-width: 4.8;
+    vector-effect: non-scaling-stroke;
 }
 
-.portal-ring-fallback span:nth-child(2) {
-    inset: 8% 12%;
-    border-color: rgba(153, 114, 255, 0.42);
+.portal-mesh-node-glow {
+    fill: rgba(224, 95, 214, 0.16);
 }
 
-.portal-ring-fallback span:nth-child(3) {
-    inset: 17% 25%;
-    border-color: rgba(120, 229, 255, 0.58);
+.portal-mesh-node {
+    fill: rgba(224, 95, 214, 0.78);
+    stroke: rgba(245, 179, 239, 0.72);
+    stroke-width: 0.7;
+    vector-effect: non-scaling-stroke;
 }
 
-.webgl-ready .portal-ring-fallback {
-    opacity: 0;
+.portal-mesh-node-protocol {
+    fill: rgba(120, 207, 231, 0.9);
+    stroke: rgba(232, 250, 255, 0.92);
 }
 
 .portal-depth-grid {
@@ -226,11 +236,17 @@
     .portal-motion-toggle {
         display: none;
     }
+
+    .portal-world-canvas {
+        display: none;
+    }
+
 }
 
 @media (forced-colors: active) {
     .portal-art,
-    .portal-webgl,
+    .portal-world-canvas,
+    .portal-mesh,
     .portal-flow,
     .portal-depth-grid {
         display: none;
