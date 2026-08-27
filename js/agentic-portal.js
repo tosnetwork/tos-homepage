@@ -51,6 +51,12 @@
     var height = 1;
     var pixelRatio = 1;
     var unit = 1;
+    var qualityProfile = 'balanced';
+    var averageRenderCost = 0;
+    var peakRenderCost = 0;
+    var staticLayer = document.createElement('canvas');
+    var staticLayerContext = staticLayer.getContext('2d', { alpha: true });
+    var glowSpriteCache = {};
     var portal = { x: 0.5, y: 0.52, rx: 58, ry: 260 };
     var random = mulberry32(927421);
     var actors = [];
@@ -94,6 +100,39 @@
 
     function rgba(color, alpha) {
         return 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + alpha + ')';
+    }
+
+    function brighten(color, amount) {
+        return color.map(function (channel) {
+            return Math.min(255, Math.round(channel + (255 - channel) * amount));
+        });
+    }
+
+    function chooseRenderScale(canvasWidth, canvasHeight) {
+        var deviceScale = window.devicePixelRatio || 1;
+        var cores = navigator.hardwareConcurrency || 4;
+        var deviceMemory = navigator.deviceMemory || 4;
+        var saveData = Boolean(navigator.connection && navigator.connection.saveData);
+        var compact = compactQuery.matches;
+        var capableDevice = cores >= 6 && deviceMemory >= 4 && !saveData;
+        var pixelBudget = compact
+            ? 1200000
+            : (capableDevice ? 3000000 : 2200000);
+        var maximumScale = compact
+            ? Math.min(deviceScale, capableDevice ? 1.08 : 0.95)
+            : Math.min(deviceScale, capableDevice ? 1.4 : 1.2);
+        var budgetScale = Math.sqrt(pixelBudget / Math.max(1, canvasWidth * canvasHeight));
+        var minimumScale = compact ? 0.68 : 0.58;
+        var resolvedScale = clamp(
+            Math.min(maximumScale, budgetScale),
+            Math.min(minimumScale, maximumScale),
+            maximumScale
+        );
+
+        qualityProfile = resolvedScale >= 1.3
+            ? 'cinematic'
+            : (resolvedScale >= 1 ? 'high' : 'efficient');
+        return resolvedScale;
     }
 
     function lifeAlpha(entity) {
@@ -911,11 +950,69 @@
         updateExchanges(delta, elapsed);
     }
 
+    function glowSprite(color) {
+        var key = color.join('-');
+        if (glowSpriteCache[key]) {
+            return glowSpriteCache[key];
+        }
+        var sprite = document.createElement('canvas');
+        var spriteSize = 128;
+        sprite.width = spriteSize;
+        sprite.height = spriteSize;
+        var spriteContext = sprite.getContext('2d', { alpha: true });
+        var gradient = spriteContext.createRadialGradient(
+            spriteSize * 0.5,
+            spriteSize * 0.5,
+            0,
+            spriteSize * 0.5,
+            spriteSize * 0.5,
+            spriteSize * 0.5
+        );
+        gradient.addColorStop(0, rgba(color, 0.3));
+        gradient.addColorStop(0.34, rgba(color, 0.16));
+        gradient.addColorStop(0.72, rgba(color, 0.045));
+        gradient.addColorStop(1, rgba(color, 0));
+        spriteContext.fillStyle = gradient;
+        spriteContext.fillRect(0, 0, spriteSize, spriteSize);
+        glowSpriteCache[key] = sprite;
+        return sprite;
+    }
+
     function drawGlow(x, y, radius, color, alpha) {
-        context.beginPath();
-        context.arc(x, y, radius * 1.9, 0, Math.PI * 2);
-        context.fillStyle = rgba(color, alpha * 0.12);
-        context.fill();
+        var extent = radius * 2.65;
+        context.save();
+        context.globalAlpha = alpha;
+        context.drawImage(glowSprite(color), x - extent, y - extent, extent * 2, extent * 2);
+        context.restore();
+    }
+
+    function strokeEnergyPath(color, alpha, lineWidth) {
+        var highlight = brighten(color, 0.7);
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.lineWidth = lineWidth * 4.2;
+        context.strokeStyle = rgba(color, alpha * 0.1);
+        context.stroke();
+        context.lineWidth = lineWidth * 1.85;
+        context.strokeStyle = rgba(color, alpha * 0.42);
+        context.stroke();
+        context.lineWidth = Math.max(0.65 * unit, lineWidth * 0.58);
+        context.strokeStyle = rgba(highlight, alpha * 0.92);
+        context.stroke();
+    }
+
+    function strokeEnergyHsl(hue, alpha, lineWidth) {
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.lineWidth = lineWidth * 4;
+        context.strokeStyle = 'hsla(' + hue + ', 94%, 66%, ' + alpha * 0.09 + ')';
+        context.stroke();
+        context.lineWidth = lineWidth * 1.75;
+        context.strokeStyle = 'hsla(' + hue + ', 96%, 74%, ' + alpha * 0.4 + ')';
+        context.stroke();
+        context.lineWidth = Math.max(0.65 * unit, lineWidth * 0.56);
+        context.strokeStyle = 'hsla(' + hue + ', 100%, 92%, ' + alpha * 0.9 + ')';
+        context.stroke();
     }
 
     function drawEntity(kind, x, y, size, alpha, rotation) {
@@ -1227,6 +1324,17 @@
             context.ellipse(0, scaled * 0.48, scaled * 0.65, scaled * 0.27, 0, 0, Math.PI);
             context.stroke();
         }
+        if (scaled >= 5.5) {
+            context.beginPath();
+            context.arc(-scaled * 0.3, -scaled * 0.48, Math.max(0.7, scaled * 0.065), 0, Math.PI * 2);
+            context.fillStyle = 'rgba(239, 253, 255, 0.9)';
+            context.fill();
+            context.beginPath();
+            context.arc(0, 0, scaled * 1.28, -Math.PI * 0.77, -Math.PI * 0.25);
+            context.lineWidth = Math.max(0.55, scaled * 0.045);
+            context.strokeStyle = rgba(brighten(color, 0.65), 0.24);
+            context.stroke();
+        }
         context.restore();
     }
 
@@ -1238,9 +1346,7 @@
         context.beginPath();
         context.arc(0, 0, radius, -Math.PI * 0.15, Math.PI * 0.55);
         context.arc(0, 0, radius, Math.PI * 0.85, Math.PI * 1.35);
-        context.lineWidth = 1.1 * unit;
-        context.strokeStyle = 'rgba(118, 244, 207, ' + alpha * 0.72 + ')';
-        context.stroke();
+        strokeEnergyPath([118, 244, 207], alpha * 0.76, 0.95 * unit);
         context.restore();
     }
 
@@ -1270,17 +1376,16 @@
             context.translate(x, y);
             context.beginPath();
             context.arc(0, 0, (12 + progress * 16) * unit, 0, Math.PI * 2);
-            context.lineWidth = 1.4 * unit;
-            context.strokeStyle = event.accepted
-                ? 'rgba(112, 244, 202, ' + alpha * 0.72 + ')'
-                : 'rgba(255, 126, 111, ' + alpha * 0.72 + ')';
-            context.stroke();
+            var eventColor = event.accepted ? [112, 244, 202] : [255, 126, 111];
+            strokeEnergyPath(eventColor, alpha * 0.78, 1.15 * unit);
             if (!event.accepted) {
                 context.beginPath();
                 context.moveTo(-4 * unit, -4 * unit);
                 context.lineTo(4 * unit, 4 * unit);
                 context.moveTo(4 * unit, -4 * unit);
                 context.lineTo(-4 * unit, 4 * unit);
+                context.lineWidth = 1.1 * unit;
+                context.strokeStyle = rgba(brighten(eventColor, 0.62), alpha * 0.9);
                 context.stroke();
             }
             context.restore();
@@ -1294,21 +1399,32 @@
             var progress = clamp(actor.modeAge / Math.max(0.1, actor.verificationDuration), 0, 1);
             context.beginPath();
             context.arc(x, y, actor.size * unit * 1.55, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
-            context.lineWidth = 1.5 * unit;
-            context.strokeStyle = 'rgba(155, 226, 255, 0.82)';
-            context.stroke();
+            strokeEnergyPath([155, 226, 255], 0.82, 1.18 * unit);
         } else if (actor.mode === 'transit' && actor.route.progress >= 0.48) {
             drawVerifiedHalo(x, y, actor.size, 0.9, elapsed);
         }
     }
 
     function drawStars(elapsed) {
-        stars.forEach(function (star) {
+        context.drawImage(staticLayer, 0, 0, width, height);
+        stars.filter(function (star) {
+            return star.twinkles;
+        }).forEach(function (star) {
             var alpha = star.alpha * (0.66 + Math.sin(elapsed * star.rate + star.phase) * 0.34);
             context.beginPath();
             context.arc(star.x * width, star.y * height, star.size, 0, Math.PI * 2);
             context.fillStyle = 'rgba(179, 211, 255, ' + alpha + ')';
             context.fill();
+            if (star.depth > 0.82) {
+                context.beginPath();
+                context.moveTo(star.x * width - star.size * 2.2, star.y * height);
+                context.lineTo(star.x * width + star.size * 2.2, star.y * height);
+                context.moveTo(star.x * width, star.y * height - star.size * 2.2);
+                context.lineTo(star.x * width, star.y * height + star.size * 2.2);
+                context.lineWidth = 0.55 * unit;
+                context.strokeStyle = 'rgba(191, 228, 255, ' + alpha * 0.62 + ')';
+                context.stroke();
+            }
         });
     }
 
@@ -1323,9 +1439,7 @@
             context.beginPath();
             context.moveTo(firstX, firstY);
             context.lineTo(secondX, secondY);
-            context.lineWidth = 1.5 * unit;
-            context.strokeStyle = 'rgba(139, 218, 255, ' + alpha * 0.55 + ')';
-            context.stroke();
+            strokeEnergyPath([139, 218, 255], alpha * 0.78, 1.35 * unit);
             for (var pulse = 0; pulse < interaction.pulses; pulse += 1) {
                 var packetProgress = (progress * 1.7 + pulse / interaction.pulses) % 1;
                 var packetX = firstX + (secondX - firstX) * packetProgress;
@@ -1340,18 +1454,41 @@
             if (actor.mode !== 'transit' || actor.trail.length < 2) {
                 return;
             }
+            var first = actor.trail[0];
+            var last = actor.trail[actor.trail.length - 1];
+            var color = last.verified ? [112, 244, 202] : palette[actor.kind];
+            var highlight = brighten(color, 0.72);
+            var gradient = context.createLinearGradient(
+                first.x * width,
+                first.y * height,
+                last.x * width,
+                last.y * height
+            );
+            gradient.addColorStop(0, rgba(color, 0));
+            gradient.addColorStop(0.46, rgba(color, 0.22));
+            gradient.addColorStop(1, rgba(highlight, 0.9));
+            context.beginPath();
+            context.moveTo(first.x * width, first.y * height);
             for (var index = 1; index < actor.trail.length; index += 1) {
-                var from = actor.trail[index - 1];
-                var to = actor.trail[index];
-                var color = to.verified ? [112, 244, 202] : palette[actor.kind];
-                var alpha = index / actor.trail.length;
-                context.beginPath();
-                context.moveTo(from.x * width, from.y * height);
-                context.lineTo(to.x * width, to.y * height);
-                context.lineWidth = (1.2 + alpha * 2.8) * unit;
-                context.strokeStyle = rgba(color, alpha * 0.5);
-                context.stroke();
+                context.lineTo(actor.trail[index].x * width, actor.trail[index].y * height);
             }
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
+            context.lineWidth = 7.2 * unit;
+            context.strokeStyle = gradient;
+            context.globalAlpha = 0.18;
+            context.stroke();
+            context.lineWidth = 3.1 * unit;
+            context.globalAlpha = 0.48;
+            context.stroke();
+            context.lineWidth = 0.9 * unit;
+            context.globalAlpha = 0.98;
+            context.stroke();
+            context.globalAlpha = 1;
+            context.beginPath();
+            context.arc(last.x * width, last.y * height, 2.2 * unit, 0, Math.PI * 2);
+            context.fillStyle = rgba(highlight, 0.94);
+            context.fill();
         });
     }
 
@@ -1359,8 +1496,8 @@
         var centerX = portal.x * width;
         var centerY = portal.y * height;
         var glow = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, portal.ry * 0.9);
-        glow.addColorStop(0, 'rgba(85, 191, 255, 0.12)');
-        glow.addColorStop(0.36, 'rgba(111, 92, 255, 0.075)');
+        glow.addColorStop(0, 'rgba(85, 191, 255, 0.16)');
+        glow.addColorStop(0.34, 'rgba(111, 92, 255, 0.09)');
         glow.addColorStop(1, 'rgba(16, 42, 91, 0)');
         context.save();
         context.translate(centerX, centerY);
@@ -1374,14 +1511,19 @@
 
         context.save();
         context.translate(centerX, centerY);
-        for (var ring = 0; ring < 7; ring += 1) {
-            var ratio = 0.42 + ring * 0.085;
+        for (var ring = 0; ring < 8; ring += 1) {
+            var ratio = 0.38 + ring * 0.082;
             context.beginPath();
             context.ellipse(0, 0, portal.rx * ratio, portal.ry * ratio, 0, 0, Math.PI * 2);
-            context.lineWidth = ring === 6 ? 2.2 * unit : 0.9 * unit;
+            if (ring === 7) {
+                context.lineWidth = 6.4 * unit;
+                context.strokeStyle = 'rgba(90, 207, 255, 0.055)';
+                context.stroke();
+            }
+            context.lineWidth = ring === 7 ? 2.15 * unit : 0.82 * unit;
             context.strokeStyle = ring % 2 === 0
-                ? 'rgba(102, 220, 255, 0.34)'
-                : 'rgba(177, 115, 255, 0.26)';
+                ? 'rgba(112, 228, 255, 0.38)'
+                : 'rgba(188, 127, 255, 0.29)';
             context.stroke();
         }
         context.restore();
@@ -1392,9 +1534,12 @@
             var beadX = centerX + Math.cos(beadAngle) * portal.rx * beadRadius;
             var beadY = centerY + Math.sin(beadAngle) * portal.ry * beadRadius;
             var beadDepth = 0.45 + Math.sin(beadAngle) * 0.35;
+            if (bead % 4 === 0) {
+                drawGlow(beadX, beadY, (2.1 + beadDepth) * unit, [121, 218, 255], 0.68);
+            }
             context.beginPath();
             context.arc(beadX, beadY, (1.5 + beadDepth * 1.9) * unit, 0, Math.PI * 2);
-            context.fillStyle = 'rgba(143, 228, 255, ' + (0.36 + beadDepth * 0.45) + ')';
+            context.fillStyle = 'rgba(194, 245, 255, ' + (0.42 + beadDepth * 0.5) + ')';
             context.fill();
         }
     }
@@ -1404,27 +1549,53 @@
         var centerY = portal.y * height;
         context.save();
         context.translate(centerX, centerY);
+        var rimGradient = context.createLinearGradient(-portal.rx, -portal.ry, portal.rx, portal.ry);
+        rimGradient.addColorStop(0, 'rgba(113, 212, 255, 0.76)');
+        rimGradient.addColorStop(0.42, 'rgba(231, 253, 255, 0.98)');
+        rimGradient.addColorStop(0.68, 'rgba(165, 127, 255, 0.9)');
+        rimGradient.addColorStop(1, 'rgba(99, 224, 255, 0.78)');
         context.beginPath();
         context.ellipse(0, 0, portal.rx, portal.ry, 0, -Math.PI * 0.04, Math.PI * 1.04);
-        context.lineWidth = 4.2 * unit;
-        context.strokeStyle = 'rgba(176, 235, 255, 0.82)';
+        context.lineWidth = 11 * unit;
+        context.strokeStyle = 'rgba(86, 204, 255, 0.07)';
+        context.stroke();
+        context.lineWidth = 5.2 * unit;
+        context.strokeStyle = 'rgba(102, 218, 255, 0.25)';
+        context.stroke();
+        context.lineWidth = 2.5 * unit;
+        context.strokeStyle = rimGradient;
+        context.stroke();
+        context.lineWidth = 0.72 * unit;
+        context.strokeStyle = 'rgba(243, 254, 255, 0.96)';
         context.stroke();
         context.beginPath();
         context.ellipse(0, 0, portal.rx * 1.08, portal.ry * 1.02, 0, Math.PI * 0.03, Math.PI * 0.97);
-        context.lineWidth = 1.25 * unit;
-        context.strokeStyle = 'rgba(186, 103, 255, 0.68)';
+        context.lineWidth = 1.1 * unit;
+        context.strokeStyle = 'rgba(203, 131, 255, 0.74)';
         context.stroke();
+        context.beginPath();
+        context.setLineDash([13 * unit, 9 * unit]);
+        context.lineDashOffset = -elapsed * 15 * unit;
+        context.ellipse(0, 0, portal.rx * 1.15, portal.ry * 1.035, 0, 0, Math.PI * 2);
+        context.lineWidth = 0.72 * unit;
+        context.strokeStyle = 'rgba(139, 232, 255, 0.38)';
+        context.stroke();
+        context.setLineDash([]);
 
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillStyle = 'rgba(228, 248, 255, 0.94)';
         context.font = '600 ' + Math.round(11 * unit) + 'px "IBM Plex Sans", sans-serif';
+        context.shadowColor = 'rgba(104, 218, 255, 0.38)';
+        context.shadowBlur = 5 * unit;
         context.fillText('TOS', 0, -18 * unit);
         context.fillStyle = 'rgba(145, 220, 255, 0.88)';
         context.font = '500 ' + Math.round(8 * unit) + 'px "IBM Plex Mono", monospace';
         context.fillText('NETWORK', 0, -4 * unit);
+        context.shadowBlur = 0;
 
         var coreRotation = elapsed * 0.43;
+        drawGlow(0, 19 * unit, 7.5 * unit, [111, 220, 255], 0.72);
         context.rotate(coreRotation);
         context.beginPath();
         context.moveTo(0, 11 * unit);
@@ -1449,20 +1620,44 @@
         context.translate(centerX, centerY);
         context.beginPath();
         context.ellipse(0, 0, radius * 1.22, radius * 0.54, city.spin * 0.2, 0, Math.PI * 1.72);
-        context.lineWidth = 0.8 * unit;
-        context.strokeStyle = 'hsla(' + city.hue + ', 88%, 70%, 0.2)';
+        context.lineWidth = 4.5 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 90%, 66%, 0.045)';
+        context.stroke();
+        context.lineWidth = 0.72 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 92%, 76%, 0.28)';
         context.stroke();
         context.beginPath();
         context.ellipse(0, 0, radius * 1.08, radius * 0.46, 0, 0, Math.PI * 2);
         context.fillStyle = 'hsla(' + city.hue + ', 78%, 54%, ' + glowAlpha + ')';
         context.fill();
-        context.lineWidth = 1.35 * unit;
-        context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.72)';
+        context.lineWidth = 6 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 94%, 68%, 0.07)';
+        context.stroke();
+        context.lineWidth = 1.45 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 96%, 82%, 0.78)';
+        context.stroke();
+        context.lineWidth = 0.48 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 100%, 96%, 0.76)';
         context.stroke();
         context.beginPath();
+        context.setLineDash([9 * unit, 6 * unit]);
+        context.lineDashOffset = -elapsed * (2.4 + city.id * 0.18) * unit;
         context.ellipse(0, 2 * unit, radius * 0.82, radius * 0.32, city.spin, 0, Math.PI * 1.55);
-        context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.36)';
+        context.lineWidth = 0.82 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 96%, 82%, 0.46)';
         context.stroke();
+        context.setLineDash([]);
+
+        for (var node = 0; node < 3; node += 1) {
+            var nodeAngle = elapsed * (0.11 + node * 0.014) + city.id * 0.93 + node * Math.PI * 0.67;
+            var nodeX = Math.cos(nodeAngle) * radius * 1.08;
+            var nodeY = Math.sin(nodeAngle) * radius * 0.46;
+            drawGlow(nodeX, nodeY, 3.2 * unit, [128, 225, 255], 0.62);
+            context.beginPath();
+            context.arc(nodeX, nodeY, 1.35 * unit, 0, Math.PI * 2);
+            context.fillStyle = 'hsla(' + city.hue + ', 100%, 91%, 0.92)';
+            context.fill();
+        }
 
         city.spires.forEach(function (spire) {
             var angle = spire.angle + city.spin * 0.18;
@@ -1481,6 +1676,12 @@
             context.strokeStyle = 'hsla(' + city.hue + ', 95%, 76%, ' + (0.42 + pulse * 0.35) + ')';
             context.lineWidth = 0.75 * unit;
             context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(baseX, baseY - spireHeight * 0.94);
+            context.lineTo(baseX, baseY - spireHeight * 0.16);
+            context.lineWidth = 0.48 * unit;
+            context.strokeStyle = 'hsla(' + city.hue + ', 100%, 94%, ' + (0.32 + pulse * 0.26) + ')';
             context.stroke();
             context.beginPath();
             context.arc(baseX, baseY - spireHeight, 1.4 * unit, 0, Math.PI * 2);
@@ -1502,9 +1703,7 @@
             context.beginPath();
             context.moveTo(firstX, firstY);
             context.lineTo(secondX, secondY);
-            context.lineWidth = 1.35 * unit;
-            context.strokeStyle = 'hsla(' + city.hue + ', 94%, 78%, ' + alpha * 0.7 + ')';
-            context.stroke();
+            strokeEnergyHsl(city.hue, alpha * 0.82, 1.2 * unit);
             drawEntity(
                 interaction.kind,
                 firstX + (secondX - firstX) * packetProgress,
@@ -1527,9 +1726,7 @@
             context.beginPath();
             context.moveTo(startX, startY);
             context.lineTo(targetX, targetY);
-            context.lineWidth = 1.1 * unit;
-            context.strokeStyle = 'rgba(115, 238, 204, ' + alpha * 0.48 + ')';
-            context.stroke();
+            strokeEnergyPath([115, 238, 204], alpha * 0.68, 1.05 * unit);
             drawEntity(
                 receipt.kind,
                 startX + (targetX - startX) * progress,
@@ -1564,9 +1761,7 @@
             context.beginPath();
             context.moveTo(exchange.startX * width, exchange.startY * height);
             context.quadraticCurveTo(controlX, controlY, exchange.endX * width, exchange.endY * height);
-            context.lineWidth = 1.3 * unit;
-            context.strokeStyle = 'rgba(121, 211, 255, ' + alpha * 0.36 + ')';
-            context.stroke();
+            strokeEnergyPath([121, 211, 255], alpha * 0.62, 1.15 * unit);
             var point = exchangePoint(exchange, progress);
             drawEntity(exchange.kind, point.x * width, point.y * height, 6.2, alpha, 0);
         });
@@ -1633,7 +1828,7 @@
             stateCounts[actor.mode] = (stateCounts[actor.mode] || 0) + 1;
             kindCounts[actor.kind] = (kindCounts[actor.kind] || 0) + 1;
         });
-        canvas.dataset.sceneVersion = 'spacious-agentic-world-v5';
+        canvas.dataset.sceneVersion = 'cinematic-agentic-world-v6';
         canvas.dataset.actorStates = JSON.stringify(stateCounts);
         canvas.dataset.leftInteractions = String(leftInteractions.length);
         canvas.dataset.cityMembers = cities.map(function (city) {
@@ -1671,6 +1866,19 @@
             return city.radius.toFixed(3);
         }).join(',');
         canvas.dataset.fps = String(measuredFps);
+        canvas.dataset.renderScale = pixelRatio.toFixed(2);
+        canvas.dataset.canvasMegapixels = (canvas.width * canvas.height / 1000000).toFixed(2);
+        canvas.dataset.qualityProfile = qualityProfile;
+        canvas.dataset.renderCostMs = averageRenderCost.toFixed(2);
+        canvas.dataset.peakRenderCostMs = peakRenderCost.toFixed(2);
+        canvas.dataset.frameBudgetUse = (averageRenderCost / (1000 / 30) * 100).toFixed(1) + '%';
+        canvas.dataset.cachedGlowSprites = String(Object.keys(glowSpriteCache).length);
+        canvas.dataset.animatedStars = String(stars.filter(function (star) {
+            return star.twinkles;
+        }).length);
+        canvas.dataset.cachedStars = String(stars.filter(function (star) {
+            return !star.twinkles;
+        }).length);
     }
 
     function drawFrame(time) {
@@ -1686,8 +1894,14 @@
         var delta = lastFrameTime ? Math.min(0.06, (time - lastFrameTime) / 1000) : 0;
         lastFrameTime = time;
         var elapsed = time / 1000;
+        var renderStartedAt = performance.now();
         updateWorld(delta, elapsed);
         renderScene(elapsed);
+        var renderCost = performance.now() - renderStartedAt;
+        averageRenderCost = averageRenderCost
+            ? averageRenderCost * 0.94 + renderCost * 0.06
+            : renderCost;
+        peakRenderCost = Math.max(renderCost, peakRenderCost * 0.992);
 
         frameCounter += 1;
         if (time - frameWindowStart >= 1000) {
@@ -1700,38 +1914,94 @@
 
     function rebuildStars() {
         stars = [];
-        var count = compactQuery.matches ? 42 : 76;
+        var count = compactQuery.matches ? 48 : 94;
         for (var index = 0; index < count; index += 1) {
+            var depth = random();
             stars.push({
                 x: random(),
                 y: random(),
-                size: randomBetween(0.35, 1.25),
-                alpha: randomBetween(0.08, 0.34),
+                size: randomBetween(0.32, 0.82 + depth * 0.8),
+                alpha: randomBetween(0.055, 0.19 + depth * 0.2),
                 phase: randomBetween(0, Math.PI * 2),
-                rate: randomBetween(0.35, 1.1)
+                rate: randomBetween(0.35, 1.1),
+                depth: depth,
+                twinkles: index % 4 === 0
             });
         }
+    }
+
+    function rebuildStaticLayer() {
+        if (!staticLayerContext) {
+            return;
+        }
+        staticLayer.width = canvas.width;
+        staticLayer.height = canvas.height;
+        staticLayerContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        staticLayerContext.clearRect(0, 0, width, height);
+
+        [
+            { x: 0.18, y: 0.42, radius: 0.29, color: [91, 64, 198], alpha: 0.055 },
+            { x: 0.73, y: 0.28, radius: 0.24, color: [42, 151, 212], alpha: 0.05 },
+            { x: 0.82, y: 0.72, radius: 0.27, color: [165, 67, 210], alpha: 0.045 }
+        ].forEach(function (nebula) {
+            var centerX = nebula.x * width;
+            var centerY = nebula.y * height;
+            var radius = nebula.radius * Math.max(width, height);
+            var gradient = staticLayerContext.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, rgba(nebula.color, nebula.alpha));
+            gradient.addColorStop(0.5, rgba(nebula.color, nebula.alpha * 0.38));
+            gradient.addColorStop(1, rgba(nebula.color, 0));
+            staticLayerContext.fillStyle = gradient;
+            staticLayerContext.fillRect(0, 0, width, height);
+        });
+
+        stars.filter(function (star) {
+            return !star.twinkles;
+        }).forEach(function (star) {
+            var starX = star.x * width;
+            var starY = star.y * height;
+            staticLayerContext.beginPath();
+            staticLayerContext.arc(starX, starY, star.size, 0, Math.PI * 2);
+            staticLayerContext.fillStyle = 'rgba(179, 211, 255, ' + star.alpha + ')';
+            staticLayerContext.fill();
+            if (star.depth > 0.9) {
+                staticLayerContext.beginPath();
+                staticLayerContext.moveTo(starX - star.size * 1.9, starY);
+                staticLayerContext.lineTo(starX + star.size * 1.9, starY);
+                staticLayerContext.moveTo(starX, starY - star.size * 1.9);
+                staticLayerContext.lineTo(starX, starY + star.size * 1.9);
+                staticLayerContext.lineWidth = 0.5 * unit;
+                staticLayerContext.strokeStyle = 'rgba(179, 220, 255, ' + star.alpha * 0.55 + ')';
+                staticLayerContext.stroke();
+            }
+        });
     }
 
     function resizeCanvas() {
         var bounds = scene.getBoundingClientRect();
         var nextWidth = Math.max(1, Math.round(bounds.width));
         var nextHeight = Math.max(1, Math.round(bounds.height));
-        if (nextWidth === width && nextHeight === height) {
+        var nextPixelRatio = chooseRenderScale(nextWidth, nextHeight);
+        if (nextWidth === width
+                && nextHeight === height
+                && Math.abs(nextPixelRatio - pixelRatio) < 0.01) {
             return;
         }
         width = nextWidth;
         height = nextHeight;
-        pixelRatio = compactQuery.matches
-            ? Math.min(0.9, window.devicePixelRatio || 1)
-            : Math.min(1, Math.max(0.85, (window.devicePixelRatio || 1) * 0.58));
+        pixelRatio = nextPixelRatio;
+        averageRenderCost = 0;
+        peakRenderCost = 0;
         unit = clamp(Math.min(width / 1280, height / 760), 0.72, 1.3);
         portal.rx = clamp(width * (compactQuery.matches ? 0.052 : 0.047), 25, 68);
         portal.ry = clamp(height * (compactQuery.matches ? 0.29 : 0.34), 155, 292);
         canvas.width = Math.max(1, Math.round(width * pixelRatio));
         canvas.height = Math.max(1, Math.round(height * pixelRatio));
         context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = 'high';
         rebuildStars();
+        rebuildStaticLayer();
         renderScene(performance.now() / 1000);
     }
 
@@ -1790,7 +2060,7 @@
     }
 
     window.__tosAgenticScene = {
-        version: 'spacious-agentic-world-v5',
+        version: 'cinematic-agentic-world-v6',
         snapshot: function () {
             var stateCounts = {};
             var kindCounts = {};
@@ -1829,7 +2099,10 @@
                 canvas: {
                     cssWidth: width,
                     cssHeight: height,
-                    pixelRatio: Number(pixelRatio.toFixed(2))
+                    pixelRatio: Number(pixelRatio.toFixed(2)),
+                    megapixels: Number((canvas.width * canvas.height / 1000000).toFixed(2)),
+                    qualityProfile: qualityProfile,
+                    averageRenderCostMs: Number(averageRenderCost.toFixed(2))
                 }
             };
         }

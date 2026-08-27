@@ -44,17 +44,22 @@
 .portal-visual {
     z-index: 0;
     overflow: hidden;
+    contain: layout paint;
     background:
+        radial-gradient(circle at 9% 76%, rgba(32, 174, 171, 0.08), transparent 19%),
         radial-gradient(circle at 17% 38%, rgba(72, 53, 177, 0.19), transparent 28%),
         radial-gradient(circle at 78% 27%, rgba(23, 119, 180, 0.17), transparent 25%),
         radial-gradient(circle at 82% 72%, rgba(111, 41, 162, 0.18), transparent 28%),
         radial-gradient(ellipse at 50% 52%, rgba(24, 111, 172, 0.13), transparent 24%),
+        radial-gradient(ellipse at 50% 104%, rgba(54, 102, 171, 0.1), transparent 46%),
         linear-gradient(112deg, #020510 0%, #05091a 48%, #020713 100%);
 }
 
 .portal-world-canvas {
     z-index: 2;
     display: block;
+    image-rendering: auto;
+    transform: translateZ(0);
     pointer-events: none;
 }
 
@@ -65,8 +70,10 @@
     opacity: 0.14;
     background-image:
         linear-gradient(rgba(86, 175, 255, 0.13) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(86, 175, 255, 0.13) 1px, transparent 1px);
-    background-size: 62px 44px;
+        linear-gradient(90deg, rgba(86, 175, 255, 0.13) 1px, transparent 1px),
+        linear-gradient(rgba(132, 214, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(132, 214, 255, 0.055) 1px, transparent 1px);
+    background-size: 62px 44px, 62px 44px, 248px 176px, 248px 176px;
     transform: perspective(560px) rotateX(68deg) scale(1.6);
     transform-origin: center bottom;
     -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 77%);
