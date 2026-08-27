@@ -2983,7 +2983,7 @@
         'portal.outputLabel': '개방형 출력',
         'portal.outputValue': '다원적 Web3 세계',
         'portal.eyebrow': '개방형 조정 필드',
-        'portal.title': '자율적 Intent가<br>책임 있는 행동이 되는 곳.',
+        'portal.title': '자율적 Intent가 <br>책임 있는 행동이 되는 곳.',
         'portal.lede': 'Agent와 기존 인터넷 서비스는 각자의 로컬 판단을 유지합니다. TOS는 정확한 Agreement, 제한된 권한, 검증 가능한 증거, 선택 가능한 정산 경로를 위한 개방형 의미 체계를 제공합니다.',
         'portal.ctaOverview': '전체 시스템 살펴보기',
         'portal.ctaProtocol': '프로토콜 확인',

@@ -179,6 +179,12 @@ Natural randomization prevents mechanical appearance:
 ## Technical Implementation
 
 ### File Structure
+
+> **Historical.** Neither file below is in the repository any more.
+> `js/dag-animation.js` was gone before 2026-08-28; `css/components.css` was
+> removed on 2026-08-28 along with nine other stylesheets that no page linked.
+> This document is kept for the design reasoning, not as a map of the tree.
+
 ```
 js/dag-animation.js         - Main animation logic (540+ lines)
 css/components.css          - Canvas container styling
