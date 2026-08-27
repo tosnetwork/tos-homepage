@@ -1,7 +1,6 @@
-/* Realtime Agentic Internet entry scene.
-   The authored image is the 2.5D depth plate, a static SVG carries the legacy
-   hero mesh, a low-DPR Canvas moves protocol particles, and a slower auxiliary
-   Canvas runs an autonomous Agent/Intent/local-market simulation. */
+/* Autonomous Agentic Internet scene.
+   Every visible actor, protocol event and local-market member is rendered as
+   an independent vector object by the single scene canvas. */
 
 .portal-page {
     background: #020611;
@@ -12,11 +11,11 @@
 }
 
 .portal-page .site-header {
-    background: linear-gradient(180deg, rgba(2, 6, 17, 0.7), rgba(2, 6, 17, 0));
+    background: linear-gradient(180deg, rgba(2, 6, 17, 0.82), rgba(2, 6, 17, 0));
 }
 
 .portal-page .site-header.is-scrolled {
-    background: rgba(2, 6, 17, 0.9);
+    background: rgba(2, 6, 17, 0.92);
 }
 
 .portal-page .nav-shell {
@@ -24,8 +23,6 @@
 }
 
 .portal-hero {
-    --portal-pointer-x: 0;
-    --portal-pointer-y: 0;
     position: relative;
     isolation: isolate;
     min-height: 100vh;
@@ -35,11 +32,7 @@
 }
 
 .portal-visual,
-.portal-art-layers,
 .portal-world-canvas,
-.portal-art,
-.portal-mesh,
-.portal-flow,
 .portal-depth-grid,
 .portal-vignette {
     position: absolute;
@@ -49,31 +42,14 @@
 }
 
 .portal-visual {
-    z-index: -1;
-    overflow: hidden;
-}
-
-.portal-art-layers {
     z-index: 0;
     overflow: hidden;
-    pointer-events: none;
-}
-
-.portal-art {
-    z-index: 0;
-    inset: -12px;
-    width: calc(100% + 24px);
-    height: calc(100% + 24px);
-    object-fit: cover;
-    object-position: 50% 50%;
-    opacity: 0.88;
-    filter: saturate(1.04) contrast(1.1) brightness(0.86);
-    transform: translate3d(
-        calc(var(--portal-pointer-x) * -8px),
-        calc(var(--portal-pointer-y) * -5px),
-        0
-    ) scale(1.035);
-    transition: filter 500ms ease;
+    background:
+        radial-gradient(circle at 17% 38%, rgba(72, 53, 177, 0.19), transparent 28%),
+        radial-gradient(circle at 78% 27%, rgba(23, 119, 180, 0.17), transparent 25%),
+        radial-gradient(circle at 82% 72%, rgba(111, 41, 162, 0.18), transparent 28%),
+        radial-gradient(ellipse at 50% 52%, rgba(24, 111, 172, 0.13), transparent 24%),
+        linear-gradient(112deg, #020510 0%, #05091a 48%, #020713 100%);
 }
 
 .portal-world-canvas {
@@ -82,72 +58,28 @@
     pointer-events: none;
 }
 
-.portal-flow {
-    z-index: 3;
-    display: block;
-    pointer-events: none;
-    opacity: 0.56;
-}
-
-.portal-mesh {
-    z-index: 1;
-    display: block;
-    overflow: visible;
-    pointer-events: none;
-    opacity: 0.52;
-    mix-blend-mode: screen;
-}
-
-.portal-mesh-edge {
-    fill: none;
-    stroke: rgba(120, 207, 231, 0.52);
-    stroke-width: 1.4;
-    vector-effect: non-scaling-stroke;
-}
-
-.portal-mesh-edge-glow {
-    fill: none;
-    stroke: rgba(178, 231, 243, 0.14);
-    stroke-width: 4.8;
-    vector-effect: non-scaling-stroke;
-}
-
-.portal-mesh-node-glow {
-    fill: rgba(224, 95, 214, 0.16);
-}
-
-.portal-mesh-node {
-    fill: rgba(224, 95, 214, 0.78);
-    stroke: rgba(245, 179, 239, 0.72);
-    stroke-width: 0.7;
-    vector-effect: non-scaling-stroke;
-}
-
-.portal-mesh-node-protocol {
-    fill: rgba(120, 207, 231, 0.9);
-    stroke: rgba(232, 250, 255, 0.92);
-}
-
 .portal-depth-grid {
-    z-index: 4;
-    top: 52%;
-    height: 62%;
-    opacity: 0.24;
+    z-index: 1;
+    top: 54%;
+    height: 58%;
+    opacity: 0.14;
     background-image:
         linear-gradient(rgba(86, 175, 255, 0.13) 1px, transparent 1px),
         linear-gradient(90deg, rgba(86, 175, 255, 0.13) 1px, transparent 1px);
-    background-size: 58px 44px;
-    transform: perspective(520px) rotateX(68deg) scale(1.55);
+    background-size: 62px 44px;
+    transform: perspective(560px) rotateX(68deg) scale(1.6);
     transform-origin: center bottom;
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 75%);
-    mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 75%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 77%);
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 77%);
+    pointer-events: none;
 }
 
 .portal-vignette {
-    z-index: 5;
+    z-index: 3;
     background:
-        linear-gradient(180deg, rgba(2, 6, 17, 0.32) 0%, transparent 18%, transparent 82%, rgba(2, 6, 17, 0.28) 100%),
-        radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(1, 4, 12, 0.38) 100%);
+        linear-gradient(180deg, rgba(2, 6, 17, 0.38) 0%, transparent 18%, transparent 84%, rgba(2, 6, 17, 0.34) 100%),
+        radial-gradient(ellipse at 50% 51%, transparent 56%, rgba(1, 4, 12, 0.5) 100%);
+    pointer-events: none;
 }
 
 .portal-motion-toggle {
@@ -162,17 +94,17 @@
     padding: 0;
     border: 0;
     border-radius: 50%;
-    color: rgba(225, 240, 255, 0.55);
+    color: rgba(225, 240, 255, 0.58);
     background: transparent;
     cursor: pointer;
-    opacity: 0.46;
+    opacity: 0.5;
     transition: color 160ms ease, opacity 160ms ease, background-color 160ms ease;
 }
 
 .portal-motion-toggle:hover,
 .portal-motion-toggle:focus-visible {
     color: #fff;
-    background: rgba(3, 8, 20, 0.38);
+    background: rgba(3, 8, 20, 0.44);
     opacity: 1;
 }
 
@@ -205,49 +137,31 @@
     background: #01040b;
 }
 
-.portal-scene-paused .portal-art {
-    filter: saturate(0.9) contrast(1.06) brightness(0.78);
+.portal-scene-paused .portal-world-canvas {
+    opacity: 0.88;
 }
 
 @media (max-width: 640px) {
-    .portal-art {
-        opacity: 0.82;
-        object-position: 50% 50%;
-        transform: scale(1.16);
-    }
-
     .portal-depth-grid {
-        opacity: 0.16;
+        opacity: 0.09;
+        background-size: 44px 36px;
     }
 
     .portal-vignette {
         background:
-            linear-gradient(180deg, rgba(2, 6, 17, 0.35) 0%, transparent 20%, transparent 84%, rgba(2, 6, 17, 0.28) 100%),
-            radial-gradient(ellipse at 50% 50%, transparent 56%, rgba(1, 4, 12, 0.3) 100%);
+            linear-gradient(180deg, rgba(2, 6, 17, 0.4) 0%, transparent 22%, transparent 84%, rgba(2, 6, 17, 0.34) 100%),
+            radial-gradient(ellipse at 50% 52%, transparent 58%, rgba(1, 4, 12, 0.44) 100%);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .portal-art {
-        transform: scale(1.035);
-        transition: none;
-    }
-
     .portal-motion-toggle {
         display: none;
     }
-
-    .portal-world-canvas {
-        display: none;
-    }
-
 }
 
 @media (forced-colors: active) {
-    .portal-art,
     .portal-world-canvas,
-    .portal-mesh,
-    .portal-flow,
     .portal-depth-grid {
         display: none;
     }

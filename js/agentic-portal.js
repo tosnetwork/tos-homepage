@@ -2,69 +2,61 @@
     'use strict';
 
     var scene = document.querySelector('[data-portal-scene]');
-    var canvas = document.getElementById('portalFlowCanvas');
-    var meshField = document.getElementById('portalMeshField');
-    var edgeLayer = document.getElementById('portalMeshEdges');
-    var nodeLayer = document.getElementById('portalMeshNodes');
+    var canvas = document.getElementById('portalWorldCanvas');
     var motionToggle = document.getElementById('portalMotionToggle');
-    var portalArt = scene ? scene.querySelector('.portal-art') : null;
-    var worldCanvas = document.getElementById('portalWorldCanvas');
 
-    if (!scene || !canvas || !meshField || !edgeLayer || !nodeLayer || !motionToggle || !portalArt || !worldCanvas) {
+    if (!scene || !canvas || !motionToggle) {
         return;
     }
 
     var context = canvas.getContext('2d', { alpha: true });
-    var worldContext = worldCanvas.getContext('2d', { alpha: true });
 
-    if (!context || !worldContext) {
+    if (!context) {
         return;
     }
 
-    var SVG_NS = 'http://www.w3.org/2000/svg';
     var reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     var compactQuery = window.matchMedia('(max-width: 640px)');
-    var width = 0;
-    var height = 0;
-    var pixelRatio = 0.75;
-    var graph = { edges: [], nodes: [] };
-    var particles = [];
-    var animationFrame = 0;
+    var entityKinds = ['agent', 'intent', 'skill', 'evidence', 'storage'];
+    var palette = {
+        agent: [111, 220, 255],
+        intent: [238, 96, 216],
+        skill: [157, 109, 255],
+        evidence: [255, 188, 104],
+        storage: [102, 242, 197]
+    };
+    var cityDefinitions = [
+        { x: 0.70, y: 0.23, radius: 0.058, hue: 190 },
+        { x: 0.84, y: 0.20, radius: 0.052, hue: 253 },
+        { x: 0.78, y: 0.42, radius: 0.064, hue: 216 },
+        { x: 0.92, y: 0.42, radius: 0.054, hue: 286 },
+        { x: 0.70, y: 0.68, radius: 0.064, hue: 177 },
+        { x: 0.86, y: 0.71, radius: 0.078, hue: 246 }
+    ];
+
+    var width = 1;
+    var height = 1;
+    var pixelRatio = 1;
+    var unit = 1;
+    var portal = { x: 0.5, y: 0.52, rx: 58, ry: 260 };
+    var random = mulberry32(927421);
+    var actors = [];
+    var leftInteractions = [];
+    var cities = [];
+    var exchanges = [];
+    var stars = [];
+    var nextEntityId = 1;
+    var nextExchangeAt = 0;
+    var nextTransitAt = 0;
     var lastFrameTime = 0;
+    var animationFrame = 0;
     var manuallyPaused = false;
     var sceneVisible = true;
-    var pointerFrame = 0;
-    var lastWorldFrameTime = 0;
-    var worldPixelRatio = 0.45;
-    var worldRandom = null;
-    var worldActors = [];
-    var worldClusters = [];
-    var worldBridges = [];
-    var nextWorldEntityId = 1;
-
-    var worldClusterDefinitions = [
-        { x: 0.75, y: 0.28, radius: 0.032, max: 4 },
-        { x: 0.84, y: 0.23, radius: 0.038, max: 5 },
-        { x: 0.90, y: 0.37, radius: 0.034, max: 4 },
-        { x: 0.96, y: 0.48, radius: 0.029, max: 4 },
-        { x: 0.78, y: 0.49, radius: 0.031, max: 4 },
-        { x: 0.87, y: 0.60, radius: 0.041, max: 5 },
-        { x: 0.83, y: 0.79, radius: 0.045, max: 6 },
-        { x: 0.95, y: 0.76, radius: 0.052, max: 6 }
-    ];
-
-    var worldColors = [
-        [120, 207, 231],
-        [224, 95, 214],
-        [168, 85, 247],
-        [245, 179, 111]
-    ];
-
-    function createSvgElement(name, className) {
-        var element = document.createElementNS(SVG_NS, name);
-        element.setAttribute('class', className);
-        return element;
-    }
+    var resizePending = false;
+    var frameCounter = 0;
+    var frameWindowStart = performance.now();
+    var measuredFps = 0;
+    var lastDiagnosticsTime = 0;
 
     function mulberry32(seed) {
         return function () {
@@ -77,730 +69,1058 @@
     }
 
     function randomBetween(minimum, maximum) {
-        return minimum + (maximum - minimum) * worldRandom();
+        return minimum + (maximum - minimum) * random();
     }
 
-    function entityAlpha(entity) {
-        return Math.max(0, Math.min(
-            1,
-            entity.age / entity.fadeIn,
-            (entity.life - entity.age) / entity.fadeOut
-        ));
+    function clamp(value, minimum, maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
     }
 
-    function assignActorTarget(actor) {
-        if (actor.behavior === 1) {
-            actor.targetX = randomBetween(0.445, 0.475);
-            actor.targetY = randomBetween(0.27, 0.73);
-        } else {
-            actor.targetX = randomBetween(0.025, 0.43);
-            actor.targetY = randomBetween(0.1, 0.9);
+    function rgba(color, alpha) {
+        return 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + alpha + ')';
+    }
+
+    function lifeAlpha(entity) {
+        var fadeIn = clamp(entity.age / entity.fadeIn, 0, 1);
+        var fadeOut = entity.retiring
+            ? clamp((entity.life - entity.age) / entity.fadeOut, 0, 1)
+            : 1;
+        return Math.min(fadeIn, fadeOut);
+    }
+
+    function distanceBetween(first, second) {
+        var deltaX = (first.x - second.x) * width;
+        var deltaY = (first.y - second.y) * height;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    function chooseKind() {
+        var roll = random();
+        if (roll < 0.28) {
+            return 'agent';
         }
+        if (roll < 0.49) {
+            return 'intent';
+        }
+        if (roll < 0.69) {
+            return 'skill';
+        }
+        if (roll < 0.86) {
+            return 'evidence';
+        }
+        return 'storage';
     }
 
-    function spawnWorldActor(initial) {
-        var behavior = Math.floor(worldRandom() * 3);
+    function chooseLeftTarget() {
+        return {
+            x: randomBetween(0.045, 0.405),
+            y: randomBetween(0.13, 0.9)
+        };
+    }
+
+    function spawnActor(initial) {
+        var target = chooseLeftTarget();
         var actor = {
-            id: nextWorldEntityId,
-            role: Math.floor(worldRandom() * worldColors.length),
-            behavior: behavior,
-            x: randomBetween(0.025, 0.42),
-            y: randomBetween(0.1, 0.9),
-            vx: randomBetween(-0.008, 0.008),
-            vy: randomBetween(-0.008, 0.008),
-            targetX: 0,
-            targetY: 0,
-            homeX: randomBetween(0.04, 0.4),
-            homeY: randomBetween(0.13, 0.87),
-            orbitRadius: randomBetween(0.025, 0.075),
-            orbitRate: randomBetween(0.00028, 0.00065),
+            id: nextEntityId,
+            kind: chooseKind(),
+            x: randomBetween(0.035, 0.39),
+            y: randomBetween(0.12, 0.91),
+            vx: randomBetween(-0.006, 0.006),
+            vy: randomBetween(-0.006, 0.006),
+            targetX: target.x,
+            targetY: target.y,
+            mode: 'explore',
+            modeAge: randomBetween(0, 2),
+            decisionAt: randomBetween(1.4, 4.8),
+            speed: randomBetween(38, 68),
+            size: randomBetween(8.5, 12.5),
+            age: initial ? randomBetween(0.4, 9) : 0,
+            life: randomBetween(21, 42),
+            fadeIn: randomBetween(0.5, 1.1),
+            fadeOut: randomBetween(1.1, 2.1),
+            retiring: false,
+            busy: false,
             phase: randomBetween(0, Math.PI * 2),
-            speed: randomBetween(0.035, 0.068),
-            size: randomBetween(2.2, 4.1),
-            life: randomBetween(6.5, 15),
-            age: 0,
-            fadeIn: randomBetween(0.7, 1.5),
-            fadeOut: randomBetween(0.9, 1.8)
+            route: null,
+            trail: []
         };
-
-        nextWorldEntityId += 1;
-        assignActorTarget(actor);
-
-        if (initial) {
-            actor.age = randomBetween(0, actor.life * 0.78);
-        }
-
-        worldActors.push(actor);
+        nextEntityId += 1;
+        actors.push(actor);
+        return actor;
     }
 
-    function spawnClusterMember(cluster, initial) {
+    function cityPoint(city, amount) {
+        var angle = randomBetween(0, Math.PI * 2);
+        var radius = Math.sqrt(random()) * city.radius * Math.min(width, height) * amount;
+        return {
+            x: city.x + Math.cos(angle) * radius / width,
+            y: city.y + Math.sin(angle) * radius * 0.46 / height
+        };
+    }
+
+    function spawnCityMember(city, kind, arrival) {
+        var target = cityPoint(city, 0.78);
+        var origin = arrival || cityPoint(city, 0.48);
         var member = {
-            id: nextWorldEntityId,
-            role: Math.floor(worldRandom() * worldColors.length),
-            angle: randomBetween(0, Math.PI * 2),
-            distance: randomBetween(0.32, 1),
-            angularSpeed: randomBetween(0.22, 0.72) * (worldRandom() < 0.5 ? -1 : 1),
-            size: randomBetween(1.7, 3.2),
-            life: randomBetween(5, 13),
+            id: nextEntityId,
+            kind: kind || chooseKind(),
+            x: origin.x,
+            y: origin.y,
+            vx: 0,
+            vy: 0,
+            targetX: target.x,
+            targetY: target.y,
+            speed: randomBetween(20, 42),
+            size: randomBetween(5.8, 8.4),
             age: 0,
-            fadeIn: randomBetween(0.5, 1.2),
-            fadeOut: randomBetween(0.7, 1.5),
-            px: 0,
-            py: 0
+            life: randomBetween(18, 42),
+            fadeIn: randomBetween(0.45, 0.9),
+            fadeOut: randomBetween(0.8, 1.6),
+            retiring: false,
+            busy: false,
+            phase: randomBetween(0, Math.PI * 2)
         };
-
-        nextWorldEntityId += 1;
-
-        if (initial) {
-            member.age = randomBetween(0, member.life * 0.72);
-        }
-
-        cluster.members.push(member);
+        nextEntityId += 1;
+        city.members.push(member);
+        return member;
     }
 
-    function buildAgenticWorld() {
-        worldRandom = mulberry32(718239);
-        worldActors = [];
-        worldBridges = [];
-        nextWorldEntityId = 1;
-
-        var initialActors = compactQuery.matches ? 10 : 18;
-        for (var actorIndex = 0; actorIndex < initialActors; actorIndex += 1) {
-            spawnWorldActor(true);
-        }
-
-        worldClusters = worldClusterDefinitions.map(function (definition, clusterIndex) {
-            var cluster = {
-                x: definition.x,
-                y: definition.y,
-                radius: definition.radius,
-                max: compactQuery.matches ? Math.max(3, definition.max - 2) : definition.max,
+    function createCity(definition, index) {
+        var city = {
+            id: index,
+            x: definition.x,
+            y: definition.y,
+            radius: definition.radius,
+            hue: definition.hue,
+            spin: randomBetween(0, Math.PI * 2),
+            spinSpeed: randomBetween(-0.13, 0.13),
+            members: [],
+            interactions: [],
+            nextSpawnAt: randomBetween(1.5, 4),
+            nextInteractionAt: randomBetween(0.7, 2.2),
+            localTime: 0,
+            eventGlow: 0,
+            spires: []
+        };
+        var spireCount = compactQuery.matches ? 3 : 4 + index % 3;
+        for (var spireIndex = 0; spireIndex < spireCount; spireIndex += 1) {
+            city.spires.push({
+                angle: randomBetween(0, Math.PI * 2),
+                distance: randomBetween(0.12, 0.58),
+                height: randomBetween(0.34, 0.92),
                 phase: randomBetween(0, Math.PI * 2),
-                members: [],
-                interactions: [],
-                id: clusterIndex
-            };
-            var initialMembers = Math.max(2, Math.floor(randomBetween(2, cluster.max)));
+                rate: randomBetween(0.55, 1.35)
+            });
+        }
+        var initialMembers = compactQuery.matches
+            ? Math.floor(randomBetween(2, 4))
+            : Math.floor(randomBetween(3, 7));
+        for (var memberIndex = 0; memberIndex < initialMembers; memberIndex += 1) {
+            var member = spawnCityMember(city);
+            member.age = randomBetween(0.2, member.life * 0.55);
+        }
+        return city;
+    }
 
-            for (var memberIndex = 0; memberIndex < initialMembers; memberIndex += 1) {
-                spawnClusterMember(cluster, true);
+    function buildWorld() {
+        actors = [];
+        leftInteractions = [];
+        exchanges = [];
+        cities = [];
+        nextEntityId = 1;
+        nextExchangeAt = randomBetween(1.2, 3.2);
+        nextTransitAt = randomBetween(0.8, 1.8);
+
+        var actorCount = compactQuery.matches ? 12 : 23;
+        for (var actorIndex = 0; actorIndex < actorCount; actorIndex += 1) {
+            spawnActor(true);
+        }
+
+        var cityCount = compactQuery.matches ? 4 : cityDefinitions.length;
+        for (var cityIndex = 0; cityIndex < cityCount; cityIndex += 1) {
+            var definition = cityDefinitions[cityIndex];
+            if (compactQuery.matches) {
+                definition = {
+                    x: cityIndex % 2 === 0 ? 0.75 : 0.9,
+                    y: 0.24 + Math.floor(cityIndex / 2) * 0.42,
+                    radius: 0.068,
+                    hue: definition.hue
+                };
             }
+            cities.push(createCity(definition, cityIndex));
+        }
 
-            return cluster;
+        actors.slice(0, compactQuery.matches ? 1 : 2).forEach(function (actor, index) {
+            actor.mode = 'portal';
+            actor.modeAge = index * 0.7;
+            actor.targetX = portal.x;
+            actor.targetY = portal.y;
+            actor.busy = true;
         });
     }
 
-    function updateWorldActors(delta, time) {
-        worldActors.forEach(function (actor) {
+    function steer(entity, targetX, targetY, speed, delta) {
+        var deltaX = (targetX - entity.x) * width;
+        var deltaY = (targetY - entity.y) * height;
+        var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) || 1;
+        var desiredX = deltaX / distance * speed / width;
+        var desiredY = deltaY / distance * speed / height;
+        var response = Math.min(1, delta * 3.2);
+        entity.vx += (desiredX - entity.vx) * response;
+        entity.vy += (desiredY - entity.vy) * response;
+        entity.x += entity.vx * delta;
+        entity.y += entity.vy * delta;
+        return distance;
+    }
+
+    function findPartner(actor) {
+        var candidates = actors.filter(function (candidate) {
+            return candidate !== actor
+                && !candidate.busy
+                && !candidate.retiring
+                && candidate.mode === 'explore';
+        });
+        if (!candidates.length) {
+            return null;
+        }
+        candidates.sort(function (first, second) {
+            return distanceBetween(actor, first) - distanceBetween(actor, second);
+        });
+        return candidates[Math.floor(random() * Math.min(3, candidates.length))];
+    }
+
+    function beginInteraction(first, second) {
+        first.mode = 'handshake';
+        second.mode = 'handshake';
+        first.modeAge = 0;
+        second.modeAge = 0;
+        first.busy = true;
+        second.busy = true;
+        leftInteractions.push({
+            first: first,
+            second: second,
+            age: 0,
+            duration: randomBetween(1.3, 2.5),
+            pulses: 2 + Math.floor(random() * 3)
+        });
+    }
+
+    function releaseActor(actor, preferPortal) {
+        actor.busy = false;
+        actor.modeAge = 0;
+        actor.decisionAt = randomBetween(1.2, 4.2);
+        if (preferPortal && random() < 0.3) {
+            actor.mode = 'portal';
+            actor.busy = true;
+            actor.targetX = portal.x;
+            actor.targetY = portal.y;
+        } else {
+            var target = chooseLeftTarget();
+            actor.mode = 'explore';
+            actor.targetX = target.x;
+            actor.targetY = target.y;
+        }
+    }
+
+    function beginTransit(actor) {
+        var destination = cities[Math.floor(random() * cities.length)];
+        actor.mode = 'transit';
+        actor.modeAge = 0;
+        actor.busy = true;
+        actor.route = {
+            startX: actor.x,
+            startY: actor.y,
+            city: destination,
+            duration: randomBetween(2.7, 4.2),
+            progress: 0
+        };
+        actor.trail = [];
+        actor.life = Math.max(actor.life, actor.age + actor.route.duration + 2);
+    }
+
+    function quadraticPoint(fromX, fromY, controlX, controlY, toX, toY, progress) {
+        var inverse = 1 - progress;
+        return {
+            x: inverse * inverse * fromX + 2 * inverse * progress * controlX + progress * progress * toX,
+            y: inverse * inverse * fromY + 2 * inverse * progress * controlY + progress * progress * toY
+        };
+    }
+
+    function transitPoint(route, progress) {
+        var centerSplit = 0.48;
+        if (progress <= centerSplit) {
+            var incoming = progress / centerSplit;
+            return quadraticPoint(
+                route.startX,
+                route.startY,
+                0.43,
+                route.startY * 0.42 + portal.y * 0.58,
+                portal.x,
+                portal.y,
+                incoming
+            );
+        }
+        var outgoing = (progress - centerSplit) / (1 - centerSplit);
+        return quadraticPoint(
+            portal.x,
+            portal.y,
+            0.61,
+            portal.y * 0.48 + route.city.y * 0.52,
+            route.city.x,
+            route.city.y,
+            outgoing
+        );
+    }
+
+    function updateLeftInteractions(delta) {
+        leftInteractions.forEach(function (interaction) {
+            interaction.age += delta;
+        });
+        leftInteractions = leftInteractions.filter(function (interaction) {
+            if (interaction.age < interaction.duration
+                && actors.indexOf(interaction.first) !== -1
+                && actors.indexOf(interaction.second) !== -1) {
+                return true;
+            }
+            if (actors.indexOf(interaction.first) !== -1) {
+                releaseActor(interaction.first, true);
+            }
+            if (actors.indexOf(interaction.second) !== -1) {
+                releaseActor(interaction.second, false);
+            }
+            return false;
+        });
+    }
+
+    function updateActors(delta, elapsed) {
+        actors.forEach(function (actor) {
             actor.age += delta;
+            actor.modeAge += delta;
 
-            if (actor.behavior === 2) {
-                actor.targetX = actor.homeX + Math.cos(time * actor.orbitRate + actor.phase) * actor.orbitRadius;
-                actor.targetY = actor.homeY + Math.sin(time * actor.orbitRate * 0.81 + actor.phase) * actor.orbitRadius;
-            }
-
-            var deltaX = actor.targetX - actor.x;
-            var deltaY = actor.targetY - actor.y;
-            var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) || 1;
-            actor.vx += deltaX / distance * actor.speed * delta * 0.85;
-            actor.vy += deltaY / distance * actor.speed * delta * 0.85;
-            actor.vx += Math.sin(time * 0.0007 + actor.phase) * 0.0025 * delta;
-            actor.vy += Math.cos(time * 0.00057 + actor.phase) * 0.0025 * delta;
-
-            var velocity = Math.sqrt(actor.vx * actor.vx + actor.vy * actor.vy) || 1;
-            if (velocity > actor.speed) {
-                actor.vx = actor.vx / velocity * actor.speed;
-                actor.vy = actor.vy / velocity * actor.speed;
-            }
-
-            actor.vx *= Math.pow(0.22, delta);
-            actor.vy *= Math.pow(0.22, delta);
-            actor.x += actor.vx * delta;
-            actor.y += actor.vy * delta;
-
-            if (distance < 0.018 && actor.behavior !== 2) {
-                if (actor.behavior === 1) {
-                    actor.life = Math.min(actor.life, actor.age + actor.fadeOut + 0.7);
+            if (actor.mode === 'transit') {
+                actor.route.progress = clamp(actor.route.progress + delta / actor.route.duration, 0, 1);
+                var routePoint = transitPoint(actor.route, actor.route.progress);
+                actor.x = routePoint.x;
+                actor.y = routePoint.y;
+                actor.trail.push({ x: actor.x, y: actor.y });
+                if (actor.trail.length > 24) {
+                    actor.trail.shift();
                 }
-                assignActorTarget(actor);
+                if (actor.route.progress >= 1) {
+                    spawnCityMember(actor.route.city, actor.kind, { x: actor.x, y: actor.y });
+                    actor.retiring = true;
+                    actor.life = actor.age;
+                }
+                return;
             }
 
-            if (actor.x < 0.015 || actor.x > 0.49) {
-                actor.vx *= -0.8;
-                actor.x = Math.max(0.015, Math.min(0.49, actor.x));
+            if (!actor.retiring && actor.age > actor.life) {
+                actor.retiring = true;
+                actor.life = actor.age + actor.fadeOut;
             }
-            if (actor.y < 0.07 || actor.y > 0.93) {
-                actor.vy *= -0.8;
-                actor.y = Math.max(0.07, Math.min(0.93, actor.y));
+
+            if (actor.mode === 'handshake') {
+                actor.vx *= Math.pow(0.12, delta);
+                actor.vy *= Math.pow(0.12, delta);
+                actor.x += Math.sin(elapsed * 1.2 + actor.phase) * 0.0007 * delta;
+                actor.y += Math.cos(elapsed * 1.05 + actor.phase) * 0.0007 * delta;
+                return;
             }
+
+            if (actor.mode === 'portal') {
+                var portalDistance = steer(actor, portal.x, portal.y, actor.speed * 1.58, delta);
+                if (portalDistance < Math.max(9, portal.rx * 0.12)) {
+                    beginTransit(actor);
+                }
+                return;
+            }
+
+            var distance = steer(actor, actor.targetX, actor.targetY, actor.speed, delta);
+            actor.x += Math.sin(elapsed * 0.72 + actor.phase) * 0.00028 * delta;
+            actor.y += Math.cos(elapsed * 0.61 + actor.phase) * 0.00025 * delta;
+
+            if (distance < 9) {
+                var target = chooseLeftTarget();
+                actor.targetX = target.x;
+                actor.targetY = target.y;
+            }
+
+            if (!actor.busy && actor.modeAge > actor.decisionAt) {
+                actor.modeAge = 0;
+                actor.decisionAt = randomBetween(1.5, 4.6);
+                var choice = random();
+                if (choice < 0.34) {
+                    var partner = findPartner(actor);
+                    if (partner) {
+                        beginInteraction(actor, partner);
+                    }
+                } else if (choice < 0.46) {
+                    actor.mode = 'portal';
+                    actor.busy = true;
+                    actor.targetX = portal.x;
+                    actor.targetY = portal.y;
+                }
+            }
+
+            actor.x = clamp(actor.x, 0.025, 0.47);
+            actor.y = clamp(actor.y, 0.1, 0.93);
         });
 
-        worldActors = worldActors.filter(function (actor) {
+        actors = actors.filter(function (actor) {
             return actor.age < actor.life;
         });
 
-        var baseCount = compactQuery.matches ? 8 : 15;
-        var targetCount = baseCount + Math.round((Math.sin(time * 0.00022) + 1) * (compactQuery.matches ? 3 : 4));
-
-        if (worldActors.length < targetCount && worldRandom() < Math.min(1, delta * 4.2)) {
-            spawnWorldActor(false);
+        var minimum = compactQuery.matches ? 9 : 18;
+        var maximum = compactQuery.matches ? 17 : 30;
+        if (actors.length < minimum || (actors.length < maximum && random() < delta * 0.42)) {
+            spawnActor(false);
         }
-        if (worldActors.length > targetCount + 3 && worldRandom() < delta * 0.7) {
-            var retiringActor = worldActors[Math.floor(worldRandom() * worldActors.length)];
-            retiringActor.life = Math.min(retiringActor.life, retiringActor.age + retiringActor.fadeOut);
+
+        if (elapsed >= nextTransitAt) {
+            var available = actors.filter(function (actor) {
+                return !actor.busy && !actor.retiring && actor.mode === 'explore';
+            });
+            if (available.length) {
+                var selected = available[Math.floor(random() * available.length)];
+                selected.mode = 'portal';
+                selected.modeAge = 0;
+                selected.busy = true;
+                selected.targetX = portal.x;
+                selected.targetY = portal.y;
+            }
+            nextTransitAt = elapsed + randomBetween(3.2, 5.8);
         }
     }
 
-    function updateWorldClusters(delta, time) {
-        worldClusters.forEach(function (cluster) {
-            cluster.members.forEach(function (member) {
-                member.age += delta;
-                member.angle += member.angularSpeed * delta;
-                var orbitPixels = cluster.radius * Math.min(width, height) * member.distance;
-                member.px = cluster.x * width + Math.cos(member.angle) * orbitPixels;
-                member.py = cluster.y * height + Math.sin(member.angle) * orbitPixels * 0.58;
-            });
+    function createCityInteraction(city) {
+        var available = city.members.filter(function (member) {
+            return !member.busy && !member.retiring;
+        });
+        if (available.length < 2) {
+            return;
+        }
+        var first = available[Math.floor(random() * available.length)];
+        var secondPool = available.filter(function (candidate) {
+            return candidate !== first;
+        });
+        var second = secondPool[Math.floor(random() * secondPool.length)];
+        first.busy = true;
+        second.busy = true;
+        city.interactions.push({
+            first: first,
+            second: second,
+            age: 0,
+            duration: randomBetween(1.1, 2.6),
+            kind: random() < 0.5 ? first.kind : second.kind
+        });
+    }
 
-            cluster.members = cluster.members.filter(function (member) {
-                return member.age < member.life;
-            });
+    function updateCity(city, delta, elapsed) {
+        city.localTime += delta;
+        city.spin += city.spinSpeed * delta;
+        city.eventGlow = Math.max(0, city.eventGlow - delta * 0.75);
 
-            var dynamicMaximum = Math.max(2, cluster.max - Math.round((Math.sin(time * 0.00031 + cluster.phase) + 1) * 1.2));
-            if (cluster.members.length < dynamicMaximum && worldRandom() < Math.min(1, delta * 1.15)) {
-                spawnClusterMember(cluster, false);
+        city.members.forEach(function (member) {
+            member.age += delta;
+            if (!member.retiring && member.age > member.life) {
+                member.retiring = true;
+                member.life = member.age + member.fadeOut;
             }
-
-            cluster.interactions.forEach(function (interaction) {
-                interaction.age += delta;
-            });
-            cluster.interactions = cluster.interactions.filter(function (interaction) {
-                return interaction.age < interaction.duration
-                    && cluster.members.indexOf(interaction.from) !== -1
-                    && cluster.members.indexOf(interaction.to) !== -1;
-            });
-
-            if (cluster.members.length > 1
-                && cluster.interactions.length < 2
-                && worldRandom() < delta * 0.42) {
-                var fromIndex = Math.floor(worldRandom() * cluster.members.length);
-                var toIndex = (fromIndex + 1 + Math.floor(worldRandom() * (cluster.members.length - 1))) % cluster.members.length;
-                cluster.interactions.push({
-                    from: cluster.members[fromIndex],
-                    to: cluster.members[toIndex],
-                    age: 0,
-                    duration: randomBetween(0.9, 2.1)
-                });
+            if (!member.busy) {
+                var distance = steer(member, member.targetX, member.targetY, member.speed, delta);
+                member.x += Math.sin(elapsed * 0.83 + member.phase) * 0.00016 * delta;
+                member.y += Math.cos(elapsed * 0.76 + member.phase) * 0.00014 * delta;
+                if (distance < 5) {
+                    var target = cityPoint(city, 0.8);
+                    member.targetX = target.x;
+                    member.targetY = target.y;
+                }
+            } else {
+                member.vx *= Math.pow(0.15, delta);
+                member.vy *= Math.pow(0.15, delta);
             }
         });
 
-        worldBridges.forEach(function (bridge) {
-            bridge.age += delta;
-        });
-        worldBridges = worldBridges.filter(function (bridge) {
-            return bridge.age < bridge.duration;
+        city.members = city.members.filter(function (member) {
+            return member.age < member.life;
         });
 
-        if (worldBridges.length < 3 && worldRandom() < delta * 0.18) {
-            var sourceIndex = Math.floor(worldRandom() * worldClusters.length);
-            var destinationIndex = (sourceIndex + 1 + Math.floor(worldRandom() * (worldClusters.length - 1))) % worldClusters.length;
-            worldBridges.push({
-                from: worldClusters[sourceIndex],
-                to: worldClusters[destinationIndex],
-                age: 0,
-                duration: randomBetween(1.4, 2.8),
-                color: Math.floor(worldRandom() * worldColors.length)
-            });
+        city.interactions.forEach(function (interaction) {
+            interaction.age += delta;
+        });
+        city.interactions = city.interactions.filter(function (interaction) {
+            if (interaction.age < interaction.duration
+                && city.members.indexOf(interaction.first) !== -1
+                && city.members.indexOf(interaction.second) !== -1) {
+                return true;
+            }
+            interaction.first.busy = false;
+            interaction.second.busy = false;
+            city.eventGlow = Math.max(city.eventGlow, 0.6);
+            return false;
+        });
+
+        if (city.localTime >= city.nextSpawnAt) {
+            var cityMaximum = compactQuery.matches ? 6 : 10;
+            if (city.members.length < cityMaximum && random() < 0.72) {
+                spawnCityMember(city);
+            } else if (city.members.length > 3 && random() < 0.44) {
+                var retiring = city.members[Math.floor(random() * city.members.length)];
+                if (!retiring.busy) {
+                    retiring.retiring = true;
+                    retiring.life = retiring.age + retiring.fadeOut;
+                }
+            }
+            city.nextSpawnAt = city.localTime + randomBetween(2.2, 6.8);
+        }
+
+        if (city.localTime >= city.nextInteractionAt) {
+            if (city.interactions.length < 2) {
+                createCityInteraction(city);
+            }
+            city.nextInteractionAt = city.localTime + randomBetween(0.9, 3.2);
         }
     }
 
-    function drawEntity(x, y, size, role, alpha) {
-        var color = worldColors[role];
-        var colorValue = color[0] + ', ' + color[1] + ', ' + color[2];
+    function createExchange() {
+        if (cities.length < 2) {
+            return;
+        }
+        var source = cities[Math.floor(random() * cities.length)];
+        var destinations = cities.filter(function (city) {
+            return city !== source;
+        });
+        var target = destinations[Math.floor(random() * destinations.length)];
+        var sourceMember = source.members.length
+            ? source.members[Math.floor(random() * source.members.length)]
+            : source;
+        var targetMember = target.members.length
+            ? target.members[Math.floor(random() * target.members.length)]
+            : target;
+        exchanges.push({
+            source: source,
+            target: target,
+            startX: sourceMember.x,
+            startY: sourceMember.y,
+            endX: targetMember.x,
+            endY: targetMember.y,
+            kind: chooseKind(),
+            age: 0,
+            duration: randomBetween(2.1, 3.8),
+            curve: randomBetween(-0.08, 0.08)
+        });
+    }
 
-        worldContext.beginPath();
+    function updateExchanges(delta, elapsed) {
+        exchanges.forEach(function (exchange) {
+            exchange.age += delta;
+        });
+        exchanges = exchanges.filter(function (exchange) {
+            if (exchange.age < exchange.duration) {
+                return true;
+            }
+            exchange.target.eventGlow = 1;
+            if (exchange.target.members.length < (compactQuery.matches ? 6 : 10) && random() < 0.34) {
+                spawnCityMember(exchange.target, exchange.kind);
+            }
+            return false;
+        });
+        if (elapsed >= nextExchangeAt) {
+            createExchange();
+            nextExchangeAt = elapsed + randomBetween(1.7, 4.5);
+        }
+    }
 
-        if (role === 0) {
-            worldContext.arc(x, y, size, 0, Math.PI * 2);
-        } else if (role === 1) {
-            worldContext.moveTo(x, y - size * 1.25);
-            worldContext.lineTo(x + size * 1.25, y);
-            worldContext.lineTo(x, y + size * 1.25);
-            worldContext.lineTo(x - size * 1.25, y);
-            worldContext.closePath();
-        } else if (role === 2) {
+    function updateWorld(delta, elapsed) {
+        updateLeftInteractions(delta);
+        updateActors(delta, elapsed);
+        cities.forEach(function (city) {
+            updateCity(city, delta, elapsed);
+        });
+        updateExchanges(delta, elapsed);
+    }
+
+    function drawGlow(x, y, radius, color, alpha) {
+        context.beginPath();
+        context.arc(x, y, radius * 1.9, 0, Math.PI * 2);
+        context.fillStyle = rgba(color, alpha * 0.12);
+        context.fill();
+    }
+
+    function drawEntity(kind, x, y, size, alpha, rotation) {
+        var color = palette[kind];
+        var scaled = Math.max(3.8, size * unit);
+        context.save();
+        context.translate(x, y);
+        context.rotate(rotation || 0);
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.globalAlpha = alpha;
+        drawGlow(0, 0, scaled, color, alpha);
+        context.strokeStyle = rgba(color, 0.98);
+        context.fillStyle = rgba(color, 0.2);
+        context.lineWidth = Math.max(1.15, scaled * 0.12);
+
+        if (kind === 'agent') {
+            context.beginPath();
+            context.arc(0, -scaled * 0.38, scaled * 0.27, 0, Math.PI * 2);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(0, -scaled * 0.08);
+            context.lineTo(0, scaled * 0.52);
+            context.moveTo(-scaled * 0.42, scaled * 0.12);
+            context.lineTo(0, scaled * 0.02);
+            context.lineTo(scaled * 0.42, scaled * 0.12);
+            context.moveTo(0, scaled * 0.5);
+            context.lineTo(-scaled * 0.28, scaled * 0.83);
+            context.moveTo(0, scaled * 0.5);
+            context.lineTo(scaled * 0.28, scaled * 0.83);
+            context.stroke();
+        } else if (kind === 'intent') {
+            context.beginPath();
+            context.roundRect(-scaled * 0.78, -scaled * 0.5, scaled * 1.56, scaled, scaled * 0.14);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.67, -scaled * 0.35);
+            context.lineTo(0, scaled * 0.12);
+            context.lineTo(scaled * 0.67, -scaled * 0.35);
+            context.stroke();
+        } else if (kind === 'skill') {
+            context.beginPath();
             for (var side = 0; side < 6; side += 1) {
                 var angle = Math.PI / 3 * side - Math.PI / 2;
-                var sideX = x + Math.cos(angle) * size * 1.2;
-                var sideY = y + Math.sin(angle) * size * 1.2;
+                var sideX = Math.cos(angle) * scaled * 0.78;
+                var sideY = Math.sin(angle) * scaled * 0.78;
                 if (side === 0) {
-                    worldContext.moveTo(sideX, sideY);
+                    context.moveTo(sideX, sideY);
                 } else {
-                    worldContext.lineTo(sideX, sideY);
+                    context.lineTo(sideX, sideY);
                 }
             }
-            worldContext.closePath();
+            context.closePath();
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.34, 0);
+            context.lineTo(scaled * 0.34, 0);
+            context.moveTo(0, -scaled * 0.34);
+            context.lineTo(0, scaled * 0.34);
+            context.stroke();
+        } else if (kind === 'evidence') {
+            context.beginPath();
+            context.moveTo(-scaled * 0.55, -scaled * 0.72);
+            context.lineTo(scaled * 0.22, -scaled * 0.72);
+            context.lineTo(scaled * 0.56, -scaled * 0.38);
+            context.lineTo(scaled * 0.56, scaled * 0.72);
+            context.lineTo(-scaled * 0.55, scaled * 0.72);
+            context.closePath();
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(scaled * 0.2, -scaled * 0.69);
+            context.lineTo(scaled * 0.2, -scaled * 0.35);
+            context.lineTo(scaled * 0.52, -scaled * 0.35);
+            context.moveTo(-scaled * 0.3, 0);
+            context.lineTo(scaled * 0.3, 0);
+            context.moveTo(-scaled * 0.3, scaled * 0.3);
+            context.lineTo(scaled * 0.2, scaled * 0.3);
+            context.stroke();
         } else {
-            worldContext.rect(x - size, y - size, size * 2, size * 2);
+            context.beginPath();
+            context.ellipse(0, -scaled * 0.48, scaled * 0.65, scaled * 0.27, 0, 0, Math.PI * 2);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.65, -scaled * 0.48);
+            context.lineTo(-scaled * 0.65, scaled * 0.48);
+            context.moveTo(scaled * 0.65, -scaled * 0.48);
+            context.lineTo(scaled * 0.65, scaled * 0.48);
+            context.ellipse(0, scaled * 0.48, scaled * 0.65, scaled * 0.27, 0, 0, Math.PI);
+            context.stroke();
         }
-
-        worldContext.fillStyle = 'rgba(' + colorValue + ', ' + alpha * 0.86 + ')';
-        worldContext.fill();
-        if (size >= 2.45) {
-            worldContext.lineWidth = 0.7;
-            worldContext.strokeStyle = 'rgba(244, 252, 255, ' + alpha * 0.62 + ')';
-            worldContext.stroke();
-        }
+        context.restore();
     }
 
-    function drawActorConnections() {
-        var thresholdSquared = 0.072 * 0.072;
-
-        worldActors.forEach(function (actor, actorIndex) {
-            if ((actor.id + actorIndex) % 3 === 0) {
-                return;
-            }
-
-            var nearest = null;
-            var nearestDistance = thresholdSquared;
-
-            worldActors.forEach(function (candidate) {
-                if (candidate === actor) {
-                    return;
-                }
-                var deltaX = candidate.x - actor.x;
-                var deltaY = candidate.y - actor.y;
-                var distance = deltaX * deltaX + deltaY * deltaY;
-                if (distance < nearestDistance) {
-                    nearest = candidate;
-                    nearestDistance = distance;
-                }
-            });
-
-            if (!nearest || actor.id > nearest.id) {
-                return;
-            }
-
-            var alpha = Math.min(entityAlpha(actor), entityAlpha(nearest));
-            worldContext.beginPath();
-            worldContext.moveTo(actor.x * width, actor.y * height);
-            worldContext.lineTo(nearest.x * width, nearest.y * height);
-            worldContext.lineWidth = 0.7;
-            worldContext.strokeStyle = 'rgba(120, 207, 231, ' + alpha * 0.2 + ')';
-            worldContext.stroke();
+    function drawStars(elapsed) {
+        stars.forEach(function (star) {
+            var alpha = star.alpha * (0.66 + Math.sin(elapsed * star.rate + star.phase) * 0.34);
+            context.beginPath();
+            context.arc(star.x * width, star.y * height, star.size, 0, Math.PI * 2);
+            context.fillStyle = 'rgba(179, 211, 255, ' + alpha + ')';
+            context.fill();
         });
     }
 
-    function drawCluster(cluster, time) {
-        var centerX = cluster.x * width;
-        var centerY = cluster.y * height;
-        var radius = cluster.radius * Math.min(width, height);
-
-        worldContext.beginPath();
-        worldContext.arc(centerX, centerY, radius * 1.14, time * 0.00016 + cluster.phase, time * 0.00016 + cluster.phase + Math.PI * 1.28);
-        worldContext.lineWidth = 0.8;
-        worldContext.strokeStyle = 'rgba(120, 207, 231, 0.16)';
-        worldContext.stroke();
-
-        cluster.interactions.forEach(function (interaction) {
+    function drawLeftInteractions() {
+        leftInteractions.forEach(function (interaction) {
             var progress = interaction.age / interaction.duration;
             var alpha = Math.sin(progress * Math.PI);
-            var packetX = interaction.from.px + (interaction.to.px - interaction.from.px) * progress;
-            var packetY = interaction.from.py + (interaction.to.py - interaction.from.py) * progress;
-
-            worldContext.beginPath();
-            worldContext.moveTo(interaction.from.px, interaction.from.py);
-            worldContext.lineTo(interaction.to.px, interaction.to.py);
-            worldContext.lineWidth = 0.9;
-            worldContext.strokeStyle = 'rgba(178, 231, 243, ' + alpha * 0.42 + ')';
-            worldContext.stroke();
-            worldContext.beginPath();
-            worldContext.arc(packetX, packetY, 1.8, 0, Math.PI * 2);
-            worldContext.fillStyle = 'rgba(255, 255, 255, ' + alpha * 0.9 + ')';
-            worldContext.fill();
-        });
-
-        cluster.members.forEach(function (member) {
-            drawEntity(member.px, member.py, member.size, member.role, entityAlpha(member));
+            var firstX = interaction.first.x * width;
+            var firstY = interaction.first.y * height;
+            var secondX = interaction.second.x * width;
+            var secondY = interaction.second.y * height;
+            context.beginPath();
+            context.moveTo(firstX, firstY);
+            context.lineTo(secondX, secondY);
+            context.lineWidth = 1.5 * unit;
+            context.strokeStyle = 'rgba(139, 218, 255, ' + alpha * 0.55 + ')';
+            context.stroke();
+            for (var pulse = 0; pulse < interaction.pulses; pulse += 1) {
+                var packetProgress = (progress * 1.7 + pulse / interaction.pulses) % 1;
+                var packetX = firstX + (secondX - firstX) * packetProgress;
+                var packetY = firstY + (secondY - firstY) * packetProgress;
+                drawEntity('evidence', packetX, packetY, 3.2, alpha * 0.9, 0);
+            }
         });
     }
 
-    function drawWorldBridges() {
-        worldBridges.forEach(function (bridge) {
-            var progress = bridge.age / bridge.duration;
+    function drawTransitTrails() {
+        actors.forEach(function (actor) {
+            if (actor.mode !== 'transit' || actor.trail.length < 2) {
+                return;
+            }
+            var color = palette[actor.kind];
+            for (var index = 1; index < actor.trail.length; index += 1) {
+                var from = actor.trail[index - 1];
+                var to = actor.trail[index];
+                var alpha = index / actor.trail.length;
+                context.beginPath();
+                context.moveTo(from.x * width, from.y * height);
+                context.lineTo(to.x * width, to.y * height);
+                context.lineWidth = (1.2 + alpha * 2.8) * unit;
+                context.strokeStyle = rgba(color, alpha * 0.5);
+                context.stroke();
+            }
+        });
+    }
+
+    function drawPortalBack(elapsed) {
+        var centerX = portal.x * width;
+        var centerY = portal.y * height;
+        var glow = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, portal.ry * 0.9);
+        glow.addColorStop(0, 'rgba(85, 191, 255, 0.12)');
+        glow.addColorStop(0.36, 'rgba(111, 92, 255, 0.075)');
+        glow.addColorStop(1, 'rgba(16, 42, 91, 0)');
+        context.save();
+        context.translate(centerX, centerY);
+        context.scale(portal.rx / portal.ry, 1);
+        context.translate(-centerX, -centerY);
+        context.fillStyle = glow;
+        context.beginPath();
+        context.arc(centerX, centerY, portal.ry * 0.88, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+
+        context.save();
+        context.translate(centerX, centerY);
+        for (var ring = 0; ring < 7; ring += 1) {
+            var ratio = 0.42 + ring * 0.085;
+            context.beginPath();
+            context.ellipse(0, 0, portal.rx * ratio, portal.ry * ratio, 0, 0, Math.PI * 2);
+            context.lineWidth = ring === 6 ? 2.2 * unit : 0.9 * unit;
+            context.strokeStyle = ring % 2 === 0
+                ? 'rgba(102, 220, 255, 0.34)'
+                : 'rgba(177, 115, 255, 0.26)';
+            context.stroke();
+        }
+        context.restore();
+
+        for (var bead = 0; bead < 22; bead += 1) {
+            var beadAngle = elapsed * (0.22 + (bead % 3) * 0.025) + bead / 22 * Math.PI * 2;
+            var beadRadius = 0.79 + (bead % 2) * 0.12;
+            var beadX = centerX + Math.cos(beadAngle) * portal.rx * beadRadius;
+            var beadY = centerY + Math.sin(beadAngle) * portal.ry * beadRadius;
+            var beadDepth = 0.45 + Math.sin(beadAngle) * 0.35;
+            context.beginPath();
+            context.arc(beadX, beadY, (1.5 + beadDepth * 1.9) * unit, 0, Math.PI * 2);
+            context.fillStyle = 'rgba(143, 228, 255, ' + (0.36 + beadDepth * 0.45) + ')';
+            context.fill();
+        }
+    }
+
+    function drawPortalFront(elapsed) {
+        var centerX = portal.x * width;
+        var centerY = portal.y * height;
+        context.save();
+        context.translate(centerX, centerY);
+        context.beginPath();
+        context.ellipse(0, 0, portal.rx, portal.ry, 0, -Math.PI * 0.04, Math.PI * 1.04);
+        context.lineWidth = 4.2 * unit;
+        context.strokeStyle = 'rgba(176, 235, 255, 0.82)';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(0, 0, portal.rx * 1.08, portal.ry * 1.02, 0, Math.PI * 0.03, Math.PI * 0.97);
+        context.lineWidth = 1.25 * unit;
+        context.strokeStyle = 'rgba(186, 103, 255, 0.68)';
+        context.stroke();
+
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillStyle = 'rgba(228, 248, 255, 0.94)';
+        context.font = '600 ' + Math.round(11 * unit) + 'px "IBM Plex Sans", sans-serif';
+        context.fillText('TOS', 0, -18 * unit);
+        context.fillStyle = 'rgba(145, 220, 255, 0.88)';
+        context.font = '500 ' + Math.round(8 * unit) + 'px "IBM Plex Mono", monospace';
+        context.fillText('NETWORK', 0, -4 * unit);
+
+        var coreRotation = elapsed * 0.43;
+        context.rotate(coreRotation);
+        context.beginPath();
+        context.moveTo(0, 11 * unit);
+        context.lineTo(8 * unit, 19 * unit);
+        context.lineTo(0, 27 * unit);
+        context.lineTo(-8 * unit, 19 * unit);
+        context.closePath();
+        context.fillStyle = 'rgba(111, 220, 255, 0.18)';
+        context.strokeStyle = 'rgba(170, 235, 255, 0.88)';
+        context.lineWidth = 1.2 * unit;
+        context.fill();
+        context.stroke();
+        context.restore();
+    }
+
+    function drawCityBase(city, elapsed) {
+        var centerX = city.x * width;
+        var centerY = city.y * height;
+        var radius = city.radius * Math.min(width, height);
+        var glowAlpha = 0.16 + city.eventGlow * 0.24;
+        context.save();
+        context.translate(centerX, centerY);
+        context.beginPath();
+        context.ellipse(0, 0, radius * 1.05, radius * 0.38, 0, 0, Math.PI * 2);
+        context.fillStyle = 'hsla(' + city.hue + ', 78%, 54%, ' + glowAlpha + ')';
+        context.fill();
+        context.lineWidth = 1.35 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.72)';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(0, 2 * unit, radius * 0.78, radius * 0.26, city.spin, 0, Math.PI * 1.55);
+        context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.36)';
+        context.stroke();
+
+        city.spires.forEach(function (spire) {
+            var angle = spire.angle + city.spin * 0.18;
+            var baseX = Math.cos(angle) * radius * spire.distance;
+            var baseY = Math.sin(angle) * radius * spire.distance * 0.3;
+            var pulse = 0.72 + Math.sin(elapsed * spire.rate + spire.phase) * 0.18;
+            var spireHeight = radius * spire.height * pulse;
+            var spireWidth = Math.max(2.2, radius * 0.08);
+            context.beginPath();
+            context.moveTo(baseX - spireWidth, baseY);
+            context.lineTo(baseX - spireWidth * 0.62, baseY - spireHeight);
+            context.lineTo(baseX + spireWidth * 0.62, baseY - spireHeight);
+            context.lineTo(baseX + spireWidth, baseY);
+            context.closePath();
+            context.fillStyle = 'hsla(' + city.hue + ', 80%, 58%, ' + (0.14 + pulse * 0.18) + ')';
+            context.strokeStyle = 'hsla(' + city.hue + ', 95%, 76%, ' + (0.42 + pulse * 0.35) + ')';
+            context.lineWidth = 0.75 * unit;
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.arc(baseX, baseY - spireHeight, 1.4 * unit, 0, Math.PI * 2);
+            context.fillStyle = 'hsla(' + city.hue + ', 100%, 83%, ' + pulse + ')';
+            context.fill();
+        });
+        context.restore();
+    }
+
+    function drawCityInteractions(city) {
+        city.interactions.forEach(function (interaction) {
+            var progress = interaction.age / interaction.duration;
             var alpha = Math.sin(progress * Math.PI);
-            var fromX = bridge.from.x * width;
-            var fromY = bridge.from.y * height;
-            var toX = bridge.to.x * width;
-            var toY = bridge.to.y * height;
-            var controlX = (fromX + toX) / 2;
-            var controlY = Math.min(fromY, toY) - 24;
-            var inverse = 1 - progress;
-            var packetX = inverse * inverse * fromX + 2 * inverse * progress * controlX + progress * progress * toX;
-            var packetY = inverse * inverse * fromY + 2 * inverse * progress * controlY + progress * progress * toY;
-            var color = worldColors[bridge.color];
-
-            worldContext.beginPath();
-            worldContext.moveTo(fromX, fromY);
-            worldContext.quadraticCurveTo(controlX, controlY, toX, toY);
-            worldContext.lineWidth = 0.7;
-            worldContext.strokeStyle = 'rgba(120, 207, 231, ' + alpha * 0.14 + ')';
-            worldContext.stroke();
-            worldContext.beginPath();
-            worldContext.arc(packetX, packetY, 2.2, 0, Math.PI * 2);
-            worldContext.fillStyle = 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + alpha * 0.85 + ')';
-            worldContext.fill();
+            var firstX = interaction.first.x * width;
+            var firstY = interaction.first.y * height;
+            var secondX = interaction.second.x * width;
+            var secondY = interaction.second.y * height;
+            var packetProgress = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+            context.beginPath();
+            context.moveTo(firstX, firstY);
+            context.lineTo(secondX, secondY);
+            context.lineWidth = 1.35 * unit;
+            context.strokeStyle = 'hsla(' + city.hue + ', 94%, 78%, ' + alpha * 0.7 + ')';
+            context.stroke();
+            drawEntity(
+                interaction.kind,
+                firstX + (secondX - firstX) * packetProgress,
+                firstY + (secondY - firstY) * packetProgress,
+                3.8,
+                alpha,
+                0
+            );
         });
     }
 
-    function drawWorldLayer(time) {
-        if (!worldRandom) {
-            return;
-        }
-
-        if (lastWorldFrameTime && time - lastWorldFrameTime < 1000 / 8) {
-            return;
-        }
-
-        var delta = lastWorldFrameTime ? Math.min(0.18, (time - lastWorldFrameTime) / 1000) : 0;
-        lastWorldFrameTime = time;
-        updateWorldActors(delta, time);
-        updateWorldClusters(delta, time);
-        worldContext.clearRect(0, 0, width, height);
-        worldContext.globalCompositeOperation = 'source-over';
-        drawWorldBridges();
-        drawActorConnections();
-
-        worldClusters.forEach(function (cluster) {
-            drawCluster(cluster, time);
-        });
-        worldActors.forEach(function (actor) {
-            drawEntity(actor.x * width, actor.y * height, actor.size, actor.role, entityAlpha(actor));
-        });
-
-        worldContext.globalCompositeOperation = 'source-over';
-        worldContext.globalAlpha = 1;
+    function exchangePoint(exchange, progress) {
+        var controlX = (exchange.startX + exchange.endX) * 0.5;
+        var controlY = (exchange.startY + exchange.endY) * 0.5 + exchange.curve;
+        return quadraticPoint(
+            exchange.startX,
+            exchange.startY,
+            controlX,
+            controlY,
+            exchange.endX,
+            exchange.endY,
+            progress
+        );
     }
 
-    function cubicPoint(edge, t) {
-        var inverse = 1 - t;
-        var inverseSquared = inverse * inverse;
-        var tSquared = t * t;
-
-        return {
-            x: inverseSquared * inverse * edge.from.x
-                + 3 * inverseSquared * t * edge.controlOne.x
-                + 3 * inverse * tSquared * edge.controlTwo.x
-                + tSquared * t * edge.to.x,
-            y: inverseSquared * inverse * edge.from.y
-                + 3 * inverseSquared * t * edge.controlOne.y
-                + 3 * inverse * tSquared * edge.controlTwo.y
-                + tSquared * t * edge.to.y
-        };
-    }
-
-    function addEdge(edges, seen, from, to) {
-        var key = from.id + ':' + to.id;
-
-        if (seen[key]) {
-            return;
-        }
-
-        seen[key] = true;
-        var deltaX = to.x - from.x;
-        var deltaY = to.y - from.y;
-        var edge = {
-            from: from,
-            to: to,
-            controlOne: {
-                x: from.x + deltaX * 0.36,
-                y: from.y + deltaY * 0.08
-            },
-            controlTwo: {
-                x: from.x + deltaX * 0.68,
-                y: to.y - deltaY * 0.08
-            },
-            samples: []
-        };
-
-        for (var sampleIndex = 0; sampleIndex <= 28; sampleIndex += 1) {
-            edge.samples.push(cubicPoint(edge, sampleIndex / 28));
-        }
-
-        edges.push(edge);
-    }
-
-    function nearestNodes(nodes, target, amount) {
-        return nodes.slice().sort(function (first, second) {
-            return Math.abs(first.y - target.y) - Math.abs(second.y - target.y);
-        }).slice(0, amount);
-    }
-
-    function buildGraph() {
-        var compact = compactQuery.matches;
-        var random = mulberry32(compact ? 7319 : 23861);
-        var columnXs = compact
-            ? [-0.08, 0.08, 0.24, 0.39, 0.5, 0.64, 0.82, 1.08]
-            : [-0.06, 0.06, 0.17, 0.28, 0.39, 0.5, 0.61, 0.73, 0.86, 1.06];
-        var columns = [];
-        var nodes = [];
-        var nextNodeId = 0;
-
-        columnXs.forEach(function (x, columnIndex) {
-            var column = [];
-
-            if (x === 0.5) {
-                column.push({
-                    id: nextNodeId,
-                    x: 0.5,
-                    y: 0.5,
-                    protocol: true,
-                    radius: compact ? 3.1 : 3.5
-                });
-                nextNodeId += 1;
-            } else {
-                var count = compact ? 2 + columnIndex % 2 : 2 + columnIndex % 3;
-
-                for (var nodeIndex = 0; nodeIndex < count; nodeIndex += 1) {
-                    var spread = compact ? 0.72 : 0.76;
-                    var baseY = 0.5 - spread / 2 + spread * (nodeIndex + 1) / (count + 1);
-                    var jitter = (random() - 0.5) * (compact ? 0.07 : 0.09);
-
-                    column.push({
-                        id: nextNodeId,
-                        x: x,
-                        y: Math.max(0.1, Math.min(0.9, baseY + jitter)),
-                        protocol: false,
-                        radius: compact ? 1.6 + random() * 0.7 : 1.75 + random() * 0.9
-                    });
-                    nextNodeId += 1;
-                }
-            }
-
-            columns.push(column);
-            Array.prototype.push.apply(nodes, column);
-        });
-
-        var edges = [];
-        var seenEdges = Object.create(null);
-
-        for (var columnCursor = 1; columnCursor < columns.length; columnCursor += 1) {
-            var previous = columns[columnCursor - 1];
-            var current = columns[columnCursor];
-            var currentIsProtocol = current.length === 1 && current[0].protocol;
-            var previousIsProtocol = previous.length === 1 && previous[0].protocol;
-
-            if (currentIsProtocol) {
-                previous.forEach(function (from) {
-                    addEdge(edges, seenEdges, from, current[0]);
-                });
-                continue;
-            }
-
-            if (previousIsProtocol) {
-                current.forEach(function (to) {
-                    addEdge(edges, seenEdges, previous[0], to);
-                });
-                continue;
-            }
-
-            current.forEach(function (to, targetIndex) {
-                var connectionCount = (targetIndex + columnCursor) % 2 === 0 ? 2 : 1;
-                nearestNodes(previous, to, connectionCount).forEach(function (from) {
-                    addEdge(edges, seenEdges, from, to);
-                });
-            });
-
-            previous.forEach(function (from) {
-                nearestNodes(current, from, 1).forEach(function (to) {
-                    addEdge(edges, seenEdges, from, to);
-                });
-            });
-        }
-
-        graph = { edges: edges, nodes: nodes };
-        renderStaticMesh();
-        buildParticles();
-    }
-
-    function edgePath(edge) {
-        return [
-            'M', edge.from.x * 1000, edge.from.y * 600,
-            'C', edge.controlOne.x * 1000, edge.controlOne.y * 600,
-            edge.controlTwo.x * 1000, edge.controlTwo.y * 600,
-            edge.to.x * 1000, edge.to.y * 600
-        ].join(' ');
-    }
-
-    function renderStaticMesh() {
-        var edgeFragment = document.createDocumentFragment();
-        var nodeFragment = document.createDocumentFragment();
-
-        graph.edges.forEach(function (edge) {
-            var glow = createSvgElement('path', 'portal-mesh-edge-glow');
-            var line = createSvgElement('path', 'portal-mesh-edge');
-            var path = edgePath(edge);
-
-            glow.setAttribute('d', path);
-            line.setAttribute('d', path);
-            edgeFragment.appendChild(glow);
-            edgeFragment.appendChild(line);
-        });
-
-        graph.nodes.forEach(function (node) {
-            var glow = createSvgElement('circle', 'portal-mesh-node-glow');
-            var coreClass = node.protocol
-                ? 'portal-mesh-node portal-mesh-node-protocol'
-                : 'portal-mesh-node';
-            var core = createSvgElement('circle', coreClass);
-            var centerX = node.x * 1000;
-            var centerY = node.y * 600;
-            var radius = node.radius;
-
-            glow.setAttribute('cx', centerX);
-            glow.setAttribute('cy', centerY);
-            glow.setAttribute('r', node.protocol ? radius * 4.4 : radius * 3.2);
-            core.setAttribute('cx', centerX);
-            core.setAttribute('cy', centerY);
-            core.setAttribute('r', radius);
-            nodeFragment.appendChild(glow);
-            nodeFragment.appendChild(core);
-        });
-
-        edgeLayer.replaceChildren(edgeFragment);
-        nodeLayer.replaceChildren(nodeFragment);
-    }
-
-    function buildParticles() {
-        var compact = compactQuery.matches;
-        var random = mulberry32(compact ? 9017 : 54233);
-        particles = [];
-
-        graph.edges.forEach(function (edge) {
-            var particleCount = 2;
-
-            for (var particleIndex = 0; particleIndex < particleCount; particleIndex += 1) {
-                particles.push({
-                    edge: edge,
-                    progress: (random() + particleIndex / particleCount) % 1,
-                    // Overview advances particles by 0.008-0.012 per 60 Hz frame.
-                    // Expressing that rate per second keeps the same motion at 24/30 fps.
-                    speed: 0.48 + random() * 0.24,
-                    size: 3 + random() * 2.2,
-                    opacity: 0.6 + random() * 0.4
-                });
-            }
+    function drawExchanges() {
+        exchanges.forEach(function (exchange) {
+            var progress = clamp(exchange.age / exchange.duration, 0, 1);
+            var alpha = Math.sin(progress * Math.PI);
+            var controlX = (exchange.startX + exchange.endX) * 0.5 * width;
+            var controlY = ((exchange.startY + exchange.endY) * 0.5 + exchange.curve) * height;
+            context.beginPath();
+            context.moveTo(exchange.startX * width, exchange.startY * height);
+            context.quadraticCurveTo(controlX, controlY, exchange.endX * width, exchange.endY * height);
+            context.lineWidth = 1.3 * unit;
+            context.strokeStyle = 'rgba(121, 211, 255, ' + alpha * 0.36 + ')';
+            context.stroke();
+            var point = exchangePoint(exchange, progress);
+            drawEntity(exchange.kind, point.x * width, point.y * height, 6.2, alpha, 0);
         });
     }
 
-    function sampledPoint(edge, progress) {
-        var scaled = progress * (edge.samples.length - 1);
-        var index = Math.min(edge.samples.length - 2, Math.floor(scaled));
-        var fraction = scaled - index;
-        var from = edge.samples[index];
-        var to = edge.samples[index + 1];
-
-        return {
-            x: (from.x + (to.x - from.x) * fraction) * width,
-            y: (from.y + (to.y - from.y) * fraction) * height
-        };
-    }
-
-    function drawParticle(particle) {
-        var point = sampledPoint(particle.edge, particle.progress);
-
-        context.beginPath();
-        context.arc(point.x, point.y, particle.size * 1.7, 0, Math.PI * 2);
-        context.fillStyle = 'rgba(178, 231, 243, ' + particle.opacity * 0.36 + ')';
-        context.fill();
-
-        context.beginPath();
-        context.arc(point.x, point.y, particle.size, 0, Math.PI * 2);
-        context.fillStyle = 'rgba(255, 255, 255, ' + particle.opacity + ')';
-        context.fill();
-    }
-
-    function draw(time) {
-        animationFrame = window.requestAnimationFrame(draw);
-
-        if (shouldPause()) {
-            lastFrameTime = time;
-            return;
-        }
-
-        var frameInterval = compactQuery.matches ? 1000 / 20 : 1000 / 24;
-
-        if (lastFrameTime && time - lastFrameTime < frameInterval) {
-            return;
-        }
-
-        var delta = lastFrameTime ? Math.min(0.06, (time - lastFrameTime) / 1000) : 0;
-        lastFrameTime = time;
-        drawWorldLayer(time);
+    function renderScene(elapsed) {
         context.clearRect(0, 0, width, height);
-        context.globalCompositeOperation = 'source-over';
+        context.save();
+        drawStars(elapsed);
+        drawExchanges();
+        cities.forEach(function (city) {
+            drawCityBase(city, elapsed);
+        });
+        drawLeftInteractions();
+        drawTransitTrails();
+        drawPortalBack(elapsed);
 
-        particles.forEach(function (particle) {
-            particle.progress += particle.speed * delta;
-
-            if (particle.progress >= 1) {
-                particle.progress -= 1;
-            }
-
-            drawParticle(particle);
+        actors.forEach(function (actor) {
+            var rotation = actor.mode === 'transit'
+                ? Math.atan2(
+                    (actor.y - (actor.trail.length > 1 ? actor.trail[actor.trail.length - 2].y : actor.y)) * height,
+                    (actor.x - (actor.trail.length > 1 ? actor.trail[actor.trail.length - 2].x : actor.x)) * width
+                )
+                : 0;
+            drawEntity(actor.kind, actor.x * width, actor.y * height, actor.size, lifeAlpha(actor), rotation);
         });
 
-        context.globalCompositeOperation = 'source-over';
-    }
-
-    function resizeCanvas() {
-        var bounds = scene.getBoundingClientRect();
-        var nextWidth = Math.max(1, Math.round(bounds.width));
-        var nextHeight = Math.max(1, Math.round(bounds.height));
-
-        if (nextWidth === width && nextHeight === height) {
-            return;
-        }
-
-        width = nextWidth;
-        height = nextHeight;
-        canvas.width = Math.max(1, Math.round(width * pixelRatio));
-        canvas.height = Math.max(1, Math.round(height * pixelRatio));
-        worldCanvas.width = Math.max(1, Math.round(width * worldPixelRatio));
-        worldCanvas.height = Math.max(1, Math.round(height * worldPixelRatio));
-        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-        worldContext.setTransform(worldPixelRatio, 0, 0, worldPixelRatio, 0, 0);
-        lastWorldFrameTime = 0;
+        cities.forEach(function (city) {
+            drawCityInteractions(city);
+            city.members.forEach(function (member) {
+                drawEntity(member.kind, member.x * width, member.y * height, member.size, lifeAlpha(member), 0);
+            });
+        });
+        drawPortalFront(elapsed);
+        context.restore();
     }
 
     function shouldPause() {
         return manuallyPaused || reducedMotionQuery.matches || document.hidden || !sceneVisible;
     }
 
+    function publishDiagnostics(time) {
+        if (time - lastDiagnosticsTime < 1000) {
+            return;
+        }
+        lastDiagnosticsTime = time;
+        var stateCounts = {};
+        actors.forEach(function (actor) {
+            stateCounts[actor.mode] = (stateCounts[actor.mode] || 0) + 1;
+        });
+        canvas.dataset.sceneVersion = 'autonomous-vector-v1';
+        canvas.dataset.actorStates = JSON.stringify(stateCounts);
+        canvas.dataset.leftInteractions = String(leftInteractions.length);
+        canvas.dataset.cityMembers = cities.map(function (city) {
+            return city.members.length;
+        }).join(',');
+        canvas.dataset.cityInteractions = cities.map(function (city) {
+            return city.interactions.length;
+        }).join(',');
+        canvas.dataset.crossDomainExchanges = String(exchanges.length);
+        canvas.dataset.fps = String(measuredFps);
+    }
+
+    function drawFrame(time) {
+        animationFrame = window.requestAnimationFrame(drawFrame);
+        if (shouldPause()) {
+            lastFrameTime = time;
+            return;
+        }
+        var frameInterval = 1000 / 30;
+        if (lastFrameTime && time - lastFrameTime < frameInterval * 0.82) {
+            return;
+        }
+        var delta = lastFrameTime ? Math.min(0.06, (time - lastFrameTime) / 1000) : 0;
+        lastFrameTime = time;
+        var elapsed = time / 1000;
+        updateWorld(delta, elapsed);
+        renderScene(elapsed);
+
+        frameCounter += 1;
+        if (time - frameWindowStart >= 1000) {
+            measuredFps = Math.round(frameCounter * 1000 / (time - frameWindowStart));
+            frameCounter = 0;
+            frameWindowStart = time;
+        }
+        publishDiagnostics(time);
+    }
+
+    function rebuildStars() {
+        stars = [];
+        var count = compactQuery.matches ? 42 : 76;
+        for (var index = 0; index < count; index += 1) {
+            stars.push({
+                x: random(),
+                y: random(),
+                size: randomBetween(0.35, 1.25),
+                alpha: randomBetween(0.08, 0.34),
+                phase: randomBetween(0, Math.PI * 2),
+                rate: randomBetween(0.35, 1.1)
+            });
+        }
+    }
+
+    function resizeCanvas() {
+        var bounds = scene.getBoundingClientRect();
+        var nextWidth = Math.max(1, Math.round(bounds.width));
+        var nextHeight = Math.max(1, Math.round(bounds.height));
+        if (nextWidth === width && nextHeight === height) {
+            return;
+        }
+        width = nextWidth;
+        height = nextHeight;
+        pixelRatio = compactQuery.matches
+            ? Math.min(0.9, window.devicePixelRatio || 1)
+            : Math.min(1, Math.max(0.85, (window.devicePixelRatio || 1) * 0.58));
+        unit = clamp(Math.min(width / 1280, height / 760), 0.72, 1.3);
+        portal.rx = clamp(width * (compactQuery.matches ? 0.052 : 0.047), 25, 68);
+        portal.ry = clamp(height * (compactQuery.matches ? 0.29 : 0.34), 155, 292);
+        canvas.width = Math.max(1, Math.round(width * pixelRatio));
+        canvas.height = Math.max(1, Math.round(height * pixelRatio));
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        rebuildStars();
+        renderScene(performance.now() / 1000);
+    }
+
     function updatePauseState() {
         var paused = shouldPause();
         scene.classList.toggle('portal-scene-paused', paused);
         motionToggle.setAttribute('aria-pressed', manuallyPaused ? 'true' : 'false');
-
         if (!paused) {
             lastFrameTime = performance.now();
         } else {
-            context.clearRect(0, 0, width, height);
-            worldContext.clearRect(0, 0, width, height);
+            renderScene(performance.now() / 1000);
         }
     }
 
-    function handlePointer(event) {
-        if (reducedMotionQuery.matches || pointerFrame) {
-            return;
-        }
-
-        pointerFrame = window.requestAnimationFrame(function () {
-            var bounds = scene.getBoundingClientRect();
-            var pointerX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-            var pointerY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-            scene.style.setProperty('--portal-pointer-x', pointerX.toFixed(3));
-            scene.style.setProperty('--portal-pointer-y', pointerY.toFixed(3));
-            pointerFrame = 0;
+    function handleCompactChange() {
+        resizePending = true;
+        window.requestAnimationFrame(function () {
+            resizePending = false;
+            resizeCanvas();
+            buildWorld();
+            renderScene(performance.now() / 1000);
         });
     }
 
@@ -808,28 +1128,14 @@
         manuallyPaused = !manuallyPaused;
         updatePauseState();
     });
-
     document.addEventListener('visibilitychange', updatePauseState);
-    scene.addEventListener('pointermove', handlePointer, { passive: true });
-    scene.addEventListener('pointerleave', function () {
-        scene.style.setProperty('--portal-pointer-x', '0');
-        scene.style.setProperty('--portal-pointer-y', '0');
-    });
 
     if (typeof reducedMotionQuery.addEventListener === 'function') {
         reducedMotionQuery.addEventListener('change', updatePauseState);
-        compactQuery.addEventListener('change', function () {
-            buildGraph();
-            buildAgenticWorld();
-            resizeCanvas();
-        });
+        compactQuery.addEventListener('change', handleCompactChange);
     } else {
         reducedMotionQuery.addListener(updatePauseState);
-        compactQuery.addListener(function () {
-            buildGraph();
-            buildAgenticWorld();
-            resizeCanvas();
-        });
+        compactQuery.addListener(handleCompactChange);
     }
 
     if ('IntersectionObserver' in window) {
@@ -841,17 +1147,54 @@
     }
 
     if ('ResizeObserver' in window) {
-        var resizeObserver = new ResizeObserver(resizeCanvas);
+        var resizeObserver = new ResizeObserver(function () {
+            if (!resizePending) {
+                resizeCanvas();
+            }
+        });
         resizeObserver.observe(scene);
     } else {
         window.addEventListener('resize', resizeCanvas, { passive: true });
     }
 
+    window.__tosAgenticScene = {
+        version: 'autonomous-vector-v1',
+        snapshot: function () {
+            var stateCounts = {};
+            actors.forEach(function (actor) {
+                stateCounts[actor.mode] = (stateCounts[actor.mode] || 0) + 1;
+            });
+            return {
+                vectorObjects: true,
+                staticCompositeImage: false,
+                fps: measuredFps,
+                actors: actors.length,
+                actorStates: stateCounts,
+                leftInteractions: leftInteractions.length,
+                transits: actors.filter(function (actor) { return actor.mode === 'transit'; }).length,
+                cities: cities.map(function (city) {
+                    return {
+                        id: city.id,
+                        members: city.members.length,
+                        interactions: city.interactions.length,
+                        eventGlow: Number(city.eventGlow.toFixed(2))
+                    };
+                }),
+                crossDomainExchanges: exchanges.length,
+                canvas: {
+                    cssWidth: width,
+                    cssHeight: height,
+                    pixelRatio: Number(pixelRatio.toFixed(2))
+                }
+            };
+        }
+    };
+
     resizeCanvas();
-    buildGraph();
-    buildAgenticWorld();
+    buildWorld();
+    renderScene(performance.now() / 1000);
     updatePauseState();
-    animationFrame = window.requestAnimationFrame(draw);
+    animationFrame = window.requestAnimationFrame(drawFrame);
 
     window.addEventListener('pagehide', function () {
         window.cancelAnimationFrame(animationFrame);
