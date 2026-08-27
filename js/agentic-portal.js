@@ -17,21 +17,34 @@
 
     var reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     var compactQuery = window.matchMedia('(max-width: 640px)');
-    var entityKinds = ['agent', 'intent', 'skill', 'evidence', 'storage'];
+    var payloadKinds = ['intent', 'skill', 'evidence', 'storage'];
     var palette = {
+        principal: [196, 216, 230],
         agent: [111, 220, 255],
         intent: [238, 96, 216],
         skill: [157, 109, 255],
         evidence: [255, 188, 104],
-        storage: [102, 242, 197]
+        storage: [102, 242, 197],
+        api: [91, 185, 255],
+        compute: [128, 151, 255],
+        sensor: [255, 151, 93],
+        drone: [145, 239, 217],
+        rover: [239, 204, 112],
+        robotArm: [255, 121, 169]
     };
     var cityDefinitions = [
-        { x: 0.70, y: 0.23, radius: 0.058, hue: 190 },
-        { x: 0.84, y: 0.20, radius: 0.052, hue: 253 },
-        { x: 0.78, y: 0.42, radius: 0.064, hue: 216 },
-        { x: 0.92, y: 0.42, radius: 0.054, hue: 286 },
-        { x: 0.70, y: 0.68, radius: 0.064, hue: 177 },
-        { x: 0.86, y: 0.71, radius: 0.078, hue: 246 }
+        { x: 0.70, y: 0.25, radius: 0.092, hue: 190 },
+        { x: 0.87, y: 0.27, radius: 0.088, hue: 253 },
+        { x: 0.72, y: 0.51, radius: 0.098, hue: 216 },
+        { x: 0.89, y: 0.52, radius: 0.093, hue: 286 },
+        { x: 0.73, y: 0.77, radius: 0.096, hue: 177 },
+        { x: 0.89, y: 0.77, radius: 0.091, hue: 246 }
+    ];
+    var web2AnchorPoints = [
+        { x: 0.08, y: 0.18 }, { x: 0.2, y: 0.18 }, { x: 0.34, y: 0.2 },
+        { x: 0.1, y: 0.4 }, { x: 0.23, y: 0.39 }, { x: 0.37, y: 0.42 },
+        { x: 0.08, y: 0.62 }, { x: 0.21, y: 0.61 }, { x: 0.35, y: 0.63 },
+        { x: 0.12, y: 0.83 }, { x: 0.26, y: 0.82 }, { x: 0.38, y: 0.81 }
     ];
 
     var width = 1;
@@ -44,6 +57,7 @@
     var leftInteractions = [];
     var cities = [];
     var exchanges = [];
+    var gateEvents = [];
     var stars = [];
     var nextEntityId = 1;
     var nextExchangeAt = 0;
@@ -57,6 +71,8 @@
     var frameWindowStart = performance.now();
     var measuredFps = 0;
     var lastDiagnosticsTime = 0;
+    var acceptedAtGate = 0;
+    var rejectedAtGate = 0;
 
     function mulberry32(seed) {
         return function () {
@@ -96,35 +112,79 @@
 
     function chooseKind() {
         var roll = random();
-        if (roll < 0.28) {
+        if (roll < 0.08) {
+            return 'principal';
+        }
+        if (roll < 0.18) {
             return 'agent';
         }
-        if (roll < 0.49) {
+        if (roll < 0.32) {
             return 'intent';
         }
-        if (roll < 0.69) {
+        if (roll < 0.43) {
             return 'skill';
         }
-        if (roll < 0.86) {
+        if (roll < 0.53) {
             return 'evidence';
         }
-        return 'storage';
+        if (roll < 0.63) {
+            return 'storage';
+        }
+        if (roll < 0.72) {
+            return 'api';
+        }
+        if (roll < 0.79) {
+            return 'compute';
+        }
+        if (roll < 0.86) {
+            return 'sensor';
+        }
+        if (roll < 0.92) {
+            return 'drone';
+        }
+        if (roll < 0.96) {
+            return 'rover';
+        }
+        return 'robotArm';
+    }
+
+    function choosePayloadKind() {
+        return payloadKinds[Math.floor(random() * payloadKinds.length)];
+    }
+
+    function canEnterProtocol(actor) {
+        return actor.kind === 'agent' || payloadKinds.indexOf(actor.kind) !== -1;
+    }
+
+    function protocolEntryX() {
+        return portal.x - portal.rx * 1.15 / Math.max(1, width);
     }
 
     function chooseLeftTarget() {
+        var anchor = web2AnchorPoints[Math.floor(random() * web2AnchorPoints.length)];
         return {
-            x: randomBetween(0.045, 0.405),
-            y: randomBetween(0.13, 0.9)
+            x: clamp(anchor.x + randomBetween(-0.042, 0.042), 0.035, 0.42),
+            y: clamp(anchor.y + randomBetween(-0.055, 0.055), 0.11, 0.9)
         };
     }
 
     function spawnActor(initial) {
         var target = chooseLeftTarget();
+        var origin = chooseLeftTarget();
+        var actorKind = chooseKind();
+        var actorSize = actorKind === 'api'
+            || actorKind === 'compute'
+            || actorKind === 'sensor'
+            || actorKind === 'drone'
+            || actorKind === 'rover'
+            || actorKind === 'robotArm'
+            ? randomBetween(10.4, 14.4)
+            : randomBetween(8.8, 12.8);
         var actor = {
             id: nextEntityId,
-            kind: chooseKind(),
-            x: randomBetween(0.035, 0.39),
-            y: randomBetween(0.12, 0.91),
+            kind: actorKind,
+            x: origin.x,
+            y: origin.y,
             vx: randomBetween(-0.006, 0.006),
             vy: randomBetween(-0.006, 0.006),
             targetX: target.x,
@@ -133,13 +193,16 @@
             modeAge: randomBetween(0, 2),
             decisionAt: randomBetween(1.4, 4.8),
             speed: randomBetween(38, 68),
-            size: randomBetween(8.5, 12.5),
+            size: actorSize,
             age: initial ? randomBetween(0.4, 9) : 0,
             life: randomBetween(21, 42),
             fadeIn: randomBetween(0.5, 1.1),
             fadeOut: randomBetween(1.1, 2.1),
             retiring: false,
             busy: false,
+            verified: false,
+            verificationDuration: 0,
+            carriedPayload: null,
             phase: randomBetween(0, Math.PI * 2),
             route: null,
             trail: []
@@ -154,16 +217,31 @@
         var radius = Math.sqrt(random()) * city.radius * Math.min(width, height) * amount;
         return {
             x: city.x + Math.cos(angle) * radius / width,
-            y: city.y + Math.sin(angle) * radius * 0.46 / height
+            y: city.y + Math.sin(angle) * radius * 0.7 / height
         };
     }
 
-    function spawnCityMember(city, kind, arrival) {
-        var target = cityPoint(city, 0.78);
-        var origin = arrival || cityPoint(city, 0.48);
+    function spawnCityMember(city, payloadKind, arrival) {
+        var capacity = compactQuery.matches ? 5 : 8;
+        if (city.members.length >= capacity) {
+            var replacement = city.members.filter(function (member) {
+                return !member.busy && !member.retiring;
+            }).sort(function (first, second) {
+                return second.age - first.age;
+            })[0];
+            if (replacement) {
+                replacement.retiring = true;
+                replacement.life = replacement.age + replacement.fadeOut;
+            }
+        }
+        var target = cityPoint(city, 1);
+        var origin = arrival || cityPoint(city, 0.62);
         var member = {
             id: nextEntityId,
-            kind: kind || chooseKind(),
+            kind: 'agent',
+            payloadKind: payloadKind || (random() < 0.72 ? choosePayloadKind() : null),
+            payloadAge: 0,
+            payloadLife: randomBetween(4.5, 10),
             x: origin.x,
             y: origin.y,
             vx: 0,
@@ -171,13 +249,16 @@
             targetX: target.x,
             targetY: target.y,
             speed: randomBetween(20, 42),
-            size: randomBetween(5.8, 8.4),
+            size: randomBetween(10.2, 13.5),
             age: 0,
             life: randomBetween(18, 42),
             fadeIn: randomBetween(0.45, 0.9),
             fadeOut: randomBetween(0.8, 1.6),
             retiring: false,
             busy: false,
+            verified: Boolean(arrival),
+            verifiedAge: 0,
+            heading: randomBetween(-Math.PI, Math.PI),
             phase: randomBetween(0, Math.PI * 2)
         };
         nextEntityId += 1;
@@ -196,13 +277,14 @@
             spinSpeed: randomBetween(-0.13, 0.13),
             members: [],
             interactions: [],
+            receipts: [],
             nextSpawnAt: randomBetween(1.5, 4),
             nextInteractionAt: randomBetween(0.7, 2.2),
             localTime: 0,
             eventGlow: 0,
             spires: []
         };
-        var spireCount = compactQuery.matches ? 3 : 4 + index % 3;
+        var spireCount = compactQuery.matches ? 3 : 4 + index % 2;
         for (var spireIndex = 0; spireIndex < spireCount; spireIndex += 1) {
             city.spires.push({
                 angle: randomBetween(0, Math.PI * 2),
@@ -213,8 +295,8 @@
             });
         }
         var initialMembers = compactQuery.matches
-            ? Math.floor(randomBetween(2, 4))
-            : Math.floor(randomBetween(3, 7));
+            ? Math.floor(randomBetween(2, 3.5))
+            : Math.floor(randomBetween(3, 5.2));
         for (var memberIndex = 0; memberIndex < initialMembers; memberIndex += 1) {
             var member = spawnCityMember(city);
             member.age = randomBetween(0.2, member.life * 0.55);
@@ -226,12 +308,15 @@
         actors = [];
         leftInteractions = [];
         exchanges = [];
+        gateEvents = [];
         cities = [];
+        acceptedAtGate = 0;
+        rejectedAtGate = 0;
         nextEntityId = 1;
         nextExchangeAt = randomBetween(1.2, 3.2);
         nextTransitAt = randomBetween(0.8, 1.8);
 
-        var actorCount = compactQuery.matches ? 12 : 23;
+        var actorCount = compactQuery.matches ? 16 : 36;
         for (var actorIndex = 0; actorIndex < actorCount; actorIndex += 1) {
             spawnActor(true);
         }
@@ -243,17 +328,17 @@
                 definition = {
                     x: cityIndex % 2 === 0 ? 0.75 : 0.9,
                     y: 0.24 + Math.floor(cityIndex / 2) * 0.42,
-                    radius: 0.068,
+                    radius: 0.075,
                     hue: definition.hue
                 };
             }
             cities.push(createCity(definition, cityIndex));
         }
 
-        actors.slice(0, compactQuery.matches ? 1 : 2).forEach(function (actor, index) {
+        actors.filter(canEnterProtocol).slice(0, compactQuery.matches ? 1 : 2).forEach(function (actor, index) {
             actor.mode = 'portal';
             actor.modeAge = index * 0.7;
-            actor.targetX = portal.x;
+            actor.targetX = protocolEntryX();
             actor.targetY = portal.y;
             actor.busy = true;
         });
@@ -273,12 +358,31 @@
         return distance;
     }
 
+    function isActorKind(kind) {
+        return kind === 'agent'
+            || kind === 'principal'
+            || kind === 'drone'
+            || kind === 'rover'
+            || kind === 'robotArm';
+    }
+
+    function kindsCanCollaborate(firstKind, secondKind) {
+        if (isActorKind(firstKind) || isActorKind(secondKind)) {
+            return true;
+        }
+        return (firstKind === 'intent' && secondKind === 'skill')
+            || (firstKind === 'skill' && secondKind === 'intent')
+            || (firstKind === 'evidence' && secondKind === 'storage')
+            || (firstKind === 'storage' && secondKind === 'evidence');
+    }
+
     function findPartner(actor) {
         var candidates = actors.filter(function (candidate) {
             return candidate !== actor
                 && !candidate.busy
                 && !candidate.retiring
-                && candidate.mode === 'explore';
+                && candidate.mode === 'explore'
+                && kindsCanCollaborate(actor.kind, candidate.kind);
         });
         if (!candidates.length) {
             return null;
@@ -301,6 +405,9 @@
             second: second,
             age: 0,
             duration: randomBetween(1.3, 2.5),
+            payloadKind: payloadKinds.indexOf(first.kind) !== -1
+                ? first.kind
+                : (payloadKinds.indexOf(second.kind) !== -1 ? second.kind : 'evidence'),
             pulses: 2 + Math.floor(random() * 3)
         });
     }
@@ -309,10 +416,10 @@
         actor.busy = false;
         actor.modeAge = 0;
         actor.decisionAt = randomBetween(1.2, 4.2);
-        if (preferPortal && random() < 0.3) {
+        if (preferPortal && canEnterProtocol(actor) && random() < 0.3) {
             actor.mode = 'portal';
             actor.busy = true;
-            actor.targetX = portal.x;
+            actor.targetX = protocolEntryX();
             actor.targetY = portal.y;
         } else {
             var target = chooseLeftTarget();
@@ -327,6 +434,7 @@
         actor.mode = 'transit';
         actor.modeAge = 0;
         actor.busy = true;
+        actor.verified = true;
         actor.route = {
             startX: actor.x,
             startY: actor.y,
@@ -336,6 +444,75 @@
         };
         actor.trail = [];
         actor.life = Math.max(actor.life, actor.age + actor.route.duration + 2);
+    }
+
+    function beginVerification(actor) {
+        actor.mode = 'verify';
+        actor.modeAge = 0;
+        actor.busy = true;
+        actor.vx = 0;
+        actor.vy = 0;
+        actor.verificationDuration = randomBetween(0.8, 1.35);
+    }
+
+    function resolveVerification(actor) {
+        var accepted = random() >= 0.14;
+        gateEvents.push({
+            kind: actor.kind,
+            accepted: accepted,
+            age: 0,
+            duration: accepted ? 1.15 : 1.5,
+            x: actor.x,
+            y: actor.y
+        });
+        if (accepted) {
+            acceptedAtGate += 1;
+            beginTransit(actor);
+            return;
+        }
+        rejectedAtGate += 1;
+        actor.mode = 'rejected';
+        actor.modeAge = 0;
+        actor.busy = true;
+        actor.verified = false;
+        actor.targetX = randomBetween(0.2, 0.38);
+        actor.targetY = clamp(actor.y + randomBetween(-0.16, 0.16), 0.12, 0.9);
+    }
+
+    function receivePayload(city, kind, arrival) {
+        var available = city.members.filter(function (member) {
+            return !member.retiring;
+        });
+        if (!available.length) {
+            spawnCityMember(city, kind, arrival);
+            return;
+        }
+        var receiver = available[Math.floor(random() * available.length)];
+        receiver.payloadKind = kind;
+        receiver.payloadAge = 0;
+        receiver.payloadLife = randomBetween(5, 11);
+        receiver.verified = true;
+        receiver.verifiedAge = 0;
+        city.receipts.push({
+            kind: kind,
+            startX: arrival.x,
+            startY: arrival.y,
+            receiver: receiver,
+            age: 0,
+            duration: randomBetween(0.8, 1.35)
+        });
+    }
+
+    function completeTransit(actor) {
+        var destination = actor.route.city;
+        var arrival = { x: actor.x, y: actor.y };
+        if (actor.kind === 'agent') {
+            spawnCityMember(destination, actor.carriedPayload || choosePayloadKind(), arrival);
+        } else {
+            receivePayload(destination, actor.kind, arrival);
+        }
+        actor.retiring = true;
+        actor.life = actor.age;
     }
 
     function quadraticPoint(fromX, fromY, controlX, controlY, toX, toY, progress) {
@@ -383,13 +560,57 @@
                 return true;
             }
             if (actors.indexOf(interaction.first) !== -1) {
+                if (interaction.first.kind === 'agent') {
+                    interaction.first.carriedPayload = interaction.payloadKind;
+                }
                 releaseActor(interaction.first, true);
             }
             if (actors.indexOf(interaction.second) !== -1) {
+                if (interaction.second.kind === 'agent') {
+                    interaction.second.carriedPayload = interaction.payloadKind;
+                }
                 releaseActor(interaction.second, false);
             }
             return false;
         });
+    }
+
+    function updateGateEvents(delta) {
+        gateEvents.forEach(function (event) {
+            event.age += delta;
+        });
+        gateEvents = gateEvents.filter(function (event) {
+            return event.age < event.duration;
+        });
+    }
+
+    function applyLeftSeparation(delta) {
+        for (var firstIndex = 0; firstIndex < actors.length; firstIndex += 1) {
+            var first = actors[firstIndex];
+            if (first.mode !== 'explore' && first.mode !== 'rejected') {
+                continue;
+            }
+            for (var secondIndex = firstIndex + 1; secondIndex < actors.length; secondIndex += 1) {
+                var second = actors[secondIndex];
+                if (second.mode !== 'explore' && second.mode !== 'rejected') {
+                    continue;
+                }
+                var deltaX = (second.x - first.x) * width;
+                var deltaY = (second.y - first.y) * height;
+                var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) || 0.01;
+                var desired = (first.size + second.size) * unit * 1.12 + 8 * unit;
+                if (distance >= desired) {
+                    continue;
+                }
+                var pressure = (desired - distance) * Math.min(0.5, delta * 5.5);
+                var pushX = deltaX / distance * pressure;
+                var pushY = deltaY / distance * pressure;
+                first.x = clamp(first.x - pushX / width, 0.025, 0.46);
+                first.y = clamp(first.y - pushY / height, 0.1, 0.93);
+                second.x = clamp(second.x + pushX / width, 0.025, 0.46);
+                second.y = clamp(second.y + pushY / height, 0.1, 0.93);
+            }
+        }
     }
 
     function updateActors(delta, elapsed) {
@@ -402,14 +623,16 @@
                 var routePoint = transitPoint(actor.route, actor.route.progress);
                 actor.x = routePoint.x;
                 actor.y = routePoint.y;
-                actor.trail.push({ x: actor.x, y: actor.y });
+                actor.trail.push({
+                    x: actor.x,
+                    y: actor.y,
+                    verified: actor.route.progress >= 0.48
+                });
                 if (actor.trail.length > 24) {
                     actor.trail.shift();
                 }
                 if (actor.route.progress >= 1) {
-                    spawnCityMember(actor.route.city, actor.kind, { x: actor.x, y: actor.y });
-                    actor.retiring = true;
-                    actor.life = actor.age;
+                    completeTransit(actor);
                 }
                 return;
             }
@@ -427,10 +650,28 @@
                 return;
             }
 
+            if (actor.mode === 'verify') {
+                actor.vx = 0;
+                actor.vy = 0;
+                if (actor.modeAge >= actor.verificationDuration) {
+                    resolveVerification(actor);
+                }
+                return;
+            }
+
+            if (actor.mode === 'rejected') {
+                var rejectionDistance = steer(actor, actor.targetX, actor.targetY, actor.speed * 1.12, delta);
+                if (rejectionDistance < 8) {
+                    releaseActor(actor, false);
+                }
+                return;
+            }
+
             if (actor.mode === 'portal') {
-                var portalDistance = steer(actor, portal.x, portal.y, actor.speed * 1.58, delta);
+                actor.targetX = protocolEntryX();
+                var portalDistance = steer(actor, actor.targetX, portal.y, actor.speed * 1.58, delta);
                 if (portalDistance < Math.max(9, portal.rx * 0.12)) {
-                    beginTransit(actor);
+                    beginVerification(actor);
                 }
                 return;
             }
@@ -454,10 +695,10 @@
                     if (partner) {
                         beginInteraction(actor, partner);
                     }
-                } else if (choice < 0.46) {
+                } else if (choice < 0.46 && canEnterProtocol(actor)) {
                     actor.mode = 'portal';
                     actor.busy = true;
-                    actor.targetX = portal.x;
+                    actor.targetX = protocolEntryX();
                     actor.targetY = portal.y;
                 }
             }
@@ -466,26 +707,31 @@
             actor.y = clamp(actor.y, 0.1, 0.93);
         });
 
+        applyLeftSeparation(delta);
+
         actors = actors.filter(function (actor) {
             return actor.age < actor.life;
         });
 
-        var minimum = compactQuery.matches ? 9 : 18;
-        var maximum = compactQuery.matches ? 17 : 30;
+        var minimum = compactQuery.matches ? 13 : 28;
+        var maximum = compactQuery.matches ? 21 : 40;
         if (actors.length < minimum || (actors.length < maximum && random() < delta * 0.42)) {
             spawnActor(false);
         }
 
         if (elapsed >= nextTransitAt) {
             var available = actors.filter(function (actor) {
-                return !actor.busy && !actor.retiring && actor.mode === 'explore';
+                return !actor.busy
+                    && !actor.retiring
+                    && actor.mode === 'explore'
+                    && canEnterProtocol(actor);
             });
             if (available.length) {
                 var selected = available[Math.floor(random() * available.length)];
                 selected.mode = 'portal';
                 selected.modeAge = 0;
                 selected.busy = true;
-                selected.targetX = portal.x;
+                selected.targetX = protocolEntryX();
                 selected.targetY = portal.y;
             }
             nextTransitAt = elapsed + randomBetween(3.2, 5.8);
@@ -506,12 +752,14 @@
         var second = secondPool[Math.floor(random() * secondPool.length)];
         first.busy = true;
         second.busy = true;
+        first.heading = Math.atan2((second.y - first.y) * height, (second.x - first.x) * width);
+        second.heading = first.heading + Math.PI;
         city.interactions.push({
             first: first,
             second: second,
             age: 0,
             duration: randomBetween(1.1, 2.6),
-            kind: random() < 0.5 ? first.kind : second.kind
+            kind: first.payloadKind || second.payloadKind || choosePayloadKind()
         });
     }
 
@@ -522,16 +770,24 @@
 
         city.members.forEach(function (member) {
             member.age += delta;
+            member.payloadAge += delta;
+            member.verifiedAge += delta;
+            if (member.payloadKind && member.payloadAge > member.payloadLife) {
+                member.payloadKind = null;
+            }
             if (!member.retiring && member.age > member.life) {
                 member.retiring = true;
                 member.life = member.age + member.fadeOut;
             }
             if (!member.busy) {
                 var distance = steer(member, member.targetX, member.targetY, member.speed, delta);
+                if (Math.abs(member.vx) + Math.abs(member.vy) > 0.00001) {
+                    member.heading = Math.atan2(member.vy * height, member.vx * width);
+                }
                 member.x += Math.sin(elapsed * 0.83 + member.phase) * 0.00016 * delta;
                 member.y += Math.cos(elapsed * 0.76 + member.phase) * 0.00014 * delta;
                 if (distance < 5) {
-                    var target = cityPoint(city, 0.8);
+                    var target = cityPoint(city, 0.9);
                     member.targetX = target.x;
                     member.targetY = target.y;
                 }
@@ -556,12 +812,25 @@
             }
             interaction.first.busy = false;
             interaction.second.busy = false;
+            interaction.second.payloadKind = interaction.kind;
+            interaction.second.payloadAge = 0;
+            interaction.second.payloadLife = randomBetween(5, 11);
+            interaction.second.verified = true;
+            interaction.second.verifiedAge = 0;
             city.eventGlow = Math.max(city.eventGlow, 0.6);
             return false;
         });
 
+        city.receipts.forEach(function (receipt) {
+            receipt.age += delta;
+        });
+        city.receipts = city.receipts.filter(function (receipt) {
+            return receipt.age < receipt.duration
+                && city.members.indexOf(receipt.receiver) !== -1;
+        });
+
         if (city.localTime >= city.nextSpawnAt) {
-            var cityMaximum = compactQuery.matches ? 6 : 10;
+            var cityMaximum = compactQuery.matches ? 5 : 7;
             if (city.members.length < cityMaximum && random() < 0.72) {
                 spawnCityMember(city);
             } else if (city.members.length > 3 && random() < 0.44) {
@@ -604,7 +873,7 @@
             startY: sourceMember.y,
             endX: targetMember.x,
             endY: targetMember.y,
-            kind: chooseKind(),
+            kind: choosePayloadKind(),
             age: 0,
             duration: randomBetween(2.1, 3.8),
             curve: randomBetween(-0.08, 0.08)
@@ -620,9 +889,10 @@
                 return true;
             }
             exchange.target.eventGlow = 1;
-            if (exchange.target.members.length < (compactQuery.matches ? 6 : 10) && random() < 0.34) {
-                spawnCityMember(exchange.target, exchange.kind);
-            }
+            receivePayload(exchange.target, exchange.kind, {
+                x: exchange.endX,
+                y: exchange.endY
+            });
             return false;
         });
         if (elapsed >= nextExchangeAt) {
@@ -633,6 +903,7 @@
 
     function updateWorld(delta, elapsed) {
         updateLeftInteractions(delta);
+        updateGateEvents(delta);
         updateActors(delta, elapsed);
         cities.forEach(function (city) {
             updateCity(city, delta, elapsed);
@@ -650,9 +921,12 @@
     function drawEntity(kind, x, y, size, alpha, rotation) {
         var color = palette[kind];
         var scaled = Math.max(3.8, size * unit);
+        var heading = rotation || 0;
         context.save();
         context.translate(x, y);
-        context.rotate(rotation || 0);
+        if (kind !== 'agent' && kind !== 'principal') {
+            context.rotate(heading);
+        }
         context.lineCap = 'round';
         context.lineJoin = 'round';
         context.globalAlpha = alpha;
@@ -662,6 +936,100 @@
         context.lineWidth = Math.max(1.15, scaled * 0.12);
 
         if (kind === 'agent') {
+            var facing = Math.cos(heading);
+            var lookX = facing * scaled * 0.055;
+            var antennaLean = Math.sin(heading) * scaled * 0.08;
+
+            /* Helmet and visor. */
+            context.beginPath();
+            context.moveTo(0, -scaled * 0.92);
+            context.lineTo(antennaLean, -scaled * 1.1);
+            context.stroke();
+            context.beginPath();
+            context.arc(antennaLean, -scaled * 1.14, scaled * 0.075, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.86);
+            context.fill();
+            context.beginPath();
+            context.roundRect(-scaled * 0.4, -scaled * 0.94, scaled * 0.8, scaled * 0.58, scaled * 0.18);
+            context.fillStyle = rgba(color, 0.18);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.roundRect(-scaled * 0.3, -scaled * 0.79, scaled * 0.6, scaled * 0.22, scaled * 0.07);
+            context.fillStyle = 'rgba(5, 25, 44, 0.78)';
+            context.fill();
+            context.beginPath();
+            context.arc(-scaled * 0.14 + lookX, -scaled * 0.68, scaled * 0.055, 0, Math.PI * 2);
+            context.arc(scaled * 0.14 + lookX, -scaled * 0.68, scaled * 0.055, 0, Math.PI * 2);
+            context.fillStyle = 'rgba(222, 252, 255, 0.98)';
+            context.fill();
+
+            /* Neck, armored torso and chest core. */
+            context.beginPath();
+            context.rect(-scaled * 0.12, -scaled * 0.35, scaled * 0.24, scaled * 0.15);
+            context.fillStyle = rgba(color, 0.2);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.48, -scaled * 0.18);
+            context.lineTo(-scaled * 0.34, scaled * 0.46);
+            context.lineTo(scaled * 0.34, scaled * 0.46);
+            context.lineTo(scaled * 0.48, -scaled * 0.18);
+            context.lineTo(scaled * 0.2, -scaled * 0.32);
+            context.lineTo(-scaled * 0.2, -scaled * 0.32);
+            context.closePath();
+            context.fillStyle = rgba(color, 0.17);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(0, -scaled * 0.1);
+            context.lineTo(scaled * 0.11, scaled * 0.03);
+            context.lineTo(0, scaled * 0.16);
+            context.lineTo(-scaled * 0.11, scaled * 0.03);
+            context.closePath();
+            context.fillStyle = 'rgba(218, 251, 255, 0.84)';
+            context.fill();
+
+            /* Segmented arms and hands. */
+            context.beginPath();
+            context.arc(-scaled * 0.51, -scaled * 0.1, scaled * 0.1, 0, Math.PI * 2);
+            context.arc(scaled * 0.51, -scaled * 0.1, scaled * 0.1, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.28);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.53, -scaled * 0.02);
+            context.lineTo(-scaled * 0.67, scaled * 0.24);
+            context.lineTo(-scaled * 0.58, scaled * 0.52);
+            context.moveTo(scaled * 0.53, -scaled * 0.02);
+            context.lineTo(scaled * 0.67, scaled * 0.24);
+            context.lineTo(scaled * 0.58, scaled * 0.52);
+            context.stroke();
+            context.beginPath();
+            context.arc(-scaled * 0.58, scaled * 0.55, scaled * 0.085, 0, Math.PI * 2);
+            context.arc(scaled * 0.58, scaled * 0.55, scaled * 0.085, 0, Math.PI * 2);
+            context.fill();
+
+            /* Articulated hips, legs and feet. */
+            context.beginPath();
+            context.moveTo(-scaled * 0.25, scaled * 0.45);
+            context.lineTo(-scaled * 0.24, scaled * 0.76);
+            context.lineTo(-scaled * 0.32, scaled * 1.03);
+            context.moveTo(scaled * 0.25, scaled * 0.45);
+            context.lineTo(scaled * 0.24, scaled * 0.76);
+            context.lineTo(scaled * 0.32, scaled * 1.03);
+            context.stroke();
+            context.beginPath();
+            context.arc(-scaled * 0.24, scaled * 0.76, scaled * 0.085, 0, Math.PI * 2);
+            context.arc(scaled * 0.24, scaled * 0.76, scaled * 0.085, 0, Math.PI * 2);
+            context.fill();
+            context.beginPath();
+            context.moveTo(-scaled * 0.42, scaled * 1.04);
+            context.lineTo(-scaled * 0.18, scaled * 1.04);
+            context.moveTo(scaled * 0.18, scaled * 1.04);
+            context.lineTo(scaled * 0.42, scaled * 1.04);
+            context.stroke();
+        } else if (kind === 'principal') {
             context.beginPath();
             context.arc(0, -scaled * 0.38, scaled * 0.27, 0, Math.PI * 2);
             context.fill();
@@ -727,6 +1095,125 @@
             context.moveTo(-scaled * 0.3, scaled * 0.3);
             context.lineTo(scaled * 0.2, scaled * 0.3);
             context.stroke();
+        } else if (kind === 'api') {
+            context.beginPath();
+            context.roundRect(-scaled * 0.72, -scaled * 0.58, scaled * 1.44, scaled * 1.16, scaled * 0.16);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.36, -scaled * 0.25);
+            context.lineTo(-scaled * 0.58, 0);
+            context.lineTo(-scaled * 0.36, scaled * 0.25);
+            context.moveTo(scaled * 0.36, -scaled * 0.25);
+            context.lineTo(scaled * 0.58, 0);
+            context.lineTo(scaled * 0.36, scaled * 0.25);
+            context.moveTo(scaled * 0.12, -scaled * 0.34);
+            context.lineTo(-scaled * 0.12, scaled * 0.34);
+            context.stroke();
+        } else if (kind === 'compute') {
+            context.beginPath();
+            context.roundRect(-scaled * 0.56, -scaled * 0.56, scaled * 1.12, scaled * 1.12, scaled * 0.12);
+            context.fill();
+            context.stroke();
+            for (var pin = -1; pin <= 1; pin += 1) {
+                context.beginPath();
+                context.moveTo(pin * scaled * 0.3, -scaled * 0.76);
+                context.lineTo(pin * scaled * 0.3, -scaled * 0.58);
+                context.moveTo(pin * scaled * 0.3, scaled * 0.58);
+                context.lineTo(pin * scaled * 0.3, scaled * 0.76);
+                context.moveTo(-scaled * 0.76, pin * scaled * 0.3);
+                context.lineTo(-scaled * 0.58, pin * scaled * 0.3);
+                context.moveTo(scaled * 0.58, pin * scaled * 0.3);
+                context.lineTo(scaled * 0.76, pin * scaled * 0.3);
+                context.stroke();
+            }
+            context.beginPath();
+            context.arc(0, 0, scaled * 0.23, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.62);
+            context.fill();
+        } else if (kind === 'sensor') {
+            context.beginPath();
+            context.arc(0, 0, scaled * 0.22, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.6);
+            context.fill();
+            for (var wave = 1; wave <= 3; wave += 1) {
+                context.beginPath();
+                context.arc(0, 0, scaled * (0.2 + wave * 0.2), -Math.PI * 0.38, Math.PI * 0.38);
+                context.stroke();
+            }
+            context.beginPath();
+            context.moveTo(-scaled * 0.14, scaled * 0.52);
+            context.lineTo(scaled * 0.14, scaled * 0.52);
+            context.lineTo(scaled * 0.25, scaled * 0.78);
+            context.lineTo(-scaled * 0.25, scaled * 0.78);
+            context.closePath();
+            context.fill();
+            context.stroke();
+        } else if (kind === 'drone') {
+            context.beginPath();
+            context.moveTo(-scaled * 0.2, -scaled * 0.16);
+            context.lineTo(scaled * 0.2, -scaled * 0.16);
+            context.lineTo(scaled * 0.34, scaled * 0.2);
+            context.lineTo(-scaled * 0.34, scaled * 0.2);
+            context.closePath();
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.22, -scaled * 0.05);
+            context.lineTo(-scaled * 0.72, -scaled * 0.38);
+            context.moveTo(scaled * 0.22, -scaled * 0.05);
+            context.lineTo(scaled * 0.72, -scaled * 0.38);
+            context.stroke();
+            context.beginPath();
+            context.ellipse(-scaled * 0.72, -scaled * 0.4, scaled * 0.34, scaled * 0.1, 0, 0, Math.PI * 2);
+            context.ellipse(scaled * 0.72, -scaled * 0.4, scaled * 0.34, scaled * 0.1, 0, 0, Math.PI * 2);
+            context.stroke();
+            context.beginPath();
+            context.arc(0, scaled * 0.34, scaled * 0.13, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.72);
+            context.fill();
+        } else if (kind === 'rover') {
+            context.beginPath();
+            context.roundRect(-scaled * 0.68, -scaled * 0.2, scaled * 1.36, scaled * 0.66, scaled * 0.14);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.arc(-scaled * 0.46, scaled * 0.48, scaled * 0.2, 0, Math.PI * 2);
+            context.arc(scaled * 0.46, scaled * 0.48, scaled * 0.2, 0, Math.PI * 2);
+            context.fillStyle = 'rgba(3, 12, 25, 0.88)';
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(0, -scaled * 0.2);
+            context.lineTo(0, -scaled * 0.65);
+            context.lineTo(scaled * 0.28, -scaled * 0.76);
+            context.stroke();
+            context.beginPath();
+            context.arc(scaled * 0.32, -scaled * 0.78, scaled * 0.12, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.8);
+            context.fill();
+        } else if (kind === 'robotArm') {
+            context.beginPath();
+            context.roundRect(-scaled * 0.48, scaled * 0.5, scaled * 0.96, scaled * 0.25, scaled * 0.08);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.arc(-scaled * 0.2, scaled * 0.42, scaled * 0.16, 0, Math.PI * 2);
+            context.arc(scaled * 0.08, -scaled * 0.1, scaled * 0.14, 0, Math.PI * 2);
+            context.fillStyle = rgba(color, 0.3);
+            context.fill();
+            context.stroke();
+            context.beginPath();
+            context.moveTo(-scaled * 0.18, scaled * 0.32);
+            context.lineTo(scaled * 0.03, 0);
+            context.lineTo(scaled * 0.43, -scaled * 0.5);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(scaled * 0.43, -scaled * 0.5);
+            context.lineTo(scaled * 0.7, -scaled * 0.62);
+            context.moveTo(scaled * 0.43, -scaled * 0.5);
+            context.lineTo(scaled * 0.58, -scaled * 0.27);
+            context.stroke();
         } else {
             context.beginPath();
             context.ellipse(0, -scaled * 0.48, scaled * 0.65, scaled * 0.27, 0, 0, Math.PI * 2);
@@ -741,6 +1228,78 @@
             context.stroke();
         }
         context.restore();
+    }
+
+    function drawVerifiedHalo(x, y, size, alpha, elapsed) {
+        var radius = size * unit * 1.55;
+        context.save();
+        context.translate(x, y);
+        context.rotate(elapsed * 0.7);
+        context.beginPath();
+        context.arc(0, 0, radius, -Math.PI * 0.15, Math.PI * 0.55);
+        context.arc(0, 0, radius, Math.PI * 0.85, Math.PI * 1.35);
+        context.lineWidth = 1.1 * unit;
+        context.strokeStyle = 'rgba(118, 244, 207, ' + alpha * 0.72 + ')';
+        context.stroke();
+        context.restore();
+    }
+
+    function drawPayloadBadge(member, elapsed) {
+        if (!member.payloadKind) {
+            return;
+        }
+        var badgeX = member.x * width + member.size * unit * 0.82;
+        var badgeY = member.y * height + member.size * unit * 0.62;
+        context.beginPath();
+        context.arc(badgeX, badgeY, 4.7 * unit, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(2, 9, 22, 0.86)';
+        context.fill();
+        context.strokeStyle = rgba(palette[member.payloadKind], 0.72);
+        context.lineWidth = 0.8 * unit;
+        context.stroke();
+        drawEntity(member.payloadKind, badgeX, badgeY, 2.7, 0.9, elapsed * 0.15);
+    }
+
+    function drawGateEvents() {
+        gateEvents.forEach(function (event) {
+            var progress = event.age / event.duration;
+            var alpha = Math.sin(progress * Math.PI);
+            var x = event.x * width;
+            var y = event.y * height;
+            context.save();
+            context.translate(x, y);
+            context.beginPath();
+            context.arc(0, 0, (12 + progress * 16) * unit, 0, Math.PI * 2);
+            context.lineWidth = 1.4 * unit;
+            context.strokeStyle = event.accepted
+                ? 'rgba(112, 244, 202, ' + alpha * 0.72 + ')'
+                : 'rgba(255, 126, 111, ' + alpha * 0.72 + ')';
+            context.stroke();
+            if (!event.accepted) {
+                context.beginPath();
+                context.moveTo(-4 * unit, -4 * unit);
+                context.lineTo(4 * unit, 4 * unit);
+                context.moveTo(4 * unit, -4 * unit);
+                context.lineTo(-4 * unit, 4 * unit);
+                context.stroke();
+            }
+            context.restore();
+        });
+    }
+
+    function drawActorProtocolState(actor, elapsed) {
+        var x = actor.x * width;
+        var y = actor.y * height;
+        if (actor.mode === 'verify') {
+            var progress = clamp(actor.modeAge / Math.max(0.1, actor.verificationDuration), 0, 1);
+            context.beginPath();
+            context.arc(x, y, actor.size * unit * 1.55, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
+            context.lineWidth = 1.5 * unit;
+            context.strokeStyle = 'rgba(155, 226, 255, 0.82)';
+            context.stroke();
+        } else if (actor.mode === 'transit' && actor.route.progress >= 0.48) {
+            drawVerifiedHalo(x, y, actor.size, 0.9, elapsed);
+        }
     }
 
     function drawStars(elapsed) {
@@ -771,7 +1330,7 @@
                 var packetProgress = (progress * 1.7 + pulse / interaction.pulses) % 1;
                 var packetX = firstX + (secondX - firstX) * packetProgress;
                 var packetY = firstY + (secondY - firstY) * packetProgress;
-                drawEntity('evidence', packetX, packetY, 3.2, alpha * 0.9, 0);
+                drawEntity(interaction.payloadKind, packetX, packetY, 3.2, alpha * 0.9, 0);
             }
         });
     }
@@ -781,10 +1340,10 @@
             if (actor.mode !== 'transit' || actor.trail.length < 2) {
                 return;
             }
-            var color = palette[actor.kind];
             for (var index = 1; index < actor.trail.length; index += 1) {
                 var from = actor.trail[index - 1];
                 var to = actor.trail[index];
+                var color = to.verified ? [112, 244, 202] : palette[actor.kind];
                 var alpha = index / actor.trail.length;
                 context.beginPath();
                 context.moveTo(from.x * width, from.y * height);
@@ -889,14 +1448,19 @@
         context.save();
         context.translate(centerX, centerY);
         context.beginPath();
-        context.ellipse(0, 0, radius * 1.05, radius * 0.38, 0, 0, Math.PI * 2);
+        context.ellipse(0, 0, radius * 1.22, radius * 0.54, city.spin * 0.2, 0, Math.PI * 1.72);
+        context.lineWidth = 0.8 * unit;
+        context.strokeStyle = 'hsla(' + city.hue + ', 88%, 70%, 0.2)';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(0, 0, radius * 1.08, radius * 0.46, 0, 0, Math.PI * 2);
         context.fillStyle = 'hsla(' + city.hue + ', 78%, 54%, ' + glowAlpha + ')';
         context.fill();
         context.lineWidth = 1.35 * unit;
         context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.72)';
         context.stroke();
         context.beginPath();
-        context.ellipse(0, 2 * unit, radius * 0.78, radius * 0.26, city.spin, 0, Math.PI * 1.55);
+        context.ellipse(0, 2 * unit, radius * 0.82, radius * 0.32, city.spin, 0, Math.PI * 1.55);
         context.strokeStyle = 'hsla(' + city.hue + ', 92%, 72%, 0.36)';
         context.stroke();
 
@@ -952,6 +1516,31 @@
         });
     }
 
+    function drawCityReceipts(city) {
+        city.receipts.forEach(function (receipt) {
+            var progress = clamp(receipt.age / receipt.duration, 0, 1);
+            var alpha = Math.sin(progress * Math.PI);
+            var startX = receipt.startX * width;
+            var startY = receipt.startY * height;
+            var targetX = receipt.receiver.x * width;
+            var targetY = receipt.receiver.y * height;
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(targetX, targetY);
+            context.lineWidth = 1.1 * unit;
+            context.strokeStyle = 'rgba(115, 238, 204, ' + alpha * 0.48 + ')';
+            context.stroke();
+            drawEntity(
+                receipt.kind,
+                startX + (targetX - startX) * progress,
+                startY + (targetY - startY) * progress,
+                4.2,
+                alpha,
+                0
+            );
+        });
+    }
+
     function exchangePoint(exchange, progress) {
         var controlX = (exchange.startX + exchange.endX) * 0.5;
         var controlY = (exchange.startY + exchange.endY) * 0.5 + exchange.curve;
@@ -994,6 +1583,7 @@
         drawLeftInteractions();
         drawTransitTrails();
         drawPortalBack(elapsed);
+        drawGateEvents();
 
         actors.forEach(function (actor) {
             var rotation = actor.mode === 'transit'
@@ -1003,12 +1593,25 @@
                 )
                 : 0;
             drawEntity(actor.kind, actor.x * width, actor.y * height, actor.size, lifeAlpha(actor), rotation);
+            drawActorProtocolState(actor, elapsed);
         });
 
         cities.forEach(function (city) {
+            drawCityReceipts(city);
             drawCityInteractions(city);
             city.members.forEach(function (member) {
-                drawEntity(member.kind, member.x * width, member.y * height, member.size, lifeAlpha(member), 0);
+                var alpha = lifeAlpha(member);
+                if (member.verified && member.verifiedAge < 3.4) {
+                    drawVerifiedHalo(
+                        member.x * width,
+                        member.y * height,
+                        member.size,
+                        alpha * (1 - member.verifiedAge / 3.4),
+                        elapsed
+                    );
+                }
+                drawEntity('agent', member.x * width, member.y * height, member.size, alpha, member.heading);
+                drawPayloadBadge(member, elapsed);
             });
         });
         drawPortalFront(elapsed);
@@ -1025,10 +1628,12 @@
         }
         lastDiagnosticsTime = time;
         var stateCounts = {};
+        var kindCounts = {};
         actors.forEach(function (actor) {
             stateCounts[actor.mode] = (stateCounts[actor.mode] || 0) + 1;
+            kindCounts[actor.kind] = (kindCounts[actor.kind] || 0) + 1;
         });
-        canvas.dataset.sceneVersion = 'autonomous-vector-v1';
+        canvas.dataset.sceneVersion = 'spacious-agentic-world-v5';
         canvas.dataset.actorStates = JSON.stringify(stateCounts);
         canvas.dataset.leftInteractions = String(leftInteractions.length);
         canvas.dataset.cityMembers = cities.map(function (city) {
@@ -1038,6 +1643,33 @@
             return city.interactions.length;
         }).join(',');
         canvas.dataset.crossDomainExchanges = String(exchanges.length);
+        canvas.dataset.gateAccepted = String(acceptedAtGate);
+        canvas.dataset.gateRejected = String(rejectedAtGate);
+        canvas.dataset.cityRobotMembers = String(cities.reduce(function (total, city) {
+            return total + city.members.length;
+        }, 0));
+        canvas.dataset.cityPayloads = String(cities.reduce(function (total, city) {
+            return total + city.members.filter(function (member) {
+                return Boolean(member.payloadKind);
+            }).length;
+        }, 0));
+        canvas.dataset.web2Elements = String(actors.length);
+        canvas.dataset.web2Kinds = JSON.stringify(kindCounts);
+        canvas.dataset.web2MeanY = actors.length
+            ? (actors.reduce(function (total, actor) { return total + actor.y; }, 0) / actors.length).toFixed(3)
+            : '0';
+        canvas.dataset.physicalAiElements = String(actors.filter(function (actor) {
+            return actor.kind === 'drone'
+                || actor.kind === 'rover'
+                || actor.kind === 'robotArm'
+                || actor.kind === 'sensor';
+        }).length);
+        canvas.dataset.agentWorldMeanY = cities.length
+            ? (cities.reduce(function (total, city) { return total + city.y; }, 0) / cities.length).toFixed(3)
+            : '0';
+        canvas.dataset.agentWorldRadii = cities.map(function (city) {
+            return city.radius.toFixed(3);
+        }).join(',');
         canvas.dataset.fps = String(measuredFps);
     }
 
@@ -1158,11 +1790,13 @@
     }
 
     window.__tosAgenticScene = {
-        version: 'autonomous-vector-v1',
+        version: 'spacious-agentic-world-v5',
         snapshot: function () {
             var stateCounts = {};
+            var kindCounts = {};
             actors.forEach(function (actor) {
                 stateCounts[actor.mode] = (stateCounts[actor.mode] || 0) + 1;
+                kindCounts[actor.kind] = (kindCounts[actor.kind] || 0) + 1;
             });
             return {
                 vectorObjects: true,
@@ -1170,6 +1804,7 @@
                 fps: measuredFps,
                 actors: actors.length,
                 actorStates: stateCounts,
+                actorKinds: kindCounts,
                 leftInteractions: leftInteractions.length,
                 transits: actors.filter(function (actor) { return actor.mode === 'transit'; }).length,
                 cities: cities.map(function (city) {
@@ -1181,6 +1816,16 @@
                     };
                 }),
                 crossDomainExchanges: exchanges.length,
+                gate: {
+                    accepted: acceptedAtGate,
+                    rejected: rejectedAtGate,
+                    active: gateEvents.length
+                },
+                cityRobotsOnly: cities.every(function (city) {
+                    return city.members.every(function (member) {
+                        return member.kind === 'agent';
+                    });
+                }),
                 canvas: {
                     cssWidth: width,
                     cssHeight: height,
