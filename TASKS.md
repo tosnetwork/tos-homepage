@@ -92,13 +92,15 @@ source encodings for the same arrow glyph.
 
 ## Notes for the next change
 
-The homepage headline carries an authored `<br>`. Below 860px that break is
-suppressed, because at that width it strands a single word on its own line. The
-languages that separate words with spaces — English and Korean — therefore carry
-a space *before* the break, which is invisible at the end of a line on wide
-layouts and survives as a word boundary once the break is dropped. Chinese and
-Japanese must **not** get that space. Anyone editing `portal.title` in any
-language needs to preserve this.
+The homepage headline is a single short line in all four languages, so it needs
+no authored `<br>` and no per-language space convention. (An earlier revision
+carried both; if a multi-line headline ever returns, note that dropping a `<br>`
+at narrow widths runs the halves together in the space-using languages.)
+
+`portal.eyebrow` and `portal.lede` are translated in zh/ja/ko but no longer
+referenced by any markup — the homepage was cut back to a headline plus two
+calls to action. They are kept rather than deleted in case the longer treatment
+returns.
 
 The homepage copy set (`portal.eyebrow`, `portal.title`, `portal.lede`,
 `portal.ctaOverview`, `portal.ctaProtocol`) was already fully translated in
@@ -190,3 +192,22 @@ normalised down to those rather than adding the missing faces, so the rendered
 result is unchanged and the declarations are now honest. **If a heavier weight
 is ever wanted, add the face to the Google Fonts request first** — declaring
 `700` on the body font silently renders 600.
+
+
+## Homepage copy reduction (2026-08-28, later)
+
+The eyebrow, the two-line headline and the lede were replaced with one line:
+"Building for the Agentic Internet." The scrim that had been protecting that
+block was doing real damage — at 0.95 it blacked out the third of the scene
+where the Web2 actors live, and its bottom gradient ran 27% up the frame and
+flattened the perspective floor.
+
+Liquid Glass puts the dimming layer for content over bright media at about 35%.
+The scrim now peaks at 0.58 and clears to transparent at 64% of the width, the
+bottom gradient covers 16% instead of 27%, and the legibility those values no
+longer provide is carried by a text-shadow on the headline and by a fill on the
+secondary button. Measured over the headline's own area at 1440px: mean
+contrast 18.4:1.
+
+The principle: protect the glyphs, not the region. A dimming layer that hides
+the artwork it sits on has stopped being a material and become a backdrop.

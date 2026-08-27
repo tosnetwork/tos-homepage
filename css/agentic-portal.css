@@ -47,50 +47,63 @@
     z-index: 6;
 }
 
-/* The headline carries its own break, so it must be wide enough for the
-   longer of the two lines. Narrower than that and the explicit break fights
-   an implicit one, which is what produced a four-line headline with a single
-   orphaned word. `balance` is off for the same reason. */
+/* One line, so it needs no authored break and no width ceiling to protect it. */
 .portal-copy h1 {
-    max-width: 27ch;
-    margin: 0 0 26px;
+    /* Holds the line at desktop and wraps on its own below that. Without a
+       ceiling the element spans the whole shell, which is 400px wider than the
+       text and makes the wrap point unpredictable. */
+    max-width: 26ch;
+    margin: 0 0 var(--space-7);
     font-family: var(--font-display);
     font-size: var(--text-5xl);
     font-weight: 600;
     line-height: 1.04;
     letter-spacing: -0.03em;
-    text-wrap: normal;
+    /* Legibility travels with the glyphs instead of being painted across the
+       scene. The tight shadow holds the edge when something bright passes
+       directly behind a letter; the wide one lifts the line off the moving
+       ground without dimming it. */
+    text-shadow:
+        0 1px 2px rgba(1, 4, 11, 0.62),
+        0 2px 26px rgba(1, 4, 11, 0.78);
 }
 
-.portal-lede {
-    max-width: 46ch;
-    margin: 0 0 38px;
-    color: var(--muted-strong);
-    font-size: var(--text-lg);
-    line-height: 1.55;
-}
+/* The scrim is a dimming layer, not a backdrop.
 
-/* Two gradients, two jobs. The first darkens the leading side so the copy has
-   a calm ground without flattening the scene behind it. The second lands the
-   canvas on the footer colour instead of letting the composition end on a cut
-   edge. */
+   It was 0.95 at its darkest, which blacked out the third of the scene where
+   the Web2 actors live, and its bottom gradient ran 27% up the frame and
+   flattened the perspective floor. Liquid Glass puts the dimming layer for
+   content over bright media at about 35%; these values sit near that and the
+   canvas reads through them. The legibility they no longer provide is carried
+   by the headline's own shadow and by the button fills.
+
+   The second gradient still lands the composition on the footer colour so it
+   does not end on a cut edge — over 16% of the height instead of 27%. */
 .portal-scrim {
     position: absolute;
     inset: 0;
     z-index: 4;
     background:
         linear-gradient(102deg,
-            rgba(2, 6, 17, 0.95) 0%,
-            rgba(2, 6, 17, 0.9) 32%,
-            rgba(2, 6, 17, 0.72) 52%,
-            rgba(2, 6, 17, 0.3) 70%,
-            transparent 86%),
+            rgba(2, 6, 17, 0.58) 0%,
+            rgba(2, 6, 17, 0.4) 26%,
+            rgba(2, 6, 17, 0.16) 46%,
+            transparent 64%),
         linear-gradient(0deg,
-            #01040b 0%,
-            rgba(1, 4, 11, 0.76) 7%,
-            rgba(1, 4, 11, 0.28) 16%,
-            transparent 27%);
+            rgba(1, 4, 11, 0.94) 0%,
+            rgba(1, 4, 11, 0.45) 5%,
+            rgba(1, 4, 11, 0.12) 10%,
+            transparent 16%);
     pointer-events: none;
+}
+
+/* The secondary button sits over the busiest part of the scene now that the
+   scrim is light, so its fill has to do the work the scrim used to. */
+.portal-copy .button-secondary {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(3, 9, 20, 0.72);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 }
 
 .portal-visual,
@@ -247,26 +260,12 @@
     opacity: 0.88;
 }
 
-/* Below this width the copy needs the full column, so the scrim stops working
-   across the page and starts working down it: the scene reads as a lit ground
-   under the text rather than a composition competing with it. */
+/* Narrow viewports still need a calmer ground under the headline, but the
+   scrim runs down the frame rather than across it, and it stays well short of
+   opaque so the scene is visible behind the type. */
 @media (max-width: 860px) {
     .portal-hero {
         align-items: flex-start;
-    }
-
-    .portal-copy h1,
-    .portal-lede {
-        max-width: 100%;
-    }
-
-    /* The authored break assumes a line wide enough for "Where autonomous
-       Intent", which does not fit here — keeping it strands a single word on
-       its own line. The space-using languages carry a space before the break
-       (invisible at line end on wide layouts), so dropping the break here
-       leaves the words correctly separated rather than run together. */
-    .portal-copy h1 br {
-        display: none;
     }
 
     .portal-copy h1 {
@@ -276,11 +275,11 @@
     .portal-scrim {
         background:
             linear-gradient(180deg,
-                rgba(2, 6, 17, 0.72) 0%,
-                rgba(2, 6, 17, 0.9) 34%,
-                rgba(2, 6, 17, 0.7) 58%,
-                rgba(1, 4, 11, 0.86) 88%,
-                #01040b 100%);
+                rgba(2, 6, 17, 0.42) 0%,
+                rgba(2, 6, 17, 0.6) 30%,
+                rgba(2, 6, 17, 0.44) 58%,
+                rgba(1, 4, 11, 0.72) 88%,
+                rgba(1, 4, 11, 0.94) 100%);
     }
 }
 
