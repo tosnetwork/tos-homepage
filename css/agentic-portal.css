@@ -82,10 +82,58 @@
     pointer-events: none;
 }
 
+.portal-scene-label {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 8;
+    display: flex;
+    min-width: 172px;
+    min-height: 36px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border: 1px solid rgba(135, 211, 235, 0.17);
+    color: rgba(205, 231, 241, 0.62);
+    background:
+        linear-gradient(90deg, rgba(89, 185, 218, 0.06), transparent 46%),
+        rgba(3, 10, 24, 0.18);
+    box-shadow:
+        inset 0 0 18px rgba(80, 178, 214, 0.035),
+        0 8px 24px rgba(0, 0, 0, 0.08);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    font: 500 10px/1 "IBM Plex Mono", monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    pointer-events: none;
+}
+
+.portal-scene-label::after {
+    content: "";
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 11px;
+    height: 1px;
+    background: rgba(132, 218, 244, 0.28);
+}
+
+.portal-scene-label-signal {
+    width: 5px;
+    height: 5px;
+    flex: 0 0 auto;
+    border: 1px solid rgba(151, 230, 250, 0.54);
+    border-radius: 50%;
+    background: rgba(94, 204, 232, 0.24);
+    box-shadow: 0 0 8px rgba(92, 209, 240, 0.24);
+}
+
 .portal-motion-toggle {
     position: absolute;
-    right: 18px;
-    bottom: 16px;
+    right: 210px;
+    bottom: 19px;
     z-index: 9;
     display: grid;
     width: 38px;
@@ -142,6 +190,22 @@
 }
 
 @media (max-width: 640px) {
+    .portal-scene-label {
+        right: 14px;
+        bottom: 14px;
+        min-width: 148px;
+        min-height: 32px;
+        gap: 8px;
+        padding: 7px 11px;
+        font-size: 8px;
+        letter-spacing: 0.15em;
+    }
+
+    .portal-motion-toggle {
+        right: 174px;
+        bottom: 11px;
+    }
+
     .portal-depth-grid {
         opacity: 0.09;
         background-size: 44px 36px;
@@ -169,5 +233,11 @@
     .portal-motion-toggle {
         border: 1px solid ButtonText;
         color: ButtonText;
+    }
+
+    .portal-scene-label {
+        border-color: CanvasText;
+        color: CanvasText;
+        background: Canvas;
     }
 }
