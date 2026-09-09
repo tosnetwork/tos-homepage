@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TOS has a fixed maximum gross supply of 500 million tokens, issued only through the validator-led launch and finalized-block reward path.">
+    <meta name="description" content="TOS has no fixed maximum supply: a bounded validator bootstrap issues about 10 million TOS over roughly two years, then governance targets a low perpetual issuance near 2% per year, all through the validator-led finalized-block reward path.">
     <meta name="author" content="TOS Network">
     <meta name="theme-color" content="#06121b">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="Token Economics - TOS Network">
-    <meta property="og:description" content="A fixed 500-million-TOS maximum supply, including genesis, with all remaining issuance reserved for elected-validator block rewards.">
+    <meta property="og:description" content="No fixed cap: about 10 million TOS over a roughly two-year validator bootstrap, then about 2% annual issuance, all reserved for elected-validator block rewards.">
     <meta property="og:image" content="https://tos.network/img/tos-network-vision.webp">
     <meta property="og:url" content="https://tos.network/token">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@tos_network">
     <meta name="twitter:title" content="Token Economics - TOS Network">
-    <meta name="twitter:description" content="A fixed 500-million-TOS maximum supply, including genesis, with all remaining issuance reserved for elected-validator block rewards.">
+    <meta name="twitter:description" content="No fixed cap: about 10 million TOS over a roughly two-year validator bootstrap, then about 2% annual issuance, all reserved for elected-validator block rewards.">
     <meta name="twitter:image" content="https://tos.network/img/tos-network-vision.webp">
 
     <title>Token Economics - TOS Network</title>
@@ -89,22 +89,24 @@
         <section class="section token-economics page-open" id="economics">
             <div class="shell">
                 <div class="section-intro reveal">
-                    <p class="kicker" data-i18n="economics.kicker">Fixed supply policy</p>
-                    <h1 data-i18n="economics.title">Fixed supply. Validator-issued.</h1>
+                    <p class="kicker" data-i18n="economics.kicker">Issuance policy</p>
+                    <h1 data-i18n="economics.title">Bounded bootstrap. Validator-issued.</h1>
                     <p data-i18n="economics.desc">
-                        TOS has a fixed maximum gross supply of exactly 500,000,000 tokens. The
-                        bounded 101,000-TOS genesis validator bootstrap is included in that total;
-                        the remaining 499,899,000 TOS can be issued only through finalized blocks
-                        produced by elected validators. Service work, provider claims, and
-                        off-chain scores cannot create TOS.
+                        TOS has no fixed maximum supply. A bounded validator bootstrap creates
+                        approximately 10,000,000 TOS over roughly its first two years — the
+                        101,000-TOS genesis bootstrap is included — after which governance targets
+                        a low perpetual issuance of about 2% of the prevailing supply per year. All
+                        native issuance comes only from finalized blocks produced by elected
+                        validators. Service work, provider claims, and off-chain scores cannot
+                        create TOS.
                     </p>
                 </div>
 
                 <div class="token-metrics" role="group" aria-label="TOS supply policy">
                     <article class="token-metric reveal">
-                        <span data-i18n="economics.metric1Label">Fixed maximum gross supply</span>
-                        <strong data-i18n="economics.metric1Value">500M TOS</strong>
-                        <p data-i18n="economics.metric1Desc">A hard consensus cap covering genesis and every later validator reward.</p>
+                        <span data-i18n="economics.metric1Label">Two-year bootstrap target</span>
+                        <strong data-i18n="economics.metric1Value">~10M TOS</strong>
+                        <p data-i18n="economics.metric1Desc">A calibration target, not a cap: genesis plus about two years of validator rewards.</p>
                     </article>
                     <article class="token-metric reveal">
                         <span data-i18n="economics.metric2Label">Provisional genesis</span>
@@ -113,8 +115,8 @@
                     </article>
                     <article class="token-metric reveal">
                         <span data-i18n="economics.metric3Label">Post-genesis validator issuance</span>
-                        <strong data-i18n="economics.metric3Value">499.899M TOS</strong>
-                        <p data-i18n="economics.metric3Desc">Created only with finalized blocks; the reference distribution period is approximately seven years.</p>
+                        <strong data-i18n="economics.metric3Value">~9.899M TOS</strong>
+                        <p data-i18n="economics.metric3Desc">Created only with finalized blocks over the ~2-year bootstrap; then about 2% of supply per year.</p>
                     </article>
                     <article class="token-metric reveal">
                         <span data-i18n="economics.metric4Label">Insider allocation</span>
@@ -139,7 +141,7 @@
                         <p data-i18n="economics.card1Desc">
                             No finalized block means no native creation. Outages create no reward
                             debt, catch-up multiplier, or later backfill. Transaction and service
-                            fees transfer existing TOS and continue after block creation is stopped.
+                            fees transfer existing TOS and are a separate, continuing flow.
                         </p>
                     </article>
 
@@ -166,13 +168,14 @@
                     </article>
 
                     <article class="economics-card reveal">
-                        <p class="economics-label" data-i18n="economics.card4Label">How issuance terminates</p>
-                        <h3 data-i18n="economics.card4Title">Creation stops at the fixed cap.</h3>
+                        <p class="economics-label" data-i18n="economics.card4Label">How issuance continues</p>
+                        <h3 data-i18n="economics.card4Title">Bootstrap gives way to ~2% issuance.</h3>
                         <p data-i18n="economics.card4Desc">
                             Genesis creation and every validator block reward count toward the
-                            500,000,000-TOS maximum. Governance may adjust the reward rate and
-                            timing, but it cannot authorize gross native creation above the cap;
-                            ConfigParam 14 must taper to zero or be clipped at the remaining supply.
+                            ~10,000,000-TOS two-year bootstrap target — a calibration target, not a
+                            hard cap. After the bootstrap, governance re-parameterizes ConfigParam
+                            14 so annual creation tracks about 2% of the prevailing supply, a low
+                            perpetual issuance that keeps validators securing the network.
                         </p>
                     </article>
                 </div>
@@ -188,7 +191,7 @@
                             technical, custody, governance, concentration, and regulatory risk.
                         </p>
                     </div>
-                    <a class="button button-secondary" href="pdf/tos.pdf?v=20260821a" target="_blank" rel="noopener">
+                    <a class="button button-secondary" href="pdf/tos.pdf?v=20260910a" target="_blank" rel="noopener">
                         <span data-i18n="economics.disclosureLink">Read full token economics</span> <span aria-hidden="true">↗</span>
                     </a>
                 </div>
@@ -236,7 +239,7 @@
                 </div>
                 <div>
                     <strong data-i18n="footer.verifyLabel">Verify</strong>
-                    <a href="pdf/tos.pdf?v=20260821a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
+                    <a href="pdf/tos.pdf?v=20260910a" target="_blank" rel="noopener" data-i18n="footer.verifyL1">Whitepaper</a>
                     <a href="https://github.com/tosnetwork/tos" target="_blank" rel="noopener" data-i18n="footer.verifyL2">Source</a>
                     <a href="https://github.com/tosnetwork/constitution" target="_blank" rel="noopener" data-i18n="footer.verifyL3">Constitution + documentation</a>
                     <a href="https://github.com/tosnetwork/openfox" target="_blank" rel="noopener" data-i18n="footer.verifyL4">OpenFox architecture + evidence</a>
@@ -258,7 +261,7 @@
         </div>
     </footer>
 
-    <script src="js/i18n.js?v=20260831a"></script>
+    <script src="js/i18n.js?v=20260910a"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
     <script src="js/investor-home.js?v=20260819a"></script>
 </body>
