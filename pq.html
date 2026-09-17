@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="css/investor-home.css?v=20260828e">
     <link rel="stylesheet" href="css/design-system.css?v=20260828e">
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b">
-    <link rel="stylesheet" href="css/pq.css?v=20260917e">
+    <link rel="stylesheet" href="css/pq.css?v=20260917g">
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -111,9 +111,18 @@
                     <svg class="pq-art" width="460" height="460" viewBox="0 0 460 460" role="img" aria-labelledby="pq-art-title">
                         <title id="pq-art-title" data-i18n="pq.artAlt">One signature slot, holding a 64-byte Ed25519 key today, sized for a 2,420-byte post-quantum key next.</title>
                         <g class="pq-art-orbit">
-                            <ellipse class="pq-orbit-a" cx="230" cy="230" rx="188" ry="76"/>
-                            <ellipse class="pq-orbit-b" cx="230" cy="230" rx="188" ry="76"/>
-                            <ellipse class="pq-orbit-c" cx="230" cy="230" rx="188" ry="76"/>
+                            <g class="pq-orbit-a">
+                                <ellipse cx="230" cy="230" rx="188" ry="76"/>
+                                <circle class="pq-art-moon" cx="418" cy="230" r="4.5"/>
+                            </g>
+                            <g class="pq-orbit-b">
+                                <ellipse cx="230" cy="230" rx="188" ry="76" transform="rotate(60 230 230)"/>
+                                <circle class="pq-art-moon" cx="42" cy="230" r="4" transform="rotate(60 230 230)"/>
+                            </g>
+                            <g class="pq-orbit-c">
+                                <ellipse cx="230" cy="230" rx="188" ry="76" transform="rotate(120 230 230)"/>
+                                <circle class="pq-art-moon" cx="418" cy="230" r="3.5" transform="rotate(120 230 230)"/>
+                            </g>
                         </g>
                         <g class="pq-art-ring">
                             <circle cx="230" cy="230" r="150"/>

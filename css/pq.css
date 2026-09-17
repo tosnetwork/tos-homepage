@@ -170,8 +170,17 @@
 .pq-art .pq-art-orbit {
     fill: none;
     stroke: var(--cyan);
-    stroke-opacity: 0.46;
-    stroke-width: 1.7;
+    stroke-opacity: 0.55;
+    stroke-width: 2.2;
+}
+
+/* One body riding each orbit, at alternating ends of the major axis. It is
+   dimmer and smaller than the key seated in the slot, so the centre keeps
+   the meaning and these stay scenery. */
+.pq-art .pq-art-moon {
+    fill: var(--cyan-bright);
+    fill-opacity: 0.55;
+    stroke: none;
 }
 
 .pq-art .pq-art-tick {
@@ -206,9 +215,13 @@
    speed, dashes travelling along the feed line toward the slot, and one
    breath on the key that is still waiting outside it.
 
-   Base angles live on the classes as static transforms, and each keyframe
-   runs from its own base to base + 360deg, so a reduced-motion visitor gets
-   the same composition standing still rather than three collapsed ellipses. */
+   The middle orbit runs backwards. Three bodies turning the same way read as
+   one rigid object; one of them going the other way is what makes the group
+   look like separate orbits crossing.
+
+   Each orbit's base angle sits on its own children as an attribute transform,
+   and the spin is a CSS transform on the wrapping group, so the two compose
+   and a reduced-motion visitor gets the original composition standing still. */
 
 .pq-orbit-a,
 .pq-orbit-b,
@@ -219,22 +232,19 @@
 }
 
 .pq-orbit-a {
-    transform: rotate(0deg);
-    animation: pq-orbit-a 120s linear infinite;
+    animation: pq-spin 120s linear infinite;
 }
 
 .pq-orbit-b {
-    transform: rotate(60deg);
-    animation: pq-orbit-b 150s linear infinite;
+    animation: pq-spin-back 150s linear infinite;
 }
 
 .pq-orbit-c {
-    transform: rotate(120deg);
-    animation: pq-orbit-c 186s linear infinite;
+    animation: pq-spin 186s linear infinite;
 }
 
 .pq-art-ticks {
-    animation: pq-orbit-a 480s linear infinite reverse;
+    animation: pq-spin-back 480s linear infinite;
 }
 
 .pq-art .pq-art-waiting {
@@ -247,19 +257,14 @@
     animation: pq-feed 2.8s linear infinite;
 }
 
-@keyframes pq-orbit-a {
+@keyframes pq-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-@keyframes pq-orbit-b {
-    from { transform: rotate(60deg); }
-    to { transform: rotate(420deg); }
-}
-
-@keyframes pq-orbit-c {
-    from { transform: rotate(120deg); }
-    to { transform: rotate(480deg); }
+@keyframes pq-spin-back {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
 }
 
 /* One dash period is 7 units, so the loop closes without a jump. */
