@@ -156,24 +156,28 @@
     margin-inline: auto;
 }
 
+/* Line weight: the drawing sits on a near-black ground at roughly 1:1 scale, so
+   a 1px stroke at low alpha disappears. The orbits carry the figure and take
+   the most weight; rings and ticks stay a step behind them so the eye still
+   lands on the slot at the centre. */
 .pq-art .pq-art-ring {
     fill: none;
     stroke: var(--cyan);
-    stroke-opacity: 0.22;
-    stroke-width: 1;
+    stroke-opacity: 0.4;
+    stroke-width: 1.4;
 }
 
 .pq-art .pq-art-orbit {
     fill: none;
     stroke: var(--cyan);
-    stroke-opacity: 0.16;
-    stroke-width: 1;
+    stroke-opacity: 0.46;
+    stroke-width: 1.7;
 }
 
 .pq-art .pq-art-tick {
     stroke: var(--cyan);
-    stroke-opacity: 0.3;
-    stroke-width: 1;
+    stroke-opacity: 0.5;
+    stroke-width: 1.6;
 }
 
 .pq-art .pq-art-slot {
