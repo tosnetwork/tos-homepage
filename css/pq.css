@@ -1,0 +1,810 @@
+/* ==========================================================================
+   Post-Quantum TOS page
+
+   Loads after design-system.css and owns only what that sheet does not have:
+   the fact strip, the figures, the layer stack, the measurement table, the
+   size chart and the caveat panel. Everything else reuses .section,
+   .section-head, .status-panel, .roadmap-list and .text-link so this page
+   reads as the same site rather than a microsite.
+
+   The page is deliberately sparse. Where the base sheet allows a dense
+   two-column block, this one takes the air instead: one idea per screen,
+   a figure to carry the mechanism, and prose that stops.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Status words
+
+   A status is a word, not a badge. The design system removed pills, tinted
+   fills and glowing dots; a status here is uppercase mono in one of four
+   colours, and the colour is the only signal.
+   -------------------------------------------------------------------------- */
+
+.pq-status {
+    display: inline-block;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pq-status--built {
+    color: var(--cyan);
+}
+
+.pq-status--frozen {
+    color: var(--blue);
+}
+
+.pq-status--pending {
+    color: var(--gold);
+}
+
+.pq-status--none {
+    color: var(--danger);
+}
+
+/* --------------------------------------------------------------------------
+   2. Hero
+
+   Copy left, figure right. The figure is the reason the copy can be four
+   sentences instead of twelve.
+   -------------------------------------------------------------------------- */
+
+.pq-hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--space-10);
+    align-items: center;
+}
+
+.pq-hero h1 {
+    max-width: 19ch;
+    margin: 0 0 var(--space-7);
+}
+
+.pq-hero-copy > p {
+    max-width: 52ch;
+    color: var(--muted-strong);
+    font-size: var(--text-lg);
+    line-height: 1.55;
+}
+
+.pq-hero-note {
+    margin-top: var(--space-6);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+}
+
+.pq-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1px;
+    margin-top: var(--space-11);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--line);
+    overflow: hidden;
+}
+
+.pq-fact {
+    padding: var(--space-6);
+    background: var(--navy-900);
+}
+
+.pq-fact dt {
+    margin-bottom: var(--space-3);
+    color: var(--muted);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pq-fact dd {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+}
+
+.pq-fact .pq-status {
+    display: block;
+    margin-top: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   3. Figures
+
+   One shared frame: the drawing, then a mono caption that says what it
+   shows. Captions are read; they are not decoration.
+   -------------------------------------------------------------------------- */
+
+.pq-figure {
+    margin: var(--space-11) 0 0;
+}
+
+.pq-figure svg {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.pq-figure-cap {
+    margin-top: var(--space-6);
+    max-width: 62ch;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+}
+
+/* The hero drawing carries no information, so it stays quiet and never
+   competes with the headline beside it. */
+.pq-art {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    margin-inline: auto;
+}
+
+.pq-art .pq-art-ring {
+    fill: none;
+    stroke: var(--cyan);
+    stroke-opacity: 0.22;
+    stroke-width: 1;
+}
+
+.pq-art .pq-art-orbit {
+    fill: none;
+    stroke: var(--cyan);
+    stroke-opacity: 0.16;
+    stroke-width: 1;
+}
+
+.pq-art .pq-art-tick {
+    stroke: var(--cyan);
+    stroke-opacity: 0.3;
+    stroke-width: 1;
+}
+
+.pq-art .pq-art-slot {
+    fill: none;
+    stroke: var(--cyan-bright);
+    stroke-opacity: 0.75;
+    stroke-width: 1.5;
+}
+
+.pq-art .pq-art-seated {
+    fill: var(--cyan-bright);
+}
+
+.pq-art .pq-art-waiting {
+    fill: none;
+    stroke: var(--cyan-bright);
+    stroke-opacity: 0.6;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 4;
+}
+
+/* ---- Motion -------------------------------------------------------------
+
+   Four movements, all slow enough to read as drift rather than animation:
+   three orbits at different periods, the tick ring at a quarter of that
+   speed, dashes travelling along the feed line toward the slot, and one
+   breath on the key that is still waiting outside it.
+
+   Base angles live on the classes as static transforms, and each keyframe
+   runs from its own base to base + 360deg, so a reduced-motion visitor gets
+   the same composition standing still rather than three collapsed ellipses. */
+
+.pq-orbit-a,
+.pq-orbit-b,
+.pq-orbit-c,
+.pq-art-ticks {
+    transform-box: view-box;
+    transform-origin: 230px 230px;
+}
+
+.pq-orbit-a {
+    transform: rotate(0deg);
+    animation: pq-orbit-a 120s linear infinite;
+}
+
+.pq-orbit-b {
+    transform: rotate(60deg);
+    animation: pq-orbit-b 150s linear infinite;
+}
+
+.pq-orbit-c {
+    transform: rotate(120deg);
+    animation: pq-orbit-c 186s linear infinite;
+}
+
+.pq-art-ticks {
+    animation: pq-orbit-a 480s linear infinite reverse;
+}
+
+.pq-art .pq-art-waiting {
+    animation: pq-breathe 5s ease-in-out infinite alternate;
+}
+
+/* Declared after the breath, and at the same specificity, so the feed line
+   marches instead of inheriting the circle's animation. */
+.pq-art .pq-art-feed {
+    animation: pq-feed 2.8s linear infinite;
+}
+
+@keyframes pq-orbit-a {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pq-orbit-b {
+    from { transform: rotate(60deg); }
+    to { transform: rotate(420deg); }
+}
+
+@keyframes pq-orbit-c {
+    from { transform: rotate(120deg); }
+    to { transform: rotate(480deg); }
+}
+
+/* One dash period is 7 units, so the loop closes without a jump. */
+@keyframes pq-feed {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -14; }
+}
+
+@keyframes pq-breathe {
+    from { stroke-opacity: 0.32; }
+    to { stroke-opacity: 0.78; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pq-orbit-a,
+    .pq-orbit-b,
+    .pq-orbit-c,
+    .pq-art-ticks,
+    .pq-art .pq-art-feed,
+    .pq-art .pq-art-waiting {
+        animation: none;
+    }
+}
+
+.pq-art text {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+}
+
+/* --------------------------------------------------------------------------
+   4. The ladder drawing
+   -------------------------------------------------------------------------- */
+
+.pq-ladder .pq-rail {
+    stroke: var(--line);
+    stroke-width: 1;
+}
+
+.pq-ladder .pq-rail-done {
+    stroke: var(--cyan);
+    stroke-opacity: 0.55;
+    stroke-width: 1.5;
+}
+
+.pq-ladder .pq-node {
+    fill: var(--navy-950);
+    stroke: var(--cyan);
+    stroke-opacity: 0.55;
+    stroke-width: 1.5;
+}
+
+.pq-ladder .pq-node-future {
+    fill: var(--navy-950);
+    stroke: var(--muted);
+    stroke-opacity: 0.4;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 3;
+}
+
+/* Classical is the neutral reference, post-quantum is the one brand hue. Two
+   teals failed the normal-vision separation floor against each other; gray
+   against teal clears it, and it also says which one is the legacy scheme. */
+.pq-ladder .pq-mark-classical {
+    fill: var(--muted);
+}
+
+.pq-ladder .pq-mark-pq {
+    fill: var(--cyan-bright);
+}
+
+.pq-ladder .pq-mark-shadow {
+    fill: none;
+    stroke: var(--cyan-bright);
+    stroke-opacity: 0.55;
+    stroke-width: 1.2;
+    stroke-dasharray: 2 2.5;
+}
+
+.pq-ladder .pq-label {
+    fill: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+}
+
+.pq-ladder .pq-sub {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+}
+
+.pq-ladder .pq-here {
+    fill: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+}
+
+/* --------------------------------------------------------------------------
+   5. Layer stack
+
+   Three bands, drawn in HTML so the labels wrap and translate. The left rail
+   colour is the status; the right column is how that layer is allowed to
+   move, which is the whole reason for the order.
+   -------------------------------------------------------------------------- */
+
+.pq-stack {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.pq-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr) auto;
+    gap: var(--space-6);
+    align-items: center;
+    padding: var(--space-6) var(--space-7);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--cyan);
+    border-radius: var(--radius-md);
+    background: rgba(4, 12, 23, 0.45);
+}
+
+.pq-band--frozen {
+    border-left-color: var(--blue);
+}
+
+.pq-band strong {
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.pq-band span {
+    color: var(--muted);
+    font-size: var(--text-sm);
+}
+
+.pq-band .pq-status {
+    justify-self: end;
+    text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   6. Exposure list
+   -------------------------------------------------------------------------- */
+
+.pq-exposure {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: exposure;
+}
+
+.pq-exposure > li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-8) 0;
+    border-top: 1px solid var(--line);
+    counter-increment: exposure;
+}
+
+.pq-exposure > li::before {
+    content: counter(exposure, decimal-leading-zero);
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.pq-exposure h3 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-xl);
+}
+
+.pq-exposure p {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--muted-strong);
+}
+
+/* --------------------------------------------------------------------------
+   7. Layer detail cards
+   -------------------------------------------------------------------------- */
+
+.pq-layers {
+    display: grid;
+    gap: var(--space-7);
+}
+
+/* Air between a summary drawing and the detail it summarises. */
+.pq-stack + .pq-layers,
+.pq-figure + .roadmap-list {
+    margin-top: var(--space-11);
+}
+
+.pq-layer {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-9);
+    padding: var(--space-9);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: rgba(4, 12, 23, 0.3);
+}
+
+.pq-layer-head h3 {
+    margin: var(--space-4) 0 var(--space-5);
+}
+
+.pq-layer-head p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.pq-layer-body ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pq-layer-body li {
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted-strong);
+}
+
+.pq-layer-body li:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.pq-layer-body li strong {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.pq-layer-foot {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+}
+
+/* --------------------------------------------------------------------------
+   8. Measurement table
+   -------------------------------------------------------------------------- */
+
+.pq-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+}
+
+.pq-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.pq-table th,
+.pq-table td {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+}
+
+.pq-table thead th {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pq-table tbody tr:last-child th,
+.pq-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.pq-table tbody th {
+    max-width: 26ch;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.pq-table td.pq-num {
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.pq-table td.pq-note {
+    max-width: 34ch;
+    color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   9. Size chart
+
+   One measure, bytes, on one axis. The bound is a line, not a fourth bar,
+   because it is a limit and not an observation.
+   -------------------------------------------------------------------------- */
+
+/* A flat three-column grid rather than nested rows: the value gets its own
+   column, so a bar at 100% cannot push its number off the page, and a phone
+   collapses the whole thing to one column without a second layout. */
+.pq-bars {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) auto;
+    gap: var(--space-5) var(--space-6);
+    align-items: center;
+}
+
+/* Every item names its column. Without this the axis row, which starts in
+   column 2, shifts auto-placement by one and the labels land on the right. */
+.pq-bar-label {
+    grid-column: 1;
+    color: var(--muted-strong);
+    font-size: var(--text-sm);
+}
+
+.pq-bar-label em {
+    display: block;
+    color: var(--muted);
+    font-size: var(--text-xs);
+    font-style: normal;
+}
+
+.pq-bar-track {
+    position: relative;
+    grid-column: 2;
+    height: 26px;
+}
+
+/* Same encoding as the ladder: gray is the classical scheme, and the red is a
+   status — over the bound — carried by a written label as well as the colour. */
+.pq-bar-fill {
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    background: var(--muted);
+}
+
+.pq-bar-fill--over {
+    background: var(--danger);
+}
+
+.pq-bar-value {
+    grid-column: 3;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.pq-bar-value em {
+    color: var(--danger);
+    font-style: normal;
+}
+
+/* The frozen bound, drawn once per track so it lines up with every bar
+   without a stacking-context trick. */
+.pq-bar-bound {
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    width: 0;
+    border-left: 1px dashed rgba(255, 255, 255, 0.45);
+}
+
+.pq-bars-axis {
+    position: relative;
+    grid-column: 2;
+    height: 1.2em;
+}
+
+.pq-bars-axis span {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   10. Open questions
+   -------------------------------------------------------------------------- */
+
+.pq-open {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-7);
+}
+
+.pq-open article {
+    padding: var(--space-7);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--gold);
+    border-radius: var(--radius-md);
+    background: rgba(4, 12, 23, 0.3);
+}
+
+.pq-open h3 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-lg);
+}
+
+.pq-open p {
+    margin: 0;
+    color: var(--muted-strong);
+}
+
+/* --------------------------------------------------------------------------
+   11. References and caveat
+   -------------------------------------------------------------------------- */
+
+.pq-refs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-8);
+}
+
+.pq-refs section > strong {
+    display: block;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pq-refs a {
+    display: block;
+    margin-bottom: var(--space-4);
+    color: var(--muted-strong);
+    text-decoration: none;
+}
+
+.pq-refs a:hover,
+.pq-refs a:focus-visible {
+    color: var(--cyan-bright);
+}
+
+.pq-caveat {
+    padding: var(--space-9);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--danger);
+    border-radius: var(--radius-md);
+    background: rgba(4, 12, 23, 0.3);
+}
+
+.pq-caveat h2 {
+    margin: 0 0 var(--space-6);
+    font-size: var(--text-xl);
+}
+
+.pq-caveat ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pq-caveat li {
+    max-width: 78ch;
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted-strong);
+}
+
+/* --------------------------------------------------------------------------
+   12. Narrow widths
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+    .pq-hero-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-9);
+    }
+
+    .pq-art {
+        max-width: 340px;
+    }
+
+    .pq-layer {
+        grid-template-columns: 1fr;
+        gap: var(--space-7);
+        padding: var(--space-7);
+    }
+
+    .pq-band {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: var(--space-3);
+    }
+
+    .pq-band span {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 720px) {
+    .pq-exposure > li {
+        grid-template-columns: 2.5rem minmax(0, 1fr);
+        gap: var(--space-4);
+        padding: var(--space-7) 0;
+    }
+
+    /* One column: label, bar, value, repeating. The top margin on each label
+       is what keeps the three parts of a row reading as one row. */
+    .pq-bars {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-2);
+    }
+
+    .pq-bars-axis,
+    .pq-bar-label,
+    .pq-bar-track,
+    .pq-bar-value {
+        grid-column: 1;
+    }
+
+    .pq-bar-label {
+        margin-top: var(--space-6);
+    }
+
+    .pq-bars-axis + .pq-bar-label {
+        margin-top: 0;
+    }
+
+    .pq-bar-track {
+        height: 22px;
+    }
+}
