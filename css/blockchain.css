@@ -839,10 +839,19 @@ main > .chain-note {
   animation-delay: -4.6s !important;
 }
 .chain-hero-art .chain-orbits ellipse {
-  stroke-dasharray: 3 14;
-  animation: chain-orbit-flow 20s linear infinite;
+  stroke: #9cebd5;
+  stroke-width: 2.75;
+  stroke-opacity: 0.7;
+  stroke-linecap: round;
+  stroke-dasharray: 7 10;
+  animation: chain-orbit-flow 16s linear infinite;
 }
 .chain-hero-art .chain-network > path {
+  stroke: #9cebd5;
+  stroke-width: 2.5;
+  stroke-opacity: 0.85;
+  stroke-linecap: round;
+  stroke-dasharray: 6 7;
   animation: chain-link-flow 3s linear infinite;
 }
 .chain-hero-art .chain-node {
@@ -895,7 +904,7 @@ main > .chain-note {
 }
 @keyframes chain-link-flow {
   to {
-    stroke-dashoffset: -44;
+    stroke-dashoffset: -52;
   }
 }
 @keyframes chain-node-breathe {
