@@ -5,28 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An introduction to TOS: a sharded Layer-1 blockchain with post-quantum authentication, shielded transfers, asynchronous TVM contracts, and agent account primitives."
+      content="Native TOS privacy: Groth16 transaction proofs, Poseidon2 commitments, nullifiers, one-time ML-DSA-44 authorization, and ML-KEM encrypted note delivery."
     />
     <meta name="theme-color" content="#06121b" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TOS Blockchain" />
-    <meta property="og:title" content="TOS Blockchain | Overview" />
+    <meta property="og:title" content="TOS Blockchain | Shielded Transfers" />
     <meta
       property="og:description"
-      content="An introduction to TOS: a sharded Layer-1 blockchain with post-quantum authentication, shielded transfers, asynchronous TVM contracts, and agent account primitives."
+      content="Native TOS privacy: Groth16 transaction proofs, Poseidon2 commitments, nullifiers, one-time ML-DSA-44 authorization, and ML-KEM encrypted note delivery."
     />
-    <meta property="og:url" content="https://tos.network/overview" />
+    <meta property="og:url" content="https://tos.network/privacy" />
     <meta property="og:image" content="https://tos.network/img/800x800.png" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@tos_network" />
-    <meta name="twitter:title" content="TOS Blockchain | Overview" />
+    <meta name="twitter:title" content="TOS Blockchain | Shielded Transfers" />
     <meta
       name="twitter:description"
-      content="An introduction to TOS: a sharded Layer-1 blockchain with post-quantum authentication, shielded transfers, asynchronous TVM contracts, and agent account primitives."
+      content="Native TOS privacy: Groth16 transaction proofs, Poseidon2 commitments, nullifiers, one-time ML-DSA-44 authorization, and ML-KEM encrypted note delivery."
     />
     <meta name="twitter:image" content="https://tos.network/img/800x800.png" />
-    <title>TOS Blockchain | Overview</title>
-    <link rel="canonical" href="https://tos.network/overview" />
+    <title>TOS Blockchain | Shielded Transfers</title>
+    <link rel="canonical" href="https://tos.network/privacy" />
     <link rel="icon" href="favicon.ico" />
     <link rel="sitemap" type="application/xml" href="sitemap.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,9 +43,9 @@
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "TOS Blockchain | Overview",
-        "url": "https://tos.network/overview",
-        "description": "An introduction to TOS: a sharded Layer-1 blockchain with post-quantum authentication, shielded transfers, asynchronous TVM contracts, and agent account primitives.",
+        "name": "TOS Blockchain | Shielded Transfers",
+        "url": "https://tos.network/privacy",
+        "description": "Native TOS privacy: Groth16 transaction proofs, Poseidon2 commitments, nullifiers, one-time ML-DSA-44 authorization, and ML-KEM encrypted note delivery.",
         "isPartOf": {
           "@type": "WebSite",
           "name": "TOS Blockchain",
@@ -73,13 +73,13 @@
           <span></span><span></span>
         </button>
         <nav class="site-nav" id="siteNav" aria-label="Primary navigation">
-          <a href="overview.html" aria-current="page"
+          <a href="overview.html"
             ><span data-i18n="nav.overview">Overview</span></a
           ><a href="foundation.html"
             ><span data-i18n="nav.foundation">Technology</span></a
           ><a href="platform.html"
             ><span data-i18n="nav.platform">Developers</span></a
-          ><a href="privacy.html"
+          ><a href="privacy.html" aria-current="page"
             ><span data-i18n="nav.privacy">Privacy</span></a
           ><a href="pq.html"><span data-i18n="nav.pq">Security</span></a
           ><a href="token.html"><span data-i18n="nav.token">Token</span></a
@@ -187,12 +187,14 @@
       <section class="chain-hero">
         <div class="shell chain-hero-grid">
           <div class="chain-hero-copy">
-            <p data-i18n="overview.k" class="eyebrow">The blockchain</p>
-            <h1 data-i18n="overview.h">Infrastructure for<br />the AI era.</h1>
-            <p data-i18n="overview.d" class="chain-lede">
-              TOS is an open-source Layer 1 with a masterchain, shardchains,
-              native TVM contracts, post-quantum validator authentication, and a
-              shielded native-asset implementation.
+            <p data-i18n="privacy.k" class="eyebrow">Shielded TOS</p>
+            <h1 data-i18n="privacy.h">
+              Private value.<br />Verifiable transactions.
+            </h1>
+            <p data-i18n="privacy.d" class="chain-lede">
+              The native-TOS shielded pool uses zero-knowledge proofs to
+              validate private note transactions, with post-quantum spending
+              authorization and encrypted note delivery.
             </p>
             <div class="chain-actions">
               <a class="button button-primary" href="platform.html"
@@ -211,81 +213,125 @@
       <section class="chain-section">
         <div class="shell">
           <div class="chain-section-head">
-            <h2 data-i18n="overview.role.h">What the chain makes possible.</h2>
+            <h2 data-i18n="privacy.flow.h">
+              A defined privacy layer for native TOS.
+            </h2>
+            <p data-i18n="privacy.flow.d">
+              V1 has a fixed two-input, three-output transaction shape.
+              Commitments represent notes; nullifiers prevent repeated spends.
+              Real and dummy output payloads have the same length.
+            </p>
           </div>
-          <div class="chain-card-grid">
-            <article class="chain-card">
-              <span class="chain-card-number">AUTHORITY</span>
-              <h3 data-i18n="overview.auth.h">
-                Authenticate consequential actions
-              </h3>
-              <p data-i18n="overview.auth.d">
-                Validator signatures authenticate consensus. Account contracts
-                define who may act, under which limits, and how authority
-                changes.
+          <div class="chain-flow">
+            <div>
+              <h3 data-i18n="privacy.deposit">Deposit TOS</h3>
+              <p data-i18n="privacy.deposit.d">Public entry into the pool</p>
+            </div>
+            <span aria-hidden="true">→</span>
+            <div class="chain-flow-focus">
+              <h3 data-i18n="privacy.transfer">Transfer notes</h3>
+              <p data-i18n="privacy.transfer.d">
+                Private witnesses, verified on-chain
               </p>
-            </article>
-            <article class="chain-card">
-              <span class="chain-card-number">VALUE</span>
-              <h3 data-i18n="overview.value.h">Transfer and settle value</h3>
-              <p data-i18n="overview.value.d">
-                Native TOS pays network fees and funds contracts. Shielded notes
-                add a defined privacy layer; escrow contracts implement explicit
-                settlement rules.
-              </p>
-            </article>
-            <article class="chain-card">
-              <span class="chain-card-number">STATE</span>
-              <h3 data-i18n="overview.state.h">Coordinate shared state</h3>
-              <p data-i18n="overview.state.d">
-                Contracts maintain deterministic account state. Messages connect
-                accounts across shards, and validator certificates authenticate
-                accepted chain history.
-              </p>
-            </article>
+            </div>
+            <span aria-hidden="true">→</span>
+            <div>
+              <h3 data-i18n="privacy.withdraw">Withdraw TOS</h3>
+              <p data-i18n="privacy.withdraw.d">Public payout from the pool</p>
+            </div>
           </div>
         </div>
       </section>
       <section class="chain-section chain-section-tint">
         <div class="shell">
           <div class="chain-section-head">
-            <h2 data-i18n="overview.ai.h">Why blockchain for agents?</h2>
-            <p data-i18n="overview.ai.d">
-              Autonomous programs need durable identities, enforceable budgets,
-              deterministic contracts, and verifiable settlement. TOS brings
-              these requirements into the account and execution model.
-            </p>
+            <h2 data-i18n="privacy.crypto.h">
+              Three mechanisms.<br />Three separate protections.
+            </h2>
           </div>
-          <aside class="chain-note">
-            <p data-i18n="overview.ai.note">
-              Models and tools run in applications. TOS verifies authorization,
-              executes contract rules, and records on-chain outcomes.
-            </p>
-          </aside>
-          <a class="text-link" href="platform.html#contracts"
-            ><span data-i18n="contracts.link">Explore contract primitives</span>
-            →</a
-          >
+          <div class="chain-card-grid">
+            <article class="chain-card">
+              <span class="chain-card-number">GROTH16 · BLS12-381</span>
+              <h3 data-i18n="privacy.proof.h">Prove transaction validity</h3>
+              <p data-i18n="privacy.proof.d">
+                The circuit checks note membership, ownership witnesses, amount
+                constraints, and value conservation. Poseidon2 supplies
+                commitments and tree hashing.
+              </p>
+            </article>
+            <article class="chain-card">
+              <span class="chain-card-number">ML-DSA-44</span>
+              <h3 data-i18n="privacy.auth.h">Authorize each spend</h3>
+              <p data-i18n="privacy.auth.d">
+                A one-time key per note signs the transaction intent, binding
+                authority to the exact inputs, outputs, payout, and validity
+                window.
+              </p>
+            </article>
+            <article class="chain-card">
+              <span class="chain-card-number">ML-KEM-768 · XCHACHA20</span>
+              <h3 data-i18n="privacy.delivery.h">Deliver notes privately</h3>
+              <p data-i18n="privacy.delivery.d">
+                Encrypted chain-delivered payloads let recipients scan and
+                recover their notes. Authentication binds encrypted data to its
+                execution domain and output slot.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
       <section class="chain-section">
         <div class="shell">
           <div class="chain-section-head">
-            <h2 data-i18n="overview.paths.h">Explore the protocol.</h2>
+            <h2 data-i18n="privacy.boundary.h">Know what is private.</h2>
+            <p data-i18n="privacy.boundary.d">
+              Private note values and ownership witnesses are checked inside the
+              proof. Deposits, withdrawals, public payouts, fees, commitments,
+              nullifiers, and timing can still expose information or permit
+              correlation. Network anonymity and wallet security require
+              separate protections.
+            </p>
           </div>
-          <div class="chain-link-list">
-            <a class="text-link" href="foundation.html"
-              ><span data-i18n="nav.foundation">Technology</span> →</a
-            ><a class="text-link" href="pq.html"
-              ><span data-i18n="nav.pq">Security</span> →</a
-            ><a class="text-link" href="privacy.html"
-              ><span data-i18n="nav.privacy">Privacy</span> →</a
-            ><a class="text-link" href="platform.html"
-              ><span data-i18n="nav.platform">Developers</span> →</a
-            ><a class="text-link" href="token.html"
-              ><span data-i18n="nav.token">Token</span> →</a
-            ><a class="text-link" href="roadmap.html"
-              ><span data-i18n="nav.roadmap">Roadmap</span> →</a
+          <aside class="chain-note">
+            <p data-i18n="privacy.pq">
+              Groth16 is pairing-based and is not a post-quantum proof system.
+              Post-quantum authorization and encryption do not make the entire
+              privacy protocol quantum resistant.
+            </p>
+          </aside>
+        </div>
+      </section>
+      <section class="chain-section">
+        <div class="shell">
+          <div class="chain-section-head">
+            <h2 data-i18n="privacy.status.h">Implementation and activation.</h2>
+            <p data-i18n="privacy.status.d">
+              The contract, circuit, wallet, and ceremony tooling are
+              implemented. Public-network activation remains subject to the
+              frozen profile’s acceptance gates. Development proving keys use a
+              known seed and must never secure real funds. Production requires
+              verified ceremony artifacts and matching deployment identities.
+            </p>
+          </div>
+          <div class="chain-source-links">
+            <a
+              class="text-link"
+              href="https://github.com/tosnetwork/tos/blob/main/artifacts/shielded-pool/PROFILE.md"
+              target="_blank"
+              rel="noopener"
+              ><span data-i18n="ref.profile">Shielded pool profile</span> ↗</a
+            ><a
+              class="text-link"
+              href="https://github.com/tosnetwork/tos/blob/main/tools/shielded-pool-circuit/README.md"
+              target="_blank"
+              rel="noopener"
+              ><span data-i18n="ref.circuit">Circuit implementation</span> ↗</a
+            ><a
+              class="text-link"
+              href="https://github.com/tosnetwork/tos/blob/main/artifacts/shielded-pool/CEREMONY.md"
+              target="_blank"
+              rel="noopener"
+              ><span data-i18n="ref.ceremony">Ceremony procedure</span> ↗</a
             >
           </div>
         </div>
