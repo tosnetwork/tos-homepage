@@ -13,9 +13,9 @@
       "strip.consensus": "基于 QUIC 的共识",
       "strip.vm": "原生合约执行",
       "strip.privacy": "隐私转账实现",
-      "home.pq.h": "后量子认证",
+      "home.pq.h": "可升级的后量子安全",
       "home.pq.d":
-        "标准创世配置采用 ML-DSA-44 验证者签名。原生验签指令让智能合约可以使用明确的后量子授权。",
+        "TOS 当前实现 ML-DSA-44 验证者签名。带算法标识的密钥与稳定的验证者身份，为通过协调的协议升级采用其他后量子签名方案提供基础。",
       "home.pq.a": "了解安全",
       "home.privacy.h": "原生资产隐私转账",
       "home.privacy.d":
@@ -133,10 +133,10 @@
       "security.k": "后量子认证",
       "security.h": "保护权限，<br>守护区块链。",
       "security.d":
-        "TOS 已实现 ML-DSA-44 验证者签名与原生合约验签。稳定的验证者身份、根授权、共识签名与传输身份各有明确职责。",
+        "TOS 当前实现 ML-DSA-44 验证者签名。共识格式显式携带算法标识，将验证者身份与签名密钥分开，为未来升级其他后量子算法提供基础。",
       "security.pk": "ML-DSA-44 公钥",
       "security.sig": "ML-DSA-44 签名",
-      "security.suite": "标准共识算法",
+      "security.suite": "当前共识算法",
       "security.genesis.h": "标准创世配置，<br>原生后量子验证者。",
       "security.genesis.d":
         "标准生成器选择协议版本 18、四个等权 PQ 验证者及 ML-DSA-44 算法 ID 1。公开身份通过 validator-pq.pub 输入，私钥由运营者保管。生成器拒绝旧的经典密码创世文件。",
@@ -241,11 +241,24 @@
       "roadmap.operations.s": "需要运行验收",
       "roadmap.work.h": "开发重点。",
       "ref.release": "发布政策",
-      "ref.upgrade": "网络升级",
+      "ref.upgrade": "协议升级流程",
       "ref.versions": "协议版本",
       "roadmap.evidence.h": "跟踪代码与发布证据。",
       "roadmap.evidence.d":
         "路线图说明当前源码基础，不代表实时网络遥测，也不承诺上线日期。生效协议版本、验证者集合、部署与性能须在指定网络中验证。",
+      "security.agility.h": "今天具备后量子安全，<br>未来持续演进密码学。",
+      "security.agility.d":
+        "ML-DSA-44 是当前的签名方案，并非对单一算法的永久绑定。验证者描述与签名显式携带算法 ID；稳定的验证者身份独立于密钥 ID，后者绑定算法与公钥。随着标准、安全研究和运行需求变化，这一设计为 TOS 演进密码学方案提供基础。",
+      "security.agility.review.h": "集成新的签名方案",
+      "security.agility.review.d":
+        "新的后量子签名方案需要获准的算法 ID、验签实现，以及经过测试的密钥、签名和证书大小限制。目前仅允许 ML-DSA-44，未知算法会被拒绝。",
+      "security.agility.prepare.h": "准备验证者升级",
+      "security.agility.prepare.d":
+        "发布兼容的节点软件，配置新的签名密钥，并在测试网验证过渡过程。稳定的验证者身份独立于可更换的签名凭证；算法迁移必须遵守协议的授权规则。",
+      "security.agility.activate.h": "协调启用新规则",
+      "security.agility.activate.d":
+        "通过协调的协议升级，让验证者在启用边界采用一致的验签规则。采用其他后量子算法属于网络升级，不能由单个验证者自行选择切换。",
+      "ref.pqformat": "携带算法标识的共识格式",
     },
     ja: {
       "home.k": "TOS Blockchain · レイヤー1",
@@ -259,9 +272,9 @@
       "strip.consensus": "QUIC 上の合意",
       "strip.vm": "ネイティブなコントラクト実行",
       "strip.privacy": "秘匿送金の実装",
-      "home.pq.h": "ポスト量子認証",
+      "home.pq.h": "更新可能なポスト量子セキュリティ",
       "home.pq.d":
-        "標準のジェネシス設定は ML-DSA-44 バリデータ署名を採用。ネイティブ検証命令でコントラクトもポスト量子認証を利用できます。",
+        "TOS は現在 ML-DSA-44 検証者署名を実装しています。アルゴリズム ID 付きの鍵と安定した検証者 ID は、協調したプロトコル更新で別の PQ 署名方式を採用する基盤です。",
       "home.pq.a": "セキュリティを見る",
       "home.privacy.h": "ネイティブ資産の秘匿送金",
       "home.privacy.d":
@@ -382,10 +395,10 @@
       "security.k": "ポスト量子認証",
       "security.h": "チェーンを守る<br>権限を守る。",
       "security.d":
-        "TOS は ML-DSA-44 バリデータ署名とネイティブなコントラクト検証を実装しています。安定した識別、ルート権限、合意署名、通信識別は異なる役割を持ちます。",
+        "TOS は現在 ML-DSA-44 検証者署名を実装しています。合意形式はアルゴリズム ID を明示し、検証者 ID と署名鍵を分離して、将来の PQ アルゴリズム更新の基盤を提供します。",
       "security.pk": "ML-DSA-44 公開鍵",
       "security.sig": "ML-DSA-44 署名",
-      "security.suite": "標準合意アルゴリズム",
+      "security.suite": "現在の合意アルゴリズム",
       "security.genesis.h": "標準ジェネシスから<br>ポスト量子バリデータ。",
       "security.genesis.d":
         "標準生成器はプロトコル18、同じ重みの PQ バリデータ4名、ML-DSA-44 アルゴリズム ID 1 を選択します。公開識別は validator-pq.pub から入力し、秘密鍵は運用者が保持。従来の古典的ブートストラップファイルは拒否されます。",
@@ -490,11 +503,25 @@
       "roadmap.operations.s": "運用受入れが必要",
       "roadmap.work.h": "開発の重点。",
       "ref.release": "リリース方針",
-      "ref.upgrade": "ネットワーク更新",
+      "ref.upgrade": "プロトコル更新手順",
       "ref.versions": "プロトコル版",
       "roadmap.evidence.h": "コードとリリースの証拠を確認する。",
       "roadmap.evidence.d":
         "このロードマップは現在のソース基盤を示し、稼働テレメトリーや公開予定日の約束ではありません。有効な版、バリデータ、デプロイ、性能は対象ネットワークで確認します。",
+      "security.agility.h":
+        "現在のポスト量子保護。<br>将来も進化する暗号設計。",
+      "security.agility.d":
+        "ML-DSA-44 は現在の署名方式であり、一つのアルゴリズムへの永久的な固定ではありません。検証者記述と署名には明示的なアルゴリズム ID が含まれます。安定した検証者 ID は、アルゴリズムと公開鍵に結び付く鍵 ID から独立しています。この設計は、標準、安全性の知見、運用要件の変化に応じて TOS の暗号を進化させる基盤です。",
+      "security.agility.review.h": "次の署名方式を統合",
+      "security.agility.review.d":
+        "新たな PQ 署名方式には、許可されたアルゴリズム ID、検証実装、鍵・署名・証明書のサイズ制限のテストが必要です。現在許可されているのは ML-DSA-44 のみで、未知のアルゴリズムは拒否されます。",
+      "security.agility.prepare.h": "検証者を準備",
+      "security.agility.prepare.d":
+        "互換性のあるノードソフトウェアを配布し、新しい署名鍵を設定して、テストネットで移行を検証します。安定した検証者 ID と交換可能な署名資格情報は分離されており、移行はプロトコルの認可規則を守る必要があります。",
+      "security.agility.activate.h": "協調して有効化",
+      "security.agility.activate.d":
+        "協調したプロトコル更新により、有効化時点で検証者が同じ検証規則を適用します。別の PQ アルゴリズムの採用はネットワーク更新であり、個々の検証者が実行時に自由に選択するものではありません。",
+      "ref.pqformat": "アルゴリズム ID 付き合意形式",
     },
     ko: {
       "home.k": "TOS Blockchain · 레이어 1",
@@ -507,9 +534,9 @@
       "strip.consensus": "QUIC 기반 합의",
       "strip.vm": "네이티브 컨트랙트 실행",
       "strip.privacy": "프라이빗 전송 구현",
-      "home.pq.h": "포스트 양자 인증",
+      "home.pq.h": "업그레이드 가능한 양자 내성 보안",
       "home.pq.d":
-        "표준 제네시스 설정은 ML-DSA-44 검증자 서명을 채택합니다. 네이티브 검증 명령으로 컨트랙트도 포스트 양자 인증을 사용할 수 있습니다.",
+        "TOS는 현재 ML-DSA-44 검증자 서명을 구현합니다. 알고리즘 ID를 포함한 키와 안정적인 검증자 신원은 조율된 프로토콜 업그레이드를 통해 다른 PQ 서명 방식을 도입하는 기반입니다.",
       "home.pq.a": "보안 알아보기",
       "home.privacy.h": "네이티브 자산 프라이빗 전송",
       "home.privacy.d":
@@ -628,10 +655,10 @@
       "security.k": "포스트 양자 인증",
       "security.h": "체인을 보호하는<br>권한을 보호합니다.",
       "security.d":
-        "TOS는 ML-DSA-44 검증자 서명과 네이티브 컨트랙트 검증을 구현합니다. 안정적인 검증자 신원, 루트 권한, 합의 서명, 전송 신원은 역할이 구분됩니다.",
+        "TOS는 현재 ML-DSA-44 검증자 서명을 구현합니다. 합의 형식은 알고리즘 ID를 명시하고 검증자 신원과 서명 키를 분리하여 향후 PQ 알고리즘 업그레이드의 기반을 제공합니다.",
       "security.pk": "ML-DSA-44 공개 키",
       "security.sig": "ML-DSA-44 서명",
-      "security.suite": "표준 합의 알고리즘",
+      "security.suite": "현재 합의 알고리즘",
       "security.genesis.h": "표준 제네시스부터<br>포스트 양자 검증자.",
       "security.genesis.d":
         "표준 생성기는 프로토콜 18, 동일 가중치 PQ 검증자 4개, ML-DSA-44 알고리즘 ID 1을 선택합니다. 공개 신원은 validator-pq.pub로 입력하며 개인 키는 운영자가 보관합니다. 기존 고전 암호 부트스트랩 파일은 거부됩니다.",
@@ -736,11 +763,25 @@
       "roadmap.operations.s": "운영 수락 필요",
       "roadmap.work.h": "개발 우선순위.",
       "ref.release": "릴리스 정책",
-      "ref.upgrade": "네트워크 업그레이드",
+      "ref.upgrade": "프로토콜 업그레이드 절차",
       "ref.versions": "프로토콜 버전",
       "roadmap.evidence.h": "코드와 릴리스 증거를 확인하세요.",
       "roadmap.evidence.d":
         "이 로드맵은 현재 소스 기반이며 실시간 네트워크 지표나 출시일 약속이 아닙니다. 활성 버전, 검증자, 배포, 성능은 대상 네트워크에서 확인해야 합니다.",
+      "security.agility.h":
+        "오늘의 양자 내성 보안.<br>앞으로도 진화하는 암호 설계.",
+      "security.agility.d":
+        "ML-DSA-44는 현재의 서명 방식이며 하나의 알고리즘에 영구적으로 고정된 것이 아닙니다. 검증자 기술 정보와 서명에는 명시적인 알고리즘 ID가 포함됩니다. 안정적인 검증자 신원은 알고리즘과 공개 키를 결합하는 키 ID와 별개입니다. 이 설계는 표준, 보안 연구, 운영 요구의 변화에 따라 TOS 암호 체계가 발전할 기반을 제공합니다.",
+      "security.agility.review.h": "새 서명 방식 통합",
+      "security.agility.review.d":
+        "새 PQ 서명 방식에는 허용된 알고리즘 ID, 검증 구현, 키·서명·인증서 크기 제한에 대한 테스트가 필요합니다. 현재 ML-DSA-44만 허용되며 알 수 없는 알고리즘은 거부됩니다.",
+      "security.agility.prepare.h": "검증자 준비",
+      "security.agility.prepare.d":
+        "호환되는 노드 소프트웨어를 배포하고 새 서명 키를 설정한 뒤 테스트넷에서 전환을 검증합니다. 안정적인 검증자 신원은 교체 가능한 서명 자격 정보와 분리되며 알고리즘 전환은 프로토콜의 권한 규칙을 준수해야 합니다.",
+      "security.agility.activate.h": "조율된 활성화",
+      "security.agility.activate.d":
+        "조율된 프로토콜 업그레이드로 활성화 시점에 검증자가 동일한 검증 규칙을 적용합니다. 다른 PQ 알고리즘 도입은 네트워크 업그레이드이며 개별 검증자가 실행 중 임의로 선택하는 설정이 아닙니다.",
+      "ref.pqformat": "알고리즘 ID를 포함한 합의 형식",
     },
   };
   var supported = ["en", "zh", "ja", "ko"];

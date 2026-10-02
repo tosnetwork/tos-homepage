@@ -7,6 +7,7 @@ This website explains the TOS blockchain: consensus, security, privacy, executio
 - Protocol behavior is controlled by the exact in-tree specification and implementation revision.
 - Source implementation, local validation, independent reproduction, public-network activation, and production acceptance are distinct claims.
 - Active network versions, validator sets, balances, deployment identities, and performance require verification of the selected network; canonical genesis is a template, not proof of current deployment.
+- ML-DSA-44 is the only currently admitted consensus signature suite. Algorithm-tagged credentials and stable validator identity support future cryptographic evolution; another PQ suite requires implementation, validation, and coordinated protocol activation, not a runtime toggle.
 - Post-quantum consensus and note authorization do not make pairing-based Groth16 proofs, every wallet, transport, or administrative path post-quantum.
 - Shielded-pool activation requires the frozen profile's acceptance gates and verified production ceremony artifacts. Known-seed development keys must not protect real funds.
 - A configured target is not a measured performance guarantee. Issuance policy targets are not automatic transitions or supply caps.
