@@ -1,9 +1,9 @@
 /* TOS Blockchain: shared page layout and protocol illustrations. */
 .blockchain-page {
-  background: #06121b;
+  background: var(--navy-900);
 }
 .blockchain-page .site-header {
-  background: rgba(6, 18, 27, 0.94);
+  background: rgba(7, 2, 15, 0.97);
   border-bottom: 1px solid var(--line);
 }
 .blockchain-page .site-nav {
@@ -146,7 +146,7 @@
   line-height: 1.65;
 }
 .chain-section-tint {
-  background: #091923;
+  background: #102330;
 }
 .chain-card-grid {
   display: grid;
@@ -300,7 +300,7 @@ main > .chain-note {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 28px;
-  background: #030d14;
+  background: var(--navy-950);
   overflow-x: auto;
   font-size: 0.8125rem;
   line-height: 1.9;
@@ -331,7 +331,7 @@ main > .chain-note {
 }
 .chain-footer {
   padding: 64px 0 28px;
-  background: #030d14;
+  background: var(--navy-950);
 }
 .chain-footer-grid {
   display: grid;
@@ -371,7 +371,7 @@ main > .chain-note {
   color: var(--cyan-bright);
 }
 .blockchain-page .button-primary:hover {
-  color: #06121b;
+  color: var(--navy-950);
 }
 .blockchain-page a:focus-visible,
 .blockchain-page button:focus-visible {
@@ -492,12 +492,25 @@ main > .chain-note {
 
 /* Preserve the brand faces while providing explicit multilingual system fallbacks. */
 .blockchain-page {
+  --ink: #ffffff;
+  --muted: #a6b3bf;
+  --muted-strong: #d3dce4;
+  --navy-950: #07020f;
+  --navy-900: #0d1d29;
+  --navy-850: #102330;
+  --navy-800: #172d3e;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(3, 202, 155, 0.45);
+  --cyan: #03ca9b;
+  --cyan-bright: #03ca9b;
+  --mint: #03ca9b;
+  --radius-control: 4px;
   --font-display:
-    "Archivo", "Archivo Fallback", -apple-system, BlinkMacSystemFont,
+    "DIN Condensed", "Barlow Condensed", -apple-system, BlinkMacSystemFont,
     "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
   --font-body:
-    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "PingFang SC",
-    "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
+    "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans",
+    "Apple SD Gothic Neo", sans-serif;
 }
 .blockchain-page:lang(zh) :is(h1, h2, h3),
 .blockchain-page:lang(ja) :is(h1, h2, h3),
@@ -629,4 +642,100 @@ main > .chain-note {
   .blockchain-page.music-player-open {
     padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   }
+}
+
+/* Institutional typography and flat controls, informed by the reference review. */
+.blockchain-page h1 {
+  font-size: clamp(2.625rem, 6.2vw, 5.625rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.blockchain-page h2 {
+  font-size: clamp(1.875rem, 3.2vw, 2.875rem);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+.blockchain-page:lang(en) :is(h1, h2) {
+  text-transform: uppercase;
+}
+.blockchain-page:lang(zh) :is(h1, h2),
+.blockchain-page:lang(ja) :is(h1, h2),
+.blockchain-page:lang(ko) :is(h1, h2) {
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.blockchain-page h3,
+.chain-feature-art strong {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+.blockchain-page .chain-home-hero {
+  background: var(--navy-950);
+}
+.blockchain-page .chain-hero .eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.blockchain-page .button {
+  border-radius: 4px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.blockchain-page .button-primary {
+  background: #01a781;
+  color: #07020f;
+  border-color: #01a781;
+}
+.blockchain-page .button-primary:hover,
+.blockchain-page .button-primary:focus-visible {
+  background: #03ca9b;
+  border-color: #03ca9b;
+  color: #07020f;
+}
+.blockchain-page .button-secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.blockchain-page .button-secondary:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--cyan);
+}
+.blockchain-page .lang-toggle {
+  border-radius: 4px;
+  background: #172d3e;
+  border-color: transparent;
+  box-shadow: none;
+}
+.blockchain-page .lang-dropdown {
+  background: #172d3e;
+  border-radius: 4px;
+}
+.blockchain-page .lang-option {
+  border-radius: 3px;
+}
+.blockchain-page .chain-account-panel,
+.blockchain-page .chain-stack > div,
+.blockchain-page .chain-shards span,
+.blockchain-page .chain-flow > div,
+.blockchain-page .chain-code {
+  border-radius: 4px;
+}
+.blockchain-page .chain-card {
+  border-top-color: var(--line-strong);
+}
+.blockchain-page .lyrics-line.active {
+  text-shadow: none;
+}
+@media (max-width: 820px) {
+  .blockchain-page .site-nav {
+    background: #102330;
+    border-radius: 4px;
+  }
+}
+
+.blockchain-page:lang(zh) h1,
+.blockchain-page:lang(ja) h1,
+.blockchain-page:lang(ko) h1 {
+  font-size: clamp(2.625rem, 5.2vw, 4.5rem);
 }
