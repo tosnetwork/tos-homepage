@@ -9,11 +9,15 @@ class WaveAnimation {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx) return;
+        this.visible = false;
+        this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
         this.t = 0;
         this.running = false;
         this.animId = null;
         this.resize();
         this.bindEvents();
+        this.draw();
     }
 
     resize() {
@@ -36,20 +40,25 @@ class WaveAnimation {
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => this.resize(), 150);
+            resizeTimer = setTimeout(() => { this.resize(); this.draw(); }, 150);
         });
 
-        // Pause when not visible
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.start();
-                } else {
-                    this.stop();
-                }
-            });
-        }, { threshold: 0.05 });
-        observer.observe(this.canvas);
+        const update = () => {
+            if (this.visible && !document.hidden && !this.motionPreference.matches) this.start();
+            else this.stop();
+        };
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(entries => {
+                this.visible = entries[0].isIntersecting;
+                update();
+            }, { threshold: 0.05 });
+            observer.observe(this.canvas);
+        } else {
+            this.visible = true;
+            update();
+        }
+        document.addEventListener('visibilitychange', update);
+        this.motionPreference.addEventListener('change', update);
     }
 
     start() {
@@ -70,8 +79,7 @@ class WaveAnimation {
         return Math.sqrt(x * x + y * y);
     }
 
-    animate() {
-        if (!this.running) return;
+    draw() {
 
         const ctx = this.ctx;
         const scale = this.scale;
@@ -79,14 +87,10 @@ class WaveAnimation {
         const cy = this.cy;
 
         // Dark background
-        ctx.fillStyle = 'rgba(7, 2, 15, 1)';
-        ctx.fillRect(0, 0, this.w, this.h);
-
-        this.t += Math.PI / 240;
+        ctx.clearRect(0, 0, this.w, this.h);
 
         // Fewer particles on mobile for performance and cleaner look
         const totalPoints = this.isMobile ? 10000 : 20000;
-        const gridW = this.isMobile ? 200 : 200;
 
         for (let i = 0; i < totalPoints; i++) {
             const k = (i / 8) % 25 - 12.5;
@@ -111,6 +115,12 @@ class WaveAnimation {
             ctx.fillRect(px, py, sz, sz);
         }
 
+    }
+
+    animate() {
+        if (!this.running) return;
+        this.t += Math.PI / 240;
+        this.draw();
         this.animId = requestAnimationFrame(() => this.animate());
     }
 }
@@ -118,6 +128,5 @@ class WaveAnimation {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Respect reduced motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     new WaveAnimation('closing-wave-canvas');
 });
