@@ -490,12 +490,6 @@ main > .chain-note {
   }
 }
 
-.chain-song-player {
-  display: block;
-  width: 100%;
-  max-width: 560px;
-}
-
 /* Preserve the brand faces while providing explicit multilingual system fallbacks. */
 .blockchain-page {
   --font-display:
@@ -605,5 +599,34 @@ main > .chain-note {
     width: 100%;
     max-width: 280px;
     justify-self: center;
+  }
+}
+
+/* Restored Digital Dawn player: keep controls clear of device safe areas. */
+.blockchain-page .tos-music-btn {
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+}
+.blockchain-page .tos-music-btn.has-session {
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+.blockchain-page .lyrics-bar {
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.blockchain-page.music-player-open {
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+}
+@media (max-width: 820px) {
+  .blockchain-page .tos-music-btn {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .blockchain-page .tos-music-btn.has-session {
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+  .blockchain-page .lyrics-bar {
+    height: calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+  .blockchain-page.music-player-open {
+    padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   }
 }
