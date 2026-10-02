@@ -806,3 +806,137 @@ main > .chain-note {
     gap: 24px;
   }
 }
+
+/* Lightweight SVG motion: depth, network pulses, and message flow. */
+.chain-hero-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  overflow: visible;
+}
+.chain-hero-art .chain-block {
+  animation: chain-block-float 6s ease-in-out infinite;
+}
+.chain-block-lower {
+  --lift: 4px;
+  animation-delay: -2s !important;
+}
+.chain-block-middle {
+  --lift: -7px;
+  animation-delay: -1s !important;
+}
+.chain-block-upper {
+  --lift: -14px;
+}
+.chain-hero-art .chain-satellite {
+  animation: chain-satellite-float 7s ease-in-out infinite;
+}
+.chain-satellite-1 {
+  animation-delay: -2.3s !important;
+}
+.chain-satellite-2 {
+  animation-delay: -4.6s !important;
+}
+.chain-hero-art .chain-orbits ellipse {
+  stroke-dasharray: 3 14;
+  animation: chain-orbit-flow 20s linear infinite;
+}
+.chain-hero-art .chain-network > path {
+  animation: chain-link-flow 3s linear infinite;
+}
+.chain-hero-art .chain-node {
+  animation: chain-node-breathe 3s ease-in-out infinite;
+}
+.chain-hero-art .chain-node-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chain-node-ripple 3s ease-out infinite;
+}
+.chain-node-1 {
+  animation-delay: -0.75s !important;
+}
+.chain-node-2 {
+  animation-delay: -1.5s !important;
+}
+.chain-node-3 {
+  animation-delay: -2.25s !important;
+}
+.chain-hero-art .chain-signal {
+  opacity: 0;
+  offset-rotate: 0deg;
+  animation: chain-message-flow 2.8s linear infinite;
+}
+.chain-hero-art.is-motion-paused * {
+  animation-play-state: paused !important;
+}
+@keyframes chain-block-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--lift));
+  }
+}
+@keyframes chain-satellite-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-4px, -8px);
+  }
+}
+@keyframes chain-orbit-flow {
+  to {
+    stroke-dashoffset: -170;
+  }
+}
+@keyframes chain-link-flow {
+  to {
+    stroke-dashoffset: -44;
+  }
+}
+@keyframes chain-node-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes chain-node-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+@keyframes chain-message-flow {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chain-hero-art * {
+    animation: none !important;
+  }
+  .chain-hero-art .chain-signal,
+  .chain-hero-art .chain-node-ring {
+    display: none;
+  }
+}

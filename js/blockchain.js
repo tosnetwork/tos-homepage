@@ -44,6 +44,26 @@
   }
   window.addEventListener("scroll", scroll, { passive: true });
   scroll();
+  // Suspend decorative motion when the illustration or tab is not visible.
+  var art = document.querySelector(".chain-hero-art");
+  if (art) {
+    var artVisible = true;
+    function updateArtMotion() {
+      art.classList.toggle("is-motion-paused", document.hidden || !artVisible);
+    }
+    if ("IntersectionObserver" in window) {
+      var artObserver = new IntersectionObserver(
+        function (entries) {
+          artVisible = entries[0].isIntersecting;
+          updateArtMotion();
+        },
+        { threshold: 0 },
+      );
+      artObserver.observe(art);
+    }
+    document.addEventListener("visibilitychange", updateArtMotion);
+    updateArtMotion();
+  }
   var year = document.getElementById("currentYear");
   if (year) year.textContent = String(new Date().getFullYear());
 })();

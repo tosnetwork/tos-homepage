@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="css/investor-home.css?v=20260828e" />
     <link rel="stylesheet" href="css/design-system.css?v=20260828e" />
     <link rel="stylesheet" href="css/lang-switcher.css?v=20260805b" />
-    <link rel="stylesheet" href="css/blockchain.css?v=20261003g" />
+    <link rel="stylesheet" href="css/blockchain.css?v=20261003h" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -215,7 +215,196 @@
             </div>
           </div>
           <div class="chain-hero-art" aria-hidden="true">
-            <img src="img/tos-blockchain.svg" width="640" height="560" alt="" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 560"
+              fill="none"
+              class="chain-hero-svg"
+              width="640"
+              height="560"
+              focusable="false"
+            >
+              <defs>
+                <linearGradient id="top" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#103a43" />
+                  <stop offset="1" stop-color="#09222f" />
+                </linearGradient>
+                <linearGradient id="front" x1="0" y1="0" x2="0" y2="1">
+                  <stop stop-color="#103743" />
+                  <stop offset="1" stop-color="#071620" />
+                </linearGradient>
+                <pattern
+                  id="grid"
+                  width="40"
+                  height="40"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path d="M40 0H0V40" stroke="#74e5c9" stroke-opacity=".045" />
+                </pattern>
+              </defs>
+              <rect width="640" height="560" fill="url(#grid)" />
+              <g stroke="#74e5c9" stroke-opacity=".17" class="chain-orbits">
+                <ellipse cx="320" cy="315" rx="285" ry="170" />
+                <ellipse cx="320" cy="315" rx="225" ry="130" />
+                <path d="M35 315H605M320 145V485" />
+              </g>
+              <g stroke="#74e5c9" stroke-width="1.5" class="chain-network">
+                <path
+                  d="M320 174L320 80M190 317L79 379M450 317L560 379M320 382V482"
+                  stroke-opacity=".45"
+                  stroke-dasharray="4 7"
+                />
+                <circle
+                  cx="320"
+                  cy="80"
+                  r="6"
+                  fill="#74e5c9"
+                  class="chain-node chain-node-0"
+                />
+                <circle
+                  cx="79"
+                  cy="379"
+                  r="6"
+                  fill="#74e5c9"
+                  class="chain-node chain-node-1"
+                />
+                <circle
+                  cx="560"
+                  cy="379"
+                  r="6"
+                  fill="#74e5c9"
+                  class="chain-node chain-node-2"
+                />
+                <circle
+                  cx="320"
+                  cy="482"
+                  r="6"
+                  fill="#74e5c9"
+                  class="chain-node chain-node-3"
+                />
+                <circle
+                  cx="320"
+                  cy="80"
+                  r="6"
+                  fill="none"
+                  class="chain-node-ring chain-node-0"
+                />
+                <circle
+                  cx="79"
+                  cy="379"
+                  r="6"
+                  fill="none"
+                  class="chain-node-ring chain-node-1"
+                />
+                <circle
+                  cx="560"
+                  cy="379"
+                  r="6"
+                  fill="none"
+                  class="chain-node-ring chain-node-2"
+                />
+                <circle
+                  cx="320"
+                  cy="482"
+                  r="6"
+                  fill="none"
+                  class="chain-node-ring chain-node-3"
+                />
+              </g>
+              <g class="chain-signals" fill="#74e5c9">
+                <circle
+                  r="3"
+                  class="chain-signal chain-signal-0"
+                  style="
+                    offset-path: path(&quot;M320 80L320 174&quot;);
+                    animation-delay: -0s;
+                  "
+                />
+                <circle
+                  r="3"
+                  class="chain-signal chain-signal-1"
+                  style="
+                    offset-path: path(&quot;M79 379L190 317&quot;);
+                    animation-delay: -0.7s;
+                  "
+                />
+                <circle
+                  r="3"
+                  class="chain-signal chain-signal-2"
+                  style="
+                    offset-path: path(&quot;M560 379L450 317&quot;);
+                    animation-delay: -1.4s;
+                  "
+                />
+                <circle
+                  r="3"
+                  class="chain-signal chain-signal-3"
+                  style="
+                    offset-path: path(&quot;M320 382L320 482&quot;);
+                    animation-delay: -2.0999999999999996s;
+                  "
+                />
+              </g>
+              <g
+                stroke="#48a998"
+                stroke-width="1.2"
+                class="chain-block chain-block-lower"
+              >
+                <path d="M320 298L450 373L320 448L190 373Z" fill="#071821" />
+                <path
+                  d="M190 350L320 425L450 350V373L320 448L190 373Z"
+                  fill="#0b2730"
+                />
+                <path d="M320 275L450 350L320 425L190 350Z" fill="url(#top)" />
+              </g>
+              <g
+                stroke="#74e5c9"
+                stroke-width="1.2"
+                class="chain-block chain-block-middle"
+              >
+                <path
+                  d="M190 274L320 349L450 274V319L320 394L190 319Z"
+                  fill="url(#front)"
+                />
+                <path d="M320 199L450 274L320 349L190 274Z" fill="url(#top)" />
+                <path d="M320 349V394" stroke-opacity=".6" />
+              </g>
+              <g
+                stroke="#74e5c9"
+                stroke-width="1.5"
+                class="chain-block chain-block-upper"
+              >
+                <path
+                  d="M190 199L320 274L450 199V245L320 320L190 245Z"
+                  fill="url(#front)"
+                />
+                <path d="M320 124L450 199L320 274L190 199Z" fill="url(#top)" />
+                <path d="M320 274V320" stroke-opacity=".6" />
+                <path
+                  d="M249 199L320 158L391 199L320 240Z"
+                  stroke-opacity=".5"
+                />
+                <path
+                  d="M290 195L320 178L350 195L320 212Z"
+                  fill="#74e5c9"
+                  fill-opacity=".75"
+                />
+              </g>
+              <g stroke="#74e5c9" stroke-opacity=".5">
+                <g class="chain-satellite chain-satellite-0">
+                  <path d="M49 255L79 272L109 255L79 237Z" fill="#0d2831" />
+                  <path d="M49 255V277L79 295L109 277V255M79 272V295" />
+                </g>
+                <g class="chain-satellite chain-satellite-1">
+                  <path d="M528 214L558 231L588 214L558 196Z" fill="#0d2831" />
+                  <path d="M528 214V236L558 254L588 236V214M558 231V254" />
+                </g>
+                <g class="chain-satellite chain-satellite-2">
+                  <path d="M467 452L497 469L527 452L497 434Z" fill="#0d2831" />
+                  <path d="M467 452V474L497 492L527 474V452M497 469V492" />
+                </g>
+              </g>
+            </svg>
           </div>
         </div>
       </section>
@@ -472,7 +661,7 @@
     </footer>
     <script src="js/i18n.js?v=20261003c"></script>
     <script src="js/lang-switcher.js?v=20260805a"></script>
-    <script src="js/blockchain.js?v=20261002a"></script>
+    <script src="js/blockchain.js?v=20261003a"></script>
     <script src="js/tos-music.js?v=20261003a"></script>
   </body>
 </html>

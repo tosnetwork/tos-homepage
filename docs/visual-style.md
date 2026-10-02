@@ -21,3 +21,5 @@ Reviewed desktop and mobile screenshots. Checked nine top-level pages at a 390px
 Sampled contrast ratios: secondary text on content background 8.02:1; body text on tinted surfaces 11.59:1; button label on solid green 6.68:1; green accent on content background 8.10:1. This is a design review with representative contrast checks, not an exhaustive accessibility certification.
 
 Content panel follow-up: replaced line-only feature cards and mixed panel treatments with #0B1923 cards. Focused architecture and transfer panels use #13454C; roadmap items now use the same content card surface. Controls and status badges retain the separate 4px radius.
+
+Hero illustration motion: the homepage now embeds the existing SVG geometry inline so three block layers can float independently, satellite nodes can drift, and connection pulses can move. Animation uses CSS with no JavaScript render loop. Visibility and intersection observers pause it offscreen or in a hidden tab; reduced-motion CSS keeps the static illustration and hides traveling signals and ripples. Desktop motion, scroll pause/resume, mobile navigation, and widths 320/390/430 were checked in the browser.
