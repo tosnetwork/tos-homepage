@@ -489,3 +489,9 @@ main > .chain-note {
     display: none;
   }
 }
+
+.chain-song-player {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+}

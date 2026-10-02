@@ -263,6 +263,9 @@
       "strip.pq.h": "后量子安全",
       "strip.ai.h": "AI 原生",
       "strip.ai": "面向智能体的可编程账户",
+      "song.k": "TOS 主题曲",
+      "song.d": "数字黎明的声音。聆听 TOS 主题曲。",
+      "song.link": "探索歌曲与歌词",
     },
     ja: {
       "home.k": "TOS Blockchain · レイヤー1",
@@ -530,6 +533,9 @@
       "strip.pq.h": "ポスト量子",
       "strip.ai.h": "AI ネイティブ",
       "strip.ai": "エージェント向けプログラム可能なアカウント",
+      "song.k": "TOS テーマソング",
+      "song.d": "新たなデジタルの夜明けを奏でる、TOS のテーマソング。",
+      "song.link": "楽曲と歌詞を見る",
     },
     ko: {
       "home.k": "TOS Blockchain · 레이어 1",
@@ -794,6 +800,9 @@
       "strip.pq.h": "양자 내성",
       "strip.ai.h": "AI 네이티브",
       "strip.ai": "에이전트를 위한 프로그래밍 가능한 계정",
+      "song.k": "TOS 테마곡",
+      "song.d": "새로운 디지털 새벽의 소리. TOS 테마곡을 들어보세요.",
+      "song.link": "노래와 가사 보기",
     },
   };
   var supported = ["en", "zh", "ja", "ko"];
