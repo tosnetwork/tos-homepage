@@ -739,3 +739,70 @@ main > .chain-note {
 .blockchain-page:lang(ko) h1 {
   font-size: clamp(2.625rem, 5.2vw, 4.5rem);
 }
+
+/* Content cards use the reference's 20px surfaces; controls retain 4px corners. */
+.blockchain-page {
+  --panel-bg: #0b1923;
+  --panel-accent-bg: #13454c;
+  --panel-border: rgba(3, 202, 155, 0.2);
+  --panel-radius: 20px;
+}
+.blockchain-page .chain-card,
+.blockchain-page .chain-account-panel,
+.blockchain-page .chain-stack > div:not(.chain-shards),
+.blockchain-page .chain-shards span,
+.blockchain-page .chain-flow > div,
+.blockchain-page .chain-code,
+.blockchain-page .chain-note,
+.blockchain-page .chain-milestone {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  box-shadow: none;
+}
+.blockchain-page .chain-card {
+  padding: 30px;
+}
+.blockchain-page .chain-account-panel {
+  padding: 30px;
+  gap: 48px;
+}
+.blockchain-page .chain-stack > div:not(.chain-shards),
+.blockchain-page .chain-flow > div,
+.blockchain-page .chain-code,
+.blockchain-page .chain-note {
+  padding: 30px;
+}
+.blockchain-page .chain-stack > div:first-child,
+.blockchain-page .chain-flow .chain-flow-focus {
+  background: var(--panel-accent-bg);
+  border-color: transparent;
+}
+.blockchain-page .chain-shards span {
+  padding: 24px 12px;
+}
+.blockchain-page .chain-milestone {
+  padding: 30px;
+  margin-bottom: 16px;
+}
+.blockchain-page .chain-status {
+  background: rgba(3, 202, 155, 0.07);
+  border-color: var(--panel-border);
+  border-radius: 4px;
+}
+@media (max-width: 820px) {
+  .chain-card-grid {
+    gap: 24px;
+  }
+  .blockchain-page .chain-card,
+  .blockchain-page .chain-account-panel,
+  .blockchain-page .chain-flow > div,
+  .blockchain-page .chain-code,
+  .blockchain-page .chain-note,
+  .blockchain-page .chain-milestone {
+    padding: 24px;
+  }
+  .blockchain-page .chain-account-panel {
+    gap: 24px;
+  }
+}
