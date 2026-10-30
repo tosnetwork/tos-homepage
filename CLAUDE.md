@@ -93,9 +93,10 @@ cover an edit to `i18n.js`, and vice versa. Before committing, check every
 
 ## Root cause 5 (2026-08-23 addendum): deploying to the wrong Pages branch is a silent no-op
 
-`wrangler pages deploy` requires a `--branch` value, and this project's
-Cloudflare Pages production branch is **`master`**, not `main`. Running
-`wrangler pages deploy . --project-name=tos-homepage --branch=main` succeeds,
+`wrangler pages deploy` requires a `--branch` value, and only the branch that
+matches the Cloudflare Pages project's production branch setting reaches
+production. At the time of this incident that setting was `master`, so running
+`wrangler pages deploy . --project-name=tos-homepage --branch=main` succeeded,
 prints a working `https://<hash>.tos-homepage.pages.dev` URL, and uploads every
 file — but it registers as a *Preview* deployment. The custom domains
 (`tos.network`, `www.tos.network`) and the production alias
@@ -107,17 +108,27 @@ hash URL shows the new content, `tos.network` does not, and waiting looks like
 the fix. It is not — waiting never resolves it, because production was never
 updated.
 
-**Preventive measure**: always deploy with `--branch=master`:
+**Current setting (since 2026-10-30)**: the git `master` branch was renamed to
+`main`, and the Cloudflare Pages production branch was switched to **`main`**
+to match. This project is a direct-upload project (no Git integration), so the
+production branch is stored only in Cloudflare and does not follow GitHub
+renames — a future branch rename needs the same Cloudflare update, or every
+deploy silently becomes a Preview again.
+
+**Preventive measure**: always deploy with `--branch=main`:
 
 ```bash
-npx wrangler pages deploy . --project-name=tos-homepage --branch=master --commit-dirty=true
+npx wrangler pages deploy . --project-name=tos-homepage --branch=main --commit-dirty=true
 ```
+
+`--branch=master` now produces a Preview deployment, the same failure in
+reverse.
 
 To tell the two failure modes apart, check the production alias
 `https://tos-homepage.pages.dev` (not the hash URL, and not `tos.network`).
 It updates immediately on a real production deploy and is not subject to the
 custom-domain propagation delay. If the alias shows the old build, the deploy
-went to a preview branch — redeploy against `master` instead of waiting.
+went to a preview branch — redeploy against `main` instead of waiting.
 `wrangler pages deployment list --project-name=tos-homepage` shows each
 deployment's Environment (Production / Preview) and branch if confirmation is
 needed.
@@ -127,6 +138,6 @@ needed.
 - [ ] Changed `css/*.css`? Did you bump the `?v=` version on the `<link>` that references it?
 - [ ] Changed `js/*.js`? Did you bump the `?v=` version on the `<script>` tag that references it?
 - [ ] Added a new `<img>`? Does it have explicit `width`/`height`?
-- [ ] Deploying? Did you pass `--branch=master` (production), not `--branch=main` (preview)?
+- [ ] Deploying? Did you pass `--branch=main` (production), not `--branch=master` or any other branch (preview)?
 - [ ] After `wrangler pages deploy`, did you verify against the returned hash URL first, instead of jumping straight to `tos.network`?
 - [ ] Did `tos-homepage.pages.dev` pick up the change before you blamed custom-domain propagation delay?
